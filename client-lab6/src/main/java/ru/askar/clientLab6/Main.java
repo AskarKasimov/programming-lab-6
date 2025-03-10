@@ -7,7 +7,7 @@ public class Main {
     public static void main(String[] args) throws IOException
     {
         // create a socket to connect to the server running on localhost at port number 9090
-        Socket socket = new Socket("localhost", 9090);
+        Socket socket = new Socket("localhost", 9091);
 
         // Setup output stream to send data to the server
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);

@@ -10,7 +10,7 @@ import java.net.Socket;
 public class Main {
     public static void main(String[] args) throws IOException {
         // create a server socket on port number 9090
-        ServerSocket serverSocket = new ServerSocket(9090);
+        ServerSocket serverSocket = new ServerSocket(9091);
         System.out.println("Server is running and waiting for client connection...");
 
         // Accept incoming client connection
