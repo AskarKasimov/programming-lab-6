@@ -23,29 +23,39 @@ public class Main {
 
             System.out.println("Соединение установлено.");
 
-            // Создаем объект DTO
             Message dto = new Message(123, "Heelllooo");
 
-            // Сериализуем объект в байты
+            // сериализация
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
             objectOutputStream.writeObject(dto);
             objectOutputStream.flush();
             byte[] data = byteArrayOutputStream.toByteArray();
 
-            // Отправка данных на сервер
-            ByteBuffer buffer = ByteBuffer.wrap(data);
-            socketChannel.write(buffer);
+            // объединение длины и сообщения в один буфер
+            ByteBuffer combinedBuffer = ByteBuffer.allocate(4 + data.length);
+            combinedBuffer.putInt(data.length); // длина сообщения (4 байта int'а)
+            combinedBuffer.put(data); // само сообщение
+            combinedBuffer.flip();
 
-            // Чтение ответа от сервера
-            ByteBuffer responseBuffer = ByteBuffer.allocate(1024);
-            while (socketChannel.read(responseBuffer) <= 0) {
-                // Ожидание данных от сервера
+            socketChannel.write(combinedBuffer);
+
+            // чтение длины сообщения (4 байта int'а)
+            ByteBuffer lengthBuffer = ByteBuffer.allocate(4);
+            socketChannel.read(lengthBuffer);
+            lengthBuffer.flip();
+            int messageLength = lengthBuffer.getInt();
+
+            // чтение объекта
+            ByteBuffer messageBuffer = ByteBuffer.allocate(messageLength);
+            while (messageBuffer.hasRemaining()) {
+                socketChannel.read(messageBuffer);
             }
+            messageBuffer.flip();
 
-            responseBuffer.flip();
-            byte[] responseData = new byte[responseBuffer.remaining()];
-            responseBuffer.get(responseData);
+            // десериализация
+            byte[] responseData = new byte[messageBuffer.remaining()];
+            messageBuffer.get(responseData);
 
             try (ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(responseData))) {
                 Message responseDTO = (Message) objectInputStream.readObject();

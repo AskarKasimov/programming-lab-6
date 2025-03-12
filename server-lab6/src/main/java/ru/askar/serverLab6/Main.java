@@ -33,10 +33,9 @@ public class Main {
 
                 while (keyIterator.hasNext()) {
                     SelectionKey key = keyIterator.next();
-                    ServerSocketChannel serverChannel = null;
 
                     if (key.isAcceptable()) {
-                        serverChannel = (ServerSocketChannel) key.channel();
+                        ServerSocketChannel serverChannel = (ServerSocketChannel) key.channel();
                         SocketChannel clientChannel = serverChannel.accept();
                         clientChannel.configureBlocking(false);
                         clientChannel.register(selector, SelectionKey.OP_READ);
@@ -45,39 +44,42 @@ public class Main {
 
                     if (key.isReadable()) {
                         SocketChannel clientChannel = (SocketChannel) key.channel();
-                        ByteBuffer buffer = ByteBuffer.allocate(1024);
-                        int bytesRead = clientChannel.read(buffer);
 
-                        if (bytesRead == -1) {
-                            System.out.println("Клиент отключен: " + clientChannel.getRemoteAddress());
+                        // чтение длины сообщения (4 байта int'а)
+                        ByteBuffer lengthBuffer = ByteBuffer.allocate(4);
+                        clientChannel.read(lengthBuffer);
+                        lengthBuffer.flip();
+                        int messageLength = lengthBuffer.getInt();
+
+                        // чтение объекта
+                        ByteBuffer messageBuffer = ByteBuffer.allocate(messageLength);
+                        while (messageBuffer.hasRemaining()) {
+                            clientChannel.read(messageBuffer);
+                        }
+                        messageBuffer.flip();
+
+                        // десериализация
+                        try (ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(messageBuffer.array()))) {
+                            Message receivedDTO = (Message) objectInputStream.readObject();
+                            System.out.println("Получено от клиента: " + receivedDTO);
+
+                            // подготовка и отправка ответа
+                            Message responseDTO = new Message(14, "receivedDTO.getPriority() * 2");
+                            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                            ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+                            objectOutputStream.writeObject(responseDTO);
+                            objectOutputStream.flush();
+
+                            byte[] responseData = byteArrayOutputStream.toByteArray();
+                            ByteBuffer responseBuffer = ByteBuffer.allocate(4 + responseData.length);
+                            responseBuffer.putInt(responseData.length);
+                            responseBuffer.put(responseData);
+                            responseBuffer.flip();
+                            clientChannel.write(responseBuffer);
+                        } catch (ClassNotFoundException e) {
+                            e.printStackTrace();
+                        } finally {
                             clientChannel.close();
-                        } else if (bytesRead > 0) {
-
-                            buffer.flip();
-                            byte[] data = new byte[buffer.remaining()];
-                            buffer.get(data);
-
-                            try (ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(data))) {
-                                Message receivedDTO = (Message) objectInputStream.readObject();
-                                System.out.println("Получено от клиента: " + receivedDTO);
-
-                                Message responseDTO = new Message(14, "receivedDTO.getPriority() * 2");
-                                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                                ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
-                                objectOutputStream.writeObject(responseDTO);
-                                objectOutputStream.flush();
-
-                                byte[] responseData = byteArrayOutputStream.toByteArray();
-                                ByteBuffer responseBuffer = ByteBuffer.wrap(responseData);
-                                clientChannel.write(responseBuffer);
-                            } catch (ClassNotFoundException e) {
-                                e.printStackTrace();
-                            } finally {
-                                if (serverChannel != null) {
-                                    serverChannel.close();
-                                }
-                                clientChannel.close();
-                            }
                         }
                     }
                     keyIterator.remove();
