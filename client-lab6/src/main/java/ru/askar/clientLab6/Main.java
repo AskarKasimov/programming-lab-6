@@ -1,28 +1,60 @@
 package ru.askar.clientLab6;
 
+import ru.askar.Message;
+
 import java.io.*;
-import java.net.*;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
 
 public class Main {
-    public static void main(String[] args) throws IOException
-    {
-        // create a socket to connect to the server running on localhost at port number 9090
-        Socket socket = new Socket("localhost", 9091);
 
-        // Setup output stream to send data to the server
-        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+    public static void main(String[] args) {
+        String serverAddress = "localhost";
+        int port = 12345;
 
-        // Setup input stream to receive data from the server
-        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        try (SocketChannel socketChannel = SocketChannel.open()) {
+            socketChannel.configureBlocking(false);
+            socketChannel.connect(new InetSocketAddress(serverAddress, port));
 
-        // Send message to the server
-        out.println("Hello from client!");
+            while (!socketChannel.finishConnect()) {
+                System.out.println("Установка соединения...");
+            }
 
-        // Receive response from the server
-        String response = in.readLine();
-        System.out.println("Server says: " + response);
+            System.out.println("Соединение установлено.");
 
-        // Close the socket
-        socket.close();
+            // Создаем объект DTO
+            Message dto = new Message(123, "Heelllooo");
+
+            // Сериализуем объект в байты
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+            objectOutputStream.writeObject(dto);
+            objectOutputStream.flush();
+            byte[] data = byteArrayOutputStream.toByteArray();
+
+            // Отправка данных на сервер
+            ByteBuffer buffer = ByteBuffer.wrap(data);
+            socketChannel.write(buffer);
+
+            // Чтение ответа от сервера
+            ByteBuffer responseBuffer = ByteBuffer.allocate(1024);
+            while (socketChannel.read(responseBuffer) <= 0) {
+                // Ожидание данных от сервера
+            }
+
+            responseBuffer.flip();
+            byte[] responseData = new byte[responseBuffer.remaining()];
+            responseBuffer.get(responseData);
+
+            try (ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(responseData))) {
+                Message responseDTO = (Message) objectInputStream.readObject();
+                System.out.println("Ответ от сервера: " + responseDTO);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
