@@ -10,15 +10,37 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
+import java.util.Scanner;
 import java.util.Set;
 
 public class Main {
 
+    public static boolean running = true;
+    private static Selector selector;
+
     public static void main(String[] args) {
+        // обработка команд из консоли
+        Thread consoleThread = new Thread(() -> {
+            Scanner scanner = new Scanner(System.in);
+            while (true) {
+                String command = scanner.nextLine();
+                if ("stop".equalsIgnoreCase(command)) {
+                    running = false;
+                    System.out.println("Сервер получил команду на остановку.");
+                    if (selector != null) {
+                        selector.wakeup(); // "будим" selector
+                    }
+                    break;
+                }
+            }
+            scanner.close();
+        });
+        consoleThread.start();
+
         int port = 12345;
 
-        try (ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-             Selector selector = Selector.open()) {
+        try (ServerSocketChannel serverSocketChannel = ServerSocketChannel.open()) {
+            selector = Selector.open();
 
             serverSocketChannel.bind(new InetSocketAddress(port));
             serverSocketChannel.configureBlocking(false);
@@ -26,8 +48,8 @@ public class Main {
 
             System.out.println("Сервер запущен на порту " + port);
 
-            while (true) {
-                selector.select();
+            while (running) {
+                selector.select(); // происходит блокировка, пока не произойдет событие на одном из каналов
                 Set<SelectionKey> selectedKeys = selector.selectedKeys();
                 Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
 
@@ -87,6 +109,15 @@ public class Main {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (selector != null) {
+                try {
+                    selector.close(); // Закрываем selector
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            System.out.println("Сервер завершил работу.");
         }
     }
 }

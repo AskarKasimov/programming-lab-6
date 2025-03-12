@@ -38,24 +38,27 @@ public class Main {
             combinedBuffer.put(data); // само сообщение
             combinedBuffer.flip();
 
+            // отправка
             socketChannel.write(combinedBuffer);
 
             // чтение длины сообщения (4 байта int'а)
-            ByteBuffer lengthBuffer = ByteBuffer.allocate(4);
-            socketChannel.read(lengthBuffer);
-            lengthBuffer.flip();
-            int messageLength = lengthBuffer.getInt();
-
-            // чтение объекта
-            ByteBuffer messageBuffer = ByteBuffer.allocate(messageLength);
-            while (messageBuffer.hasRemaining()) {
-                socketChannel.read(messageBuffer);
+            ByteBuffer responseLengthBuffer = ByteBuffer.allocate(4);
+            while (responseLengthBuffer.hasRemaining()) {
+                socketChannel.read(responseLengthBuffer);
             }
-            messageBuffer.flip();
+            responseLengthBuffer.flip();
+            int responseLength = responseLengthBuffer.getInt();
 
-            // десериализация
-            byte[] responseData = new byte[messageBuffer.remaining()];
-            messageBuffer.get(responseData);
+            // получаем само сообщение
+            ByteBuffer responseBuffer = ByteBuffer.allocate(responseLength);
+            while (responseBuffer.hasRemaining()) {
+                socketChannel.read(responseBuffer);
+            }
+            responseBuffer.flip();
+
+            // десериализация сообщения
+            byte[] responseData = new byte[responseBuffer.remaining()];
+            responseBuffer.get(responseData);
 
             try (ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(responseData))) {
                 Message responseDTO = (Message) objectInputStream.readObject();
