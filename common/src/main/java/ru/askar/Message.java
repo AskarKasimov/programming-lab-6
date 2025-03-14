@@ -13,10 +13,7 @@ public class Message implements Serializable {
 
     @Override
     public String toString() {
-        return "Message{" +
-                "priority=" + priority +
-                ", message='" + message + '\'' +
-                '}';
+        return "Message{" + "priority=" + priority + ", message='" + message + '\'' + '}';
     }
 
     public int getPriority() {

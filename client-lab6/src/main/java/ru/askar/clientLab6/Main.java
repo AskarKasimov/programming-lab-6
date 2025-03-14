@@ -1,11 +1,10 @@
 package ru.askar.clientLab6;
 
-import ru.askar.Message;
-
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import ru.askar.Message;
 
 public class Main {
 
@@ -60,7 +59,8 @@ public class Main {
             byte[] responseData = new byte[responseBuffer.remaining()];
             responseBuffer.get(responseData);
 
-            try (ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(responseData))) {
+            try (ObjectInputStream objectInputStream =
+                    new ObjectInputStream(new ByteArrayInputStream(responseData))) {
                 Message responseDTO = (Message) objectInputStream.readObject();
                 System.out.println("Ответ от сервера: " + responseDTO);
             } catch (ClassNotFoundException e) {
