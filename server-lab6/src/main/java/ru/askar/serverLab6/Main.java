@@ -10,7 +10,7 @@ import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Scanner;
 import java.util.Set;
-import ru.askar.Message;
+import ru.askar.common.Message;
 
 public class Main {
 

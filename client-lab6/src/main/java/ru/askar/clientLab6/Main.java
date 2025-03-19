@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import ru.askar.Message;
+import ru.askar.common.Message;
 
 public class Main {
 
