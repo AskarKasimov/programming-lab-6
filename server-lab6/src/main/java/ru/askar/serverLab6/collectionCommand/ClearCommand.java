@@ -1,15 +1,13 @@
 package ru.askar.serverLab6.collectionCommand;
 
-import ru.askar.common.object.Command;
-import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.exception.CollectionIsEmptyException;
 import ru.askar.serverLab6.collection.CollectionManager;
 
-public class ClearCommand extends Command {
+public class ClearCommand extends CollectionCommand {
     private final CollectionManager collectionManager;
 
-    public ClearCommand(CollectionManager collectionManager, InputReader inputReader) {
-        super("clear", 0, inputReader);
+    public ClearCommand(CollectionManager collectionManager) {
+        super("clear", 0);
         this.collectionManager = collectionManager;
     }
 

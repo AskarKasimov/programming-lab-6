@@ -1,14 +1,12 @@
 package ru.askar.serverLab6.collectionCommand;
 
-import ru.askar.common.object.Command;
-import ru.askar.common.cli.input.InputReader;
 import ru.askar.serverLab6.collection.CollectionManager;
 
-public class RemoveGreaterKeyCommand extends Command {
+public class RemoveGreaterKeyCommand extends CollectionCommand {
     private final CollectionManager collectionManager;
 
-    public RemoveGreaterKeyCommand(CollectionManager collectionManager, InputReader inputReader) {
-        super("remove_greater_key", 1, inputReader);
+    public RemoveGreaterKeyCommand(CollectionManager collectionManager) {
+        super("remove_greater_key", 1);
         this.collectionManager = collectionManager;
     }
 

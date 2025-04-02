@@ -1,4 +1,6 @@
 package ru.askar.common;
 
-public record CommandToExecute(String name, String[] args, Class<?> filledClass) {
+import java.io.Serializable;
+
+public record CommandToExecute(String name, String[] args, Class<?> filledClass) implements Serializable {
 }

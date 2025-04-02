@@ -1,5 +1,6 @@
 package ru.askar.serverLab6;
 
+import ru.askar.common.CommandAsList;
 import ru.askar.common.cli.CommandExecutor;
 import ru.askar.common.cli.CommandParser;
 import ru.askar.common.cli.input.InputReader;
@@ -8,11 +9,13 @@ import ru.askar.common.cli.output.Stdout;
 import ru.askar.serverLab6.collection.CollectionManager;
 import ru.askar.serverLab6.collection.DataReader;
 import ru.askar.serverLab6.collection.JsonReader;
+import ru.askar.serverLab6.collectionCommand.*;
 import ru.askar.serverLab6.connection.ServerHandler;
 import ru.askar.serverLab6.connection.TcpServerHandler;
 import ru.askar.serverLab6.serverCommand.*;
 
 import java.io.*;
+import java.util.ArrayList;
 
 public class Main {
 
@@ -59,15 +62,36 @@ public class Main {
         if (collectionManager.getCollection().isEmpty()) {
             outputWriter.writeOnWarning("Коллекция пуста");
         }
-        CommandExecutor serverCommandExecutor = new CommandExecutor(outputWriter);
+        CommandExecutor<CollectionCommand> collectionCommandExecutor = new CommandExecutor<>(outputWriter);
+        collectionCommandExecutor.register(new HelpCommand(collectionCommandExecutor));
+        collectionCommandExecutor.register(new InfoCommand(collectionManager));
+        collectionCommandExecutor.register(new ShowCommand(collectionManager));
+        collectionCommandExecutor.register(new InsertCommand(collectionManager));
+        collectionCommandExecutor.register(new UpdateCommand(collectionManager));
+        collectionCommandExecutor.register(new RemoveByKeyCommand(collectionManager));
+        collectionCommandExecutor.register(new ClearCommand(collectionManager));
+        collectionCommandExecutor.register(new ScriptCommand(collectionCommandExecutor));
+        collectionCommandExecutor.register(new ExitCommand());
+        collectionCommandExecutor.register(new RemoveLowerCommand(collectionManager));
+        collectionCommandExecutor.register(new ReplaceIfGreaterCommand(collectionManager));
+        collectionCommandExecutor.register(new RemoveGreaterKeyCommand(collectionManager));
+        collectionCommandExecutor.register(new FilterStartsWithNameCommand(collectionManager));
+        collectionCommandExecutor.register(new PrintFieldAscendingEventCommand(collectionManager));
+        collectionCommandExecutor.register(new PrintFieldDescendingTypeCommand(collectionManager));
+
+
+        CommandExecutor<ServerCommand> serverCommandExecutor = new CommandExecutor<>(outputWriter);
         CommandParser commandParser = new CommandParser();
 
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
         InputReader inputReader = new InputReader(serverCommandExecutor, commandParser, bufferedReader);
+        ArrayList<CommandAsList> commandList = new ArrayList<>();
+        collectionCommandExecutor.getAllCommands().forEach((name, command) -> {
+            commandList.add(new CommandAsList(command.getName(), command.getArgsCount(), command.getInfo(), command.getClassForFilling()));
+        });
+        ServerHandler serverHandler = new TcpServerHandler(commandList);
 
-        ServerHandler serverHandler = new TcpServerHandler();
-
-        serverCommandExecutor.register(new StartServerCommand(inputReader, serverHandler));
+        serverCommandExecutor.register(new StartServerCommand(inputReader, serverHandler, collectionCommandExecutor));
         serverCommandExecutor.register(new ServerStatusCommand(inputReader, serverHandler));
         serverCommandExecutor.register(new StopServerCommand(inputReader, serverHandler));
         serverCommandExecutor.register(new ServerHelpCommand(inputReader, serverHandler, serverCommandExecutor));

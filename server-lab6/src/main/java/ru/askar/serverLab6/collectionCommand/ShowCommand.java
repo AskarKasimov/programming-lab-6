@@ -3,18 +3,16 @@ package ru.askar.serverLab6.collectionCommand;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
-import ru.askar.common.object.Command;
-import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.object.Ticket;
 import ru.askar.serverLab6.collection.CollectionManager;
 
 import java.util.Arrays;
 
-public class ShowCommand extends Command {
+public class ShowCommand extends CollectionCommand {
     private final CollectionManager collectionManager;
 
-    public ShowCommand(CollectionManager collectionManager, InputReader inputReader) {
-        super("show", 0, inputReader);
+    public ShowCommand(CollectionManager collectionManager) {
+        super("show", 0);
         this.collectionManager = collectionManager;
     }
 

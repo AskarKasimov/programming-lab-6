@@ -1,19 +1,15 @@
 package ru.askar.serverLab6.collectionCommand;
 
-import ru.askar.common.object.Command;
-import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.exception.InvalidInputFieldException;
 import ru.askar.common.exception.UserRejectedToFillFieldsException;
 import ru.askar.common.object.Ticket;
 import ru.askar.serverLab6.collection.CollectionManager;
 
-public class RemoveLowerCommand extends Command {
+public class RemoveLowerCommand extends CollectionCommand {
     private final CollectionManager collectionManager;
-    private final InputReader inputReader;
 
-    public RemoveLowerCommand(CollectionManager collectionManager, InputReader inputReader) {
-        super("remove_lower", 2, inputReader);
-        this.inputReader = inputReader;
+    public RemoveLowerCommand(CollectionManager collectionManager) {
+        super("remove_lower", 2);
         this.collectionManager = collectionManager;
     }
 

@@ -1,4 +1,6 @@
 package ru.askar.common;
 
-public record CommandResponse(String name, String response) {
+import java.io.Serializable;
+
+public record CommandResponse(String name, String response) implements Serializable {
 }

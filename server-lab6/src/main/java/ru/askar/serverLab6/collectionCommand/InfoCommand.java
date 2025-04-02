@@ -1,14 +1,12 @@
 package ru.askar.serverLab6.collectionCommand;
 
-import ru.askar.common.object.Command;
-import ru.askar.common.cli.input.InputReader;
 import ru.askar.serverLab6.collection.CollectionManager;
 
-public class InfoCommand extends Command {
+public class InfoCommand extends CollectionCommand {
     private final CollectionManager collectionManager;
 
-    public InfoCommand(CollectionManager collectionManager, InputReader inputReader) {
-        super("info", 0, inputReader);
+    public InfoCommand(CollectionManager collectionManager) {
+        super("info", 0);
         this.collectionManager = collectionManager;
     }
 

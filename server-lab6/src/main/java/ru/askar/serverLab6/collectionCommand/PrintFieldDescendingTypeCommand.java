@@ -3,8 +3,6 @@ package ru.askar.serverLab6.collectionCommand;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
-import ru.askar.common.object.Command;
-import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.object.Ticket;
 import ru.askar.common.object.TicketType;
 import ru.askar.serverLab6.collection.CollectionManager;
@@ -13,11 +11,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class PrintFieldDescendingTypeCommand extends Command {
+public class PrintFieldDescendingTypeCommand extends CollectionCommand {
     private final CollectionManager collectionManager;
 
-    public PrintFieldDescendingTypeCommand(CollectionManager collectionManager, InputReader inputReader) {
-        super("print_field_descending_type", 0, inputReader);
+    public PrintFieldDescendingTypeCommand(CollectionManager collectionManager) {
+        super("print_field_descending_type", 0);
         this.collectionManager = collectionManager;
     }
 

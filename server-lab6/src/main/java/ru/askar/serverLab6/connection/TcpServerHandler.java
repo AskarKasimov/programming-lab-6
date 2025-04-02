@@ -1,5 +1,6 @@
 package ru.askar.serverLab6.connection;
 
+import ru.askar.common.CommandAsList;
 import ru.askar.common.CommandToExecute;
 
 import java.io.*;
@@ -9,16 +10,22 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class TcpServerHandler implements ServerHandler {
+    private final ArrayList<CommandAsList> commandList;
     private final ConcurrentLinkedQueue<Object> outputQueue = new ConcurrentLinkedQueue<>();
     private int port = -1;
     private Selector selector;
     private ServerSocketChannel serverChannel;
     private boolean running = false;
+
+    public TcpServerHandler(ArrayList<CommandAsList> commandList) {
+        this.commandList = commandList;
+    }
 
     @Override
     public void start() throws IOException {
@@ -67,6 +74,8 @@ public class TcpServerHandler implements ServerHandler {
         SocketChannel clientChannel = ((ServerSocketChannel) key.channel()).accept();
         clientChannel.configureBlocking(false);
         clientChannel.register(selector, SelectionKey.OP_READ);
+        sendMessage(commandList);
+        System.out.println("Клиент подключен: " + clientChannel.getRemoteAddress() + ", список команд отправлен.");
     }
 
     private void handleRead(SelectionKey key) throws IOException {

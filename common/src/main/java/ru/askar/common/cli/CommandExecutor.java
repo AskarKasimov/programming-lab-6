@@ -10,9 +10,9 @@ import java.util.Map;
 /**
  * Класс для аккумулирования команд и предоставления к ним доступа.
  */
-public class CommandExecutor {
+public class CommandExecutor<T extends Command> {
     private final OutputWriter outputWriter;
-    private final LinkedHashMap<String, Command> commands = new LinkedHashMap<>();
+    private final LinkedHashMap<String, T> commands = new LinkedHashMap<>();
     private boolean scriptMode;
 
     /**
@@ -43,7 +43,7 @@ public class CommandExecutor {
      *
      * @param command - команда
      */
-    public void register(Command command) {
+    public void register(T command) {
         command.setOutputWriter(this.outputWriter);
         command.setScriptMode(this.scriptMode);
         commands.put(command.getName(), command);
@@ -56,8 +56,8 @@ public class CommandExecutor {
      * @return экземпляр команды
      * @throws NoSuchCommandException - если нет команды с таким названием
      */
-    public Command getCommand(String name) throws NoSuchCommandException {
-        Command command = commands.get(name);
+    public T getCommand(String name) throws NoSuchCommandException {
+        T command = commands.get(name);
         if (command == null) {
             throw new NoSuchCommandException(name);
         }
@@ -67,7 +67,7 @@ public class CommandExecutor {
     /**
      * Копия экземпляра мапы со всеми доступными командами
      */
-    public Map<String, Command> getAllCommands() {
+    public Map<String, T> getAllCommands() {
         return new LinkedHashMap<>(commands);
     }
 }

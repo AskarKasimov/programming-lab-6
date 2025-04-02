@@ -1,17 +1,16 @@
 package ru.askar.serverLab6.collectionCommand;
 
-import ru.askar.common.object.Command;
 import ru.askar.common.cli.CommandExecutor;
-import ru.askar.common.cli.input.InputReader;
+import ru.askar.common.object.Command;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HelpCommand extends Command {
+public class HelpCommand extends CollectionCommand {
     private final CommandExecutor executor;
 
-    public HelpCommand(CommandExecutor executor, InputReader inputReader) {
-        super("help", 0, inputReader);
+    public HelpCommand(CommandExecutor executor) {
+        super("help", 0);
         this.executor = executor;
     }
 

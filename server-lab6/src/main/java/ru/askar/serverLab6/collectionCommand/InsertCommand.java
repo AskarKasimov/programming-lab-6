@@ -1,19 +1,15 @@
 package ru.askar.serverLab6.collectionCommand;
 
-import ru.askar.common.object.Command;
-import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.exception.InvalidInputFieldException;
 import ru.askar.common.exception.UserRejectedToFillFieldsException;
 import ru.askar.common.object.Ticket;
 import ru.askar.serverLab6.collection.CollectionManager;
 
-public class InsertCommand extends Command {
+public class InsertCommand extends CollectionCommand {
     private final CollectionManager collectionManager;
-    private final InputReader inputReader;
 
-    public InsertCommand(CollectionManager collectionManager, InputReader inputReader) {
-        super("insert", 3, inputReader);
-        this.inputReader = inputReader;
+    public InsertCommand(CollectionManager collectionManager) {
+        super("insert", 3);
         this.collectionManager = collectionManager;
     }
 

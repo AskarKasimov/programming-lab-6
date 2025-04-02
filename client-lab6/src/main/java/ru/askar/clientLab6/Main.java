@@ -1,5 +1,6 @@
 package ru.askar.clientLab6;
 
+import ru.askar.clientLab6.clientCommand.ClientCommand;
 import ru.askar.clientLab6.clientCommand.ClientStartCommand;
 import ru.askar.clientLab6.connection.TcpClientHandler;
 import ru.askar.common.cli.CommandExecutor;
@@ -16,7 +17,7 @@ public class Main {
     public static void main(String[] args) {
         OutputWriter outputWriter = new Stdout();
 
-        CommandExecutor clientCommandExecutor = new CommandExecutor(outputWriter);
+        CommandExecutor<ClientCommand> clientCommandExecutor = new CommandExecutor<>(outputWriter);
         CommandParser commandParser = new CommandParser();
 
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));

@@ -1,15 +1,13 @@
 package ru.askar.serverLab6.collectionCommand;
 
-import ru.askar.common.object.Command;
-import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.exception.NoSuchKeyException;
 import ru.askar.serverLab6.collection.CollectionManager;
 
-public class RemoveByKeyCommand extends Command {
+public class RemoveByKeyCommand extends CollectionCommand {
     private final CollectionManager collectionManager;
 
-    public RemoveByKeyCommand(CollectionManager collectionManager, InputReader inputReader) {
-        super("remove_key", 1, inputReader);
+    public RemoveByKeyCommand(CollectionManager collectionManager) {
+        super("remove_key", 1);
         this.collectionManager = collectionManager;
     }
 

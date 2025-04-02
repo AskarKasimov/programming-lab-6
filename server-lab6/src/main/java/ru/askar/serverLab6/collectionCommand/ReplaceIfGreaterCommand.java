@@ -1,19 +1,15 @@
 package ru.askar.serverLab6.collectionCommand;
 
-import ru.askar.common.object.Command;
-import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.exception.InvalidInputFieldException;
 import ru.askar.common.exception.UserRejectedToFillFieldsException;
 import ru.askar.common.object.Ticket;
 import ru.askar.serverLab6.collection.CollectionManager;
 
-public class ReplaceIfGreaterCommand extends Command {
+public class ReplaceIfGreaterCommand extends CollectionCommand {
     private final CollectionManager collectionManager;
-    private final InputReader inputReader;
 
-    public ReplaceIfGreaterCommand(CollectionManager collectionManager, InputReader inputReader) {
-        super("replace_if_greater", 3, inputReader);
-        this.inputReader = inputReader;
+    public ReplaceIfGreaterCommand(CollectionManager collectionManager) {
+        super("replace_if_greater", 3);
         this.collectionManager = collectionManager;
     }
 

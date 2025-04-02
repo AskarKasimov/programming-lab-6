@@ -1,12 +1,10 @@
 package ru.askar.serverLab6.collectionCommand;
 
-import ru.askar.common.object.Command;
-import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.exception.ExitCLIException;
 
-public class ExitCommand extends Command {
-    public ExitCommand(InputReader inputReader) {
-        super("exit", 0, inputReader);
+public class ExitCommand extends CollectionCommand {
+    public ExitCommand() {
+        super("exit", 0);
     }
 
     @Override

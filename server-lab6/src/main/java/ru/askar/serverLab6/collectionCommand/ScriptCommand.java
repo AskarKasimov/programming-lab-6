@@ -1,8 +1,6 @@
 package ru.askar.serverLab6.collectionCommand;
 
-import ru.askar.common.object.Command;
 import ru.askar.common.cli.CommandExecutor;
-import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.cli.output.VoidOutput;
 
@@ -11,11 +9,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class ScriptCommand extends Command {
+public class ScriptCommand extends CollectionCommand {
     private final CommandExecutor commandExecutor;
 
-    public ScriptCommand(CommandExecutor commandExecutor, InputReader inputReader) {
-        super("execute_script", 1, inputReader);
+    public ScriptCommand(CommandExecutor commandExecutor) {
+        super("execute_script", 1);
         this.commandExecutor = commandExecutor;
     }
 
