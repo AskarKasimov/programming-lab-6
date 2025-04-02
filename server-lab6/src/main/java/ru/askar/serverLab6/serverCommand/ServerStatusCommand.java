@@ -10,8 +10,8 @@ public class ServerStatusCommand extends ServerCommand {
      * @param name
      * @param inputReader
      */
-    public ServerStatusCommand(String name, InputReader inputReader, ServerHandler serverHandler) {
-        super(name, 0, inputReader, serverHandler);
+    public ServerStatusCommand(InputReader inputReader, ServerHandler serverHandler) {
+        super("status", 0, inputReader, serverHandler);
     }
 
     @Override

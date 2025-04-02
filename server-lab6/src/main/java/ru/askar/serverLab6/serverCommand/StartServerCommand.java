@@ -10,8 +10,8 @@ public class StartServerCommand extends ServerCommand {
      * @param name
      * @param inputReader
      */
-    public StartServerCommand(String name, InputReader inputReader, ServerHandler serverHandler) {
-        super(name, 1, inputReader, serverHandler);
+    public StartServerCommand(InputReader inputReader, ServerHandler serverHandler) {
+        super("start", 1, inputReader, serverHandler);
     }
 
     @Override

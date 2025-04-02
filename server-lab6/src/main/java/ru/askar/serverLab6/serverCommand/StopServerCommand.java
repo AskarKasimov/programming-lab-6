@@ -10,8 +10,8 @@ public class StopServerCommand extends ServerCommand {
      * @param name
      * @param inputReader
      */
-    public StopServerCommand(String name, InputReader inputReader, ServerHandler serverHandler) {
-        super(name, 0, inputReader, serverHandler);
+    public StopServerCommand(InputReader inputReader, ServerHandler serverHandler) {
+        super("stop", 0, inputReader, serverHandler);
     }
 
     @Override
@@ -26,6 +26,6 @@ public class StopServerCommand extends ServerCommand {
 
     @Override
     public String getInfo() {
-        return "stop - остановить сервера";
+        return "stop - остановить сервер";
     }
 }
