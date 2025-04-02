@@ -10,10 +10,7 @@ import ru.askar.serverLab6.collection.DataReader;
 import ru.askar.serverLab6.collection.JsonReader;
 import ru.askar.serverLab6.connection.ServerHandler;
 import ru.askar.serverLab6.connection.TcpServerHandler;
-import ru.askar.serverLab6.serverCommand.ServerHelpCommand;
-import ru.askar.serverLab6.serverCommand.ServerStatusCommand;
-import ru.askar.serverLab6.serverCommand.StartServerCommand;
-import ru.askar.serverLab6.serverCommand.StopServerCommand;
+import ru.askar.serverLab6.serverCommand.*;
 
 import java.io.*;
 
@@ -74,6 +71,7 @@ public class Main {
         commandExecutor.register(new ServerStatusCommand(inputReader, serverHandler));
         commandExecutor.register(new StopServerCommand(inputReader, serverHandler));
         commandExecutor.register(new ServerHelpCommand(inputReader, serverHandler, commandExecutor));
+        commandExecutor.register(new ExitCommand(inputReader, serverHandler));
 
 
         try {
