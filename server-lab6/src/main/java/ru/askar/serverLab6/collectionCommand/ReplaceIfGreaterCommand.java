@@ -1,6 +1,6 @@
 package ru.askar.serverLab6.collectionCommand;
 
-import ru.askar.common.Command;
+import ru.askar.common.object.Command;
 import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.exception.InvalidInputFieldException;
 import ru.askar.common.exception.UserRejectedToFillFieldsException;

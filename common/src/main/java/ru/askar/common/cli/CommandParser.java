@@ -1,4 +1,5 @@
 package ru.askar.common.cli;
+
 import ru.askar.common.exception.InvalidCommandException;
 
 import java.util.Arrays;

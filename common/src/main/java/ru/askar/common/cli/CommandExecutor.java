@@ -1,8 +1,8 @@
 package ru.askar.common.cli;
 
-import ru.askar.common.Command;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.NoSuchCommandException;
+import ru.askar.common.object.Command;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

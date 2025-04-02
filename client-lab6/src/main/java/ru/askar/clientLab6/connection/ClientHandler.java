@@ -1,8 +1,8 @@
-package ru.askar.serverLab6.connection;
+package ru.askar.clientLab6.connection;
 
 import java.io.IOException;
 
-public interface ServerHandler {
+public interface ClientHandler {
     void start() throws IOException;
 
     void stop() throws IOException;
@@ -12,6 +12,10 @@ public interface ServerHandler {
     int getPort();
 
     void setPort(int port);
+
+    String getHost();
+
+    void setHost(String host);
 
     void sendMessage(Object object) throws IOException;
 }

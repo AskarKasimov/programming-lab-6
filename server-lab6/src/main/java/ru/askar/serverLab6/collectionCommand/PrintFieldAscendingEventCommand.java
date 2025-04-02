@@ -3,7 +3,7 @@ package ru.askar.serverLab6.collectionCommand;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
-import ru.askar.common.Command;
+import ru.askar.common.object.Command;
 import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.object.Event;
 import ru.askar.common.object.Ticket;

@@ -1,6 +1,6 @@
 package ru.askar.serverLab6.connection;
 
-import ru.askar.common.CommandDTO;
+import ru.askar.common.CommandToExecute;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -14,20 +14,25 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class TcpServerHandler implements ServerHandler {
-    private int port;
+    private final ConcurrentLinkedQueue<Object> outputQueue = new ConcurrentLinkedQueue<>();
+    private int port = -1;
     private Selector selector;
     private ServerSocketChannel serverChannel;
     private boolean running = false;
-    private final ConcurrentLinkedQueue<CommandDTO> outputQueue = new ConcurrentLinkedQueue<>();
 
     @Override
     public void start() throws IOException {
+        if (port == -1) {
+            throw new IllegalStateException("Порт не задан");
+        }
         selector = Selector.open();
         serverChannel = ServerSocketChannel.open();
         serverChannel.bind(new InetSocketAddress(this.port));
         serverChannel.configureBlocking(false);
         serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+        outputQueue.clear();
         running = true;
+        System.out.println("Сервер запущен на порту " + port);
 
         new Thread(() -> {
             try {
@@ -86,8 +91,13 @@ public class TcpServerHandler implements ServerHandler {
                 int size = buf.getInt();
                 key.attach(ByteBuffer.allocate(size)); // Новый буфер для данных
             } else {
-                CommandDTO dto = deserialize(buf);
-                System.out.println("Server received: " + dto);
+                Object dto = deserialize(buf);
+                if (dto instanceof CommandToExecute command) {
+                    // Обработка команды
+                    System.out.println("Server received command: " + command);
+                } else {
+                    System.out.println("Сервер не смог обработать полученное сообщение");
+                }
                 key.attach(null); // Сброс состояния
             }
         }
@@ -95,10 +105,9 @@ public class TcpServerHandler implements ServerHandler {
 
     private void processOutputQueue() throws IOException {
         for (SelectionKey key : selector.keys()) {
-            if (key.channel() instanceof SocketChannel && key.isValid()) {
-                SocketChannel channel = (SocketChannel) key.channel();
+            if (key.channel() instanceof SocketChannel channel && key.isValid()) {
                 while (!outputQueue.isEmpty()) {
-                    CommandDTO message = outputQueue.poll();
+                    Object message = outputQueue.poll();
                     ByteBuffer data = serialize(message);
                     ByteBuffer header = ByteBuffer.allocate(4)
                             .putInt(data.limit())
@@ -110,11 +119,11 @@ public class TcpServerHandler implements ServerHandler {
     }
 
     @Override
-    public void sendMessage(CommandDTO message) {
+    public void sendMessage(Object message) {
         outputQueue.add(message);
     }
 
-    private ByteBuffer serialize(CommandDTO dto) throws IOException {
+    private ByteBuffer serialize(Object dto) throws IOException {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
              ObjectOutputStream oos = new ObjectOutputStream(bos)) {
             oos.writeObject(dto);
@@ -122,10 +131,10 @@ public class TcpServerHandler implements ServerHandler {
         }
     }
 
-    private CommandDTO deserialize(ByteBuffer buffer) throws IOException {
+    private Object deserialize(ByteBuffer buffer) throws IOException {
         try (ObjectInputStream ois = new ObjectInputStream(
                 new ByteArrayInputStream(buffer.array(), 0, buffer.limit()))) {
-            return (CommandDTO) ois.readObject();
+            return ois.readObject();
         } catch (ClassNotFoundException e) {
             throw new IOException(e);
         }

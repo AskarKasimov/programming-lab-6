@@ -1,6 +1,7 @@
-package ru.askar.clientLab6;
+package ru.askar.clientLab6.connection;
 
-import ru.askar.common.CommandDTO;
+
+import ru.askar.common.CommandAsList;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -8,22 +9,32 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class Client {
+public class TcpClientHandler implements ClientHandler {
+    private final ConcurrentLinkedQueue<Object> outputQueue = new ConcurrentLinkedQueue<>();
+    private String host = "";
+    private int port = -1;
     private Selector selector;
     private SocketChannel channel;
-    private volatile boolean running = true;
-    private final ConcurrentLinkedQueue<CommandDTO> outputQueue = new ConcurrentLinkedQueue<>();
+    private volatile boolean running = false;
 
-    public void connect(String host, int port) throws IOException {
+    @Override
+    public void start() throws IOException {
+        if (host.isEmpty() || port == -1) {
+            throw new IllegalStateException("Нужно указать хост и порт");
+        }
         selector = Selector.open();
         channel = SocketChannel.open();
         channel.configureBlocking(false);
         channel.connect(new InetSocketAddress(host, port));
         channel.register(selector, SelectionKey.OP_CONNECT);
+        outputQueue.clear();
+        running = true;
+        System.out.println("Подключён к серверу " + host + ":" + port);
 
         new Thread(() -> {
             try {
@@ -83,8 +94,15 @@ public class Client {
                 int size = buf.getInt();
                 key.attach(ByteBuffer.allocate(size)); // Новый буфер для данных
             } else {
-                CommandDTO dto = deserialize(buf);
-                System.out.println("Client received: " + dto);
+                Object dto = deserialize(buf);
+                if (dto instanceof ArrayList<?> list
+                        && !list.isEmpty()
+                        && list.get(0) instanceof CommandAsList) { // избегаю type erasure
+                    ArrayList<CommandAsList> commandsAsList = (ArrayList<CommandAsList>) list;
+                    System.out.println("Клиент получил команды от сервера: " + commandsAsList);
+                } else {
+                    System.out.println("Клиент не смог обработать ответ сервера");
+                }
                 key.attach(null);  // Сброс состояния
             }
         }
@@ -93,7 +111,7 @@ public class Client {
     private void processOutputQueue() throws IOException {
         if (channel.isConnected()) {
             while (!outputQueue.isEmpty()) {
-                CommandDTO message = outputQueue.poll();
+                Object message = outputQueue.poll();
                 ByteBuffer data = serialize(message);
                 ByteBuffer header = ByteBuffer.allocate(4)
                         .putInt(data.limit())
@@ -103,11 +121,12 @@ public class Client {
         }
     }
 
-    public void sendMessage(CommandDTO message) {
+    @Override
+    public void sendMessage(Object message) {
         outputQueue.add(message);
     }
 
-    private ByteBuffer serialize(CommandDTO dto) throws IOException {
+    private ByteBuffer serialize(Object dto) throws IOException {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
              ObjectOutputStream oos = new ObjectOutputStream(bos)) {
             oos.writeObject(dto);
@@ -115,24 +134,44 @@ public class Client {
         }
     }
 
-    private CommandDTO deserialize(ByteBuffer buffer) throws IOException {
+    private Object deserialize(ByteBuffer buffer) throws IOException {
         try (ObjectInputStream ois = new ObjectInputStream(
                 new ByteArrayInputStream(buffer.array(), 0, buffer.limit()))) {
-            return (CommandDTO) ois.readObject();
+            return ois.readObject();
         } catch (ClassNotFoundException e) {
             throw new IOException(e);
         }
     }
 
+    @Override
     public void stop() throws IOException {
         running = false;
         selector.close();
         channel.close();
     }
 
-    public static void main(String[] args) throws IOException {
-        Client client = new Client();
-        client.connect("localhost", 1234);
-        client.sendMessage(new CommandDTO("REQUEST", "Hello from client!"));
+    @Override
+    public boolean getStatus() {
+        return running;
+    }
+
+    @Override
+    public int getPort() {
+        return port;
+    }
+
+    @Override
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    @Override
+    public String getHost() {
+        return host;
+    }
+
+    @Override
+    public void setHost(String host) {
+        this.host = host;
     }
 }

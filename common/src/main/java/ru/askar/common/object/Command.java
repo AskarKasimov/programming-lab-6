@@ -1,4 +1,4 @@
-package ru.askar.common;
+package ru.askar.common.object;
 
 import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.cli.output.OutputWriter;
