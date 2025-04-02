@@ -1,4 +1,4 @@
-package ru.askar.serverLab6.command;
+package ru.askar.serverLab6.collectionCommand;
 
 import ru.askar.common.Command;
 import ru.askar.common.cli.input.InputReader;

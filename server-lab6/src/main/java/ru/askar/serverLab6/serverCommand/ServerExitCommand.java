@@ -4,8 +4,8 @@ import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.exception.ExitCLIException;
 import ru.askar.serverLab6.connection.ServerHandler;
 
-public class ExitCommand extends ServerCommand {
-    public ExitCommand(InputReader inputReader, ServerHandler serverHandler) {
+public class ServerExitCommand extends ServerCommand {
+    public ServerExitCommand(InputReader inputReader, ServerHandler serverHandler) {
         super("exit", 0, inputReader, serverHandler);
     }
 

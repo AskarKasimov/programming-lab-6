@@ -1,4 +1,4 @@
-package ru.askar.serverLab6.command;
+package ru.askar.serverLab6.collectionCommand;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;

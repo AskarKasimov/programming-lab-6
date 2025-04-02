@@ -71,7 +71,7 @@ public class Main {
         commandExecutor.register(new ServerStatusCommand(inputReader, serverHandler));
         commandExecutor.register(new StopServerCommand(inputReader, serverHandler));
         commandExecutor.register(new ServerHelpCommand(inputReader, serverHandler, commandExecutor));
-        commandExecutor.register(new ExitCommand(inputReader, serverHandler));
+        commandExecutor.register(new ServerExitCommand(inputReader, serverHandler));
 
 
         try {
