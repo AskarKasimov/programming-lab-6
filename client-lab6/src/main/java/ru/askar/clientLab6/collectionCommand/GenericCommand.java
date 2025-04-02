@@ -1,18 +1,22 @@
-package ru.askar.serverLab6.collectionCommand;
+package ru.askar.clientLab6.collectionCommand;
 
 import java.io.IOException;
+import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.exception.*;
 import ru.askar.common.object.Command;
 
-public class CollectionCommand extends Command {
+public class GenericCommand extends Command {
+
     /**
      * Заполнение имени и количества требуемых аргументов
      *
      * @param name
      * @param argsCount
+     * @param info
+     * @param inputReader
      */
-    public CollectionCommand(String name, int argsCount, String info) {
-        super(name, argsCount, info, null);
+    public GenericCommand(String name, int argsCount, String info, InputReader inputReader) {
+        super(name, argsCount, info, inputReader);
     }
 
     @Override
@@ -23,8 +27,4 @@ public class CollectionCommand extends Command {
                     NoSuchKeyException,
                     InvalidInputFieldException,
                     UserRejectedToFillFieldsException {}
-
-    public Class<?> getClassForFilling() {
-        return null;
-    }
 }

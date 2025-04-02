@@ -7,22 +7,16 @@ public class ClearCommand extends CollectionCommand {
     private final CollectionManager collectionManager;
 
     public ClearCommand(CollectionManager collectionManager) {
-        super("clear", 0);
+        super("clear", 0, "clear - очистить коллекцию");
         this.collectionManager = collectionManager;
     }
 
     @Override
     public void execute(String[] args) throws CollectionIsEmptyException {
-        if (collectionManager.getCollection().isEmpty())
-            throw new CollectionIsEmptyException();
+        if (collectionManager.getCollection().isEmpty()) throw new CollectionIsEmptyException();
         else {
             collectionManager.getCollection().clear();
             outputWriter.writeOnSuccess("Коллекция очищена");
         }
-    }
-
-    @Override
-    public String getInfo() {
-        return "clear - очистить коллекцию";
     }
 }

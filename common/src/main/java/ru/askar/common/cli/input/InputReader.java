@@ -1,30 +1,31 @@
 package ru.askar.common.cli.input;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.math.BigDecimal;
 import ru.askar.common.cli.CommandExecutor;
 import ru.askar.common.cli.CommandParser;
 import ru.askar.common.cli.ParsedCommand;
 import ru.askar.common.exception.*;
 import ru.askar.common.object.Coordinates;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.math.BigDecimal;
-
 public class InputReader {
-    /**
-     * Класс, ответственный за чтение ввода от пользователя и исполнение команд.
-     */
+    /** Класс, ответственный за чтение ввода от пользователя и исполнение команд. */
     private final CommandExecutor commandExecutor;
+
     private final CommandParser commandParser;
     private boolean scriptMode = false;
     private BufferedReader bufferedReader;
 
     /**
      * @param commandExecutor - класс для выполнения команд.
-     * @param commandParser   - класс для парсинга команд.
-     * @param bufferedReader  - класс для чтения ввода.
+     * @param commandParser - класс для парсинга команд.
+     * @param bufferedReader - класс для чтения ввода.
      */
-    public InputReader(CommandExecutor commandExecutor, CommandParser commandParser, BufferedReader bufferedReader) {
+    public InputReader(
+            CommandExecutor commandExecutor,
+            CommandParser commandParser,
+            BufferedReader bufferedReader) {
         this.commandExecutor = commandExecutor;
         this.commandParser = commandParser;
         this.bufferedReader = bufferedReader;
@@ -96,15 +97,12 @@ public class InputReader {
         }
     }
 
-    /**
-     * Выполнение поступающих команд.
-     */
+    /** Выполнение поступающих команд. */
     public void process() throws IOException {
         String line;
-        if (!scriptMode)
-            commandExecutor.getOutputWriter().write("> ");
+        if (!scriptMode) commandExecutor.getOutputWriter().write("> ");
         while ((line = bufferedReader.readLine()) != null) {
-//            System.out.println(line);
+            //            System.out.println(line);
             try {
                 ParsedCommand parsedCommand;
                 try {
@@ -113,21 +111,33 @@ public class InputReader {
                     commandExecutor.getOutputWriter().writeOnFail(e.getMessage());
                     continue;
                 }
-                if (parsedCommand.args().length != commandExecutor.getCommand(parsedCommand.name()).getArgsCount()) {
-                    commandExecutor.getOutputWriter().writeOnFail("Неверное количество аргументов: для команды " + parsedCommand.name() + " требуется " + commandExecutor.getCommand(parsedCommand.name()).getArgsCount());
+                if (parsedCommand.args().length
+                        != commandExecutor.getCommand(parsedCommand.name()).getArgsCount()) {
+                    commandExecutor
+                            .getOutputWriter()
+                            .writeOnFail(
+                                    "Неверное количество аргументов: для команды "
+                                            + parsedCommand.name()
+                                            + " требуется "
+                                            + commandExecutor
+                                                    .getCommand(parsedCommand.name())
+                                                    .getArgsCount());
                     continue;
                 }
                 commandExecutor.getCommand(parsedCommand.name()).execute(parsedCommand.args());
-            } catch (CollectionIsEmptyException | NoSuchCommandException | IOException |
-                     NoSuchKeyException | IllegalArgumentException | InvalidInputFieldException e) {
+            } catch (CollectionIsEmptyException
+                    | NoSuchCommandException
+                    | IOException
+                    | NoSuchKeyException
+                    | IllegalArgumentException
+                    | InvalidInputFieldException e) {
                 commandExecutor.getOutputWriter().writeOnFail(e.getMessage());
             } catch (UserRejectedToFillFieldsException e) {
                 commandExecutor.getOutputWriter().writeOnWarning("Возврат в CLI");
             } catch (ExitCLIException e) {
                 break;
             } finally {
-                if (!scriptMode)
-                    commandExecutor.getOutputWriter().write("> ");
+                if (!scriptMode) commandExecutor.getOutputWriter().write("> ");
             }
         }
     }

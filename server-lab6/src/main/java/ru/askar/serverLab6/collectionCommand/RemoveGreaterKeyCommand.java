@@ -6,7 +6,10 @@ public class RemoveGreaterKeyCommand extends CollectionCommand {
     private final CollectionManager collectionManager;
 
     public RemoveGreaterKeyCommand(CollectionManager collectionManager) {
-        super("remove_greater_key", 1);
+        super(
+                "remove_greater_key",
+                1,
+                "remove_greater_key key - удалить элементы, ключ которых превышает заданный");
         this.collectionManager = collectionManager;
     }
 
@@ -20,10 +23,5 @@ public class RemoveGreaterKeyCommand extends CollectionCommand {
         } else {
             outputWriter.writeOnSuccess("Элементы удалены");
         }
-    }
-
-    @Override
-    public String getInfo() {
-        return "remove_greater_key key - удалить элементы, ключ которых превышает заданный";
     }
 }

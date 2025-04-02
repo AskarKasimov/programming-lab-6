@@ -2,25 +2,35 @@ package ru.askar.common.object;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.time.LocalDateTime;
+import java.util.Objects;
 import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.InvalidInputFieldException;
 import ru.askar.common.exception.UserRejectedToFillFieldsException;
 
-import java.time.LocalDateTime;
-import java.util.Objects;
-
 public class Ticket implements Comparable<Ticket> {
-    private final LocalDateTime creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
-    private Long id; //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
-    private String name; //Поле не может быть null, Строка не может быть пустой
-    private Coordinates coordinates; //Поле не может быть null
-    private long price; //Значение поля должно быть больше 0
-    private TicketType type; //Поле не может быть null
-    private Event event; //Поле может быть null
+    private final LocalDateTime
+            creationDate; // Поле не может быть null, Значение этого поля должно генерироваться
+    // автоматически
+    private Long
+            id; // Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля
+    // должно быть уникальным, Значение этого поля должно генерироваться автоматически
+    private String name; // Поле не может быть null, Строка не может быть пустой
+    private Coordinates coordinates; // Поле не может быть null
+    private long price; // Значение поля должно быть больше 0
+    private TicketType type; // Поле не может быть null
+    private Event event; // Поле может быть null
 
     @JsonCreator
-    public Ticket(@JsonProperty("id") Long id, @JsonProperty("name") String name, @JsonProperty("coordinates") Coordinates coordinates, @JsonProperty("price") long price, @JsonProperty("type") TicketType type, @JsonProperty("event") Event event) throws InvalidInputFieldException {
+    public Ticket(
+            @JsonProperty("id") Long id,
+            @JsonProperty("name") String name,
+            @JsonProperty("coordinates") Coordinates coordinates,
+            @JsonProperty("price") long price,
+            @JsonProperty("type") TicketType type,
+            @JsonProperty("event") Event event)
+            throws InvalidInputFieldException {
         setId(id);
         setName(name);
         setCoordinates(coordinates);
@@ -38,17 +48,25 @@ public class Ticket implements Comparable<Ticket> {
     }
 
     /**
-     * Создание экземпляра с пользовательским вводом.
-     * Параметры помимо <code>name</code> и <code>price</code> будут считываться из заданного метода
+     * Создание экземпляра с пользовательским вводом. Параметры помимо <code>name</code> и <code>
+     * price</code> будут считываться из заданного метода
      *
      * @param outputWriter - способ печати ответа
-     * @param inputReader  - способ считывания входных данных
-     * @param ticketId     - id билета
-     * @param name         - название
-     * @param price        - цена
+     * @param inputReader - способ считывания входных данных
+     * @param ticketId - id билета
+     * @param name - название
+     * @param price - цена
      * @return - созданный Ticket
      */
-    public static Ticket createTicket(OutputWriter outputWriter, InputReader inputReader, Long ticketId, String name, long price, Integer eventId, boolean scriptMode) throws InvalidInputFieldException, UserRejectedToFillFieldsException {
+    public static Ticket createTicket(
+            OutputWriter outputWriter,
+            InputReader inputReader,
+            Long ticketId,
+            String name,
+            long price,
+            Integer eventId,
+            boolean scriptMode)
+            throws InvalidInputFieldException, UserRejectedToFillFieldsException {
         Ticket ticket = new Ticket(ticketId, name, price);
         ticket.setCoordinates(Coordinates.createCoordinates(outputWriter, inputReader, scriptMode));
         ticket.setType(TicketType.createTicketType(outputWriter, inputReader, scriptMode));
@@ -56,7 +74,9 @@ public class Ticket implements Comparable<Ticket> {
         return ticket;
     }
 
-    private void requestEvent(OutputWriter outputWriter, InputReader inputReader, Integer eventId, boolean scriptMode) throws InvalidInputFieldException, UserRejectedToFillFieldsException {
+    private void requestEvent(
+            OutputWriter outputWriter, InputReader inputReader, Integer eventId, boolean scriptMode)
+            throws InvalidInputFieldException, UserRejectedToFillFieldsException {
         outputWriter.writeOnWarning("Хотите ввести событие? (y/n): ");
         String answer = inputReader.getInputString();
         if (answer != null && answer.equalsIgnoreCase("y")) {
@@ -68,7 +88,13 @@ public class Ticket implements Comparable<Ticket> {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Ticket ticket = (Ticket) o;
-        return price == ticket.price && Objects.equals(id, ticket.id) && Objects.equals(name, ticket.name) && Objects.equals(coordinates, ticket.coordinates) && Objects.equals(creationDate, ticket.creationDate) && type == ticket.type && Objects.equals(event, ticket.event);
+        return price == ticket.price
+                && Objects.equals(id, ticket.id)
+                && Objects.equals(name, ticket.name)
+                && Objects.equals(coordinates, ticket.coordinates)
+                && Objects.equals(creationDate, ticket.creationDate)
+                && type == ticket.type
+                && Objects.equals(event, ticket.event);
     }
 
     @Override
@@ -76,9 +102,7 @@ public class Ticket implements Comparable<Ticket> {
         return Objects.hash(id, name, coordinates, creationDate, price, type, event);
     }
 
-    /**
-     * Сравнение, реализованное через разницу id'шников
-     */
+    /** Сравнение, реализованное через разницу id'шников */
     @Override
     public int compareTo(Ticket other) {
         // Сначала сравниваем по типу билета
@@ -93,7 +117,23 @@ public class Ticket implements Comparable<Ticket> {
 
     @Override
     public String toString() {
-        return "Билет" + ": id=" + id + ", название='" + name + "'" + ", координаты=" + coordinates + ", дата создания=" + creationDate + ", цена=" + price + ", тип=" + type + ", событие=" + event + ";";
+        return "Билет"
+                + ": id="
+                + id
+                + ", название='"
+                + name
+                + "'"
+                + ", координаты="
+                + coordinates
+                + ", дата создания="
+                + creationDate
+                + ", цена="
+                + price
+                + ", тип="
+                + type
+                + ", событие="
+                + event
+                + ";";
     }
 
     public Long getId() {

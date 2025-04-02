@@ -1,8 +1,5 @@
 package ru.askar.serverLab6.connection;
 
-import ru.askar.common.CommandAsList;
-import ru.askar.common.CommandToExecute;
-
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -14,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import ru.askar.common.CommandAsList;
+import ru.askar.common.CommandToExecute;
 
 public class TcpServerHandler implements ServerHandler {
     private final ArrayList<CommandAsList> commandList;
@@ -41,17 +40,19 @@ public class TcpServerHandler implements ServerHandler {
         running = true;
         System.out.println("Сервер запущен на порту " + port);
 
-        new Thread(() -> {
-            try {
-                while (running) {
-                    selector.select(100);
-                    processSelectedKeys();
-                    processOutputQueue();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
+        new Thread(
+                        () -> {
+                            try {
+                                while (running) {
+                                    selector.select(100);
+                                    processSelectedKeys();
+                                    processOutputQueue();
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        })
+                .start();
     }
 
     private void processSelectedKeys() throws IOException {
@@ -75,7 +76,10 @@ public class TcpServerHandler implements ServerHandler {
         clientChannel.configureBlocking(false);
         clientChannel.register(selector, SelectionKey.OP_READ);
         sendMessage(commandList);
-        System.out.println("Клиент подключен: " + clientChannel.getRemoteAddress() + ", список команд отправлен.");
+        System.out.println(
+                "Клиент подключен: "
+                        + clientChannel.getRemoteAddress()
+                        + ", список команд отправлен.");
     }
 
     private void handleRead(SelectionKey key) throws IOException {
@@ -118,10 +122,8 @@ public class TcpServerHandler implements ServerHandler {
                 while (!outputQueue.isEmpty()) {
                     Object message = outputQueue.poll();
                     ByteBuffer data = serialize(message);
-                    ByteBuffer header = ByteBuffer.allocate(4)
-                            .putInt(data.limit())
-                            .flip();
-                    channel.write(new ByteBuffer[]{header, data});
+                    ByteBuffer header = ByteBuffer.allocate(4).putInt(data.limit()).flip();
+                    channel.write(new ByteBuffer[] {header, data});
                 }
             }
         }
@@ -134,15 +136,16 @@ public class TcpServerHandler implements ServerHandler {
 
     private ByteBuffer serialize(Object dto) throws IOException {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
-             ObjectOutputStream oos = new ObjectOutputStream(bos)) {
+                ObjectOutputStream oos = new ObjectOutputStream(bos)) {
             oos.writeObject(dto);
             return ByteBuffer.wrap(bos.toByteArray());
         }
     }
 
     private Object deserialize(ByteBuffer buffer) throws IOException {
-        try (ObjectInputStream ois = new ObjectInputStream(
-                new ByteArrayInputStream(buffer.array(), 0, buffer.limit()))) {
+        try (ObjectInputStream ois =
+                new ObjectInputStream(
+                        new ByteArrayInputStream(buffer.array(), 0, buffer.limit()))) {
             return ois.readObject();
         } catch (ClassNotFoundException e) {
             throw new IOException(e);

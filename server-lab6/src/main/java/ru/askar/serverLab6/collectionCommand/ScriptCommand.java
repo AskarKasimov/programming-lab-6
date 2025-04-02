@@ -1,19 +1,21 @@
 package ru.askar.serverLab6.collectionCommand;
 
-import ru.askar.common.cli.CommandExecutor;
-import ru.askar.common.cli.output.OutputWriter;
-import ru.askar.common.cli.output.VoidOutput;
-
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import ru.askar.common.cli.CommandExecutor;
+import ru.askar.common.cli.output.OutputWriter;
+import ru.askar.common.cli.output.VoidOutput;
 
 public class ScriptCommand extends CollectionCommand {
-    private final CommandExecutor commandExecutor;
+    private final CommandExecutor<CollectionCommand> commandExecutor;
 
-    public ScriptCommand(CommandExecutor commandExecutor) {
-        super("execute_script", 1);
+    public ScriptCommand(CommandExecutor<CollectionCommand> commandExecutor) {
+        super(
+                "execute_script",
+                1,
+                "execute_script file_name - считать и исполнить скрипт из указанного файла");
         this.commandExecutor = commandExecutor;
     }
 
@@ -32,10 +34,5 @@ public class ScriptCommand extends CollectionCommand {
         inputReader.setScriptMode(lastScriptMode);
         inputReader.setBufferedReader(lastBufferedReader);
         commandExecutor.setOutputWriterToCommands(lastOutputWriter);
-    }
-
-    @Override
-    public String getInfo() {
-        return "execute_script file_name - считать и исполнить скрипт из указанного файла";
     }
 }

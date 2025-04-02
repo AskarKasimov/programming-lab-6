@@ -1,17 +1,15 @@
 package ru.askar.common.object;
 
+import java.io.IOException;
 import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.*;
 
-import java.io.IOException;
-
-/**
- * Абстрактный класс для команд
- */
+/** Абстрактный класс для команд */
 public abstract class Command {
     protected final int argsCount;
     protected final String name;
+    protected final String info;
     protected OutputWriter outputWriter;
     protected boolean scriptMode = false;
     protected InputReader inputReader;
@@ -22,9 +20,10 @@ public abstract class Command {
      * @param name
      * @param argsCount
      */
-    public Command(String name, int argsCount, InputReader inputReader) {
+    public Command(String name, int argsCount, String info, InputReader inputReader) {
         this.name = name;
         this.argsCount = argsCount;
+        this.info = info;
         this.inputReader = inputReader;
     }
 
@@ -40,17 +39,24 @@ public abstract class Command {
      * Выполнение логики команды
      *
      * @param args - аргументы
-     * @throws IOException                - ошибка чтения ввода
+     * @throws IOException - ошибка чтения ввода
      * @throws CollectionIsEmptyException - коллекция пуста
-     * @throws ExitCLIException           - выход из CLI
-     * @throws NoSuchKeyException         - нет такого ключа в коллекции, на который пытается сослаться команда
+     * @throws ExitCLIException - выход из CLI
+     * @throws NoSuchKeyException - нет такого ключа в коллекции, на который пытается сослаться
+     *     команда
      */
-    public abstract void execute(String[] args) throws IOException, CollectionIsEmptyException, ExitCLIException, NoSuchKeyException, InvalidInputFieldException, UserRejectedToFillFieldsException;
+    public abstract void execute(String[] args)
+            throws IOException,
+                    CollectionIsEmptyException,
+                    ExitCLIException,
+                    NoSuchKeyException,
+                    InvalidInputFieldException,
+                    UserRejectedToFillFieldsException;
 
-    /**
-     * Выдать справку об использовании команды
-     */
-    public abstract String getInfo();
+    /** Выдать справку об использовании команды */
+    public String getInfo() {
+        return info;
+    }
 
     public String getName() {
         return name;

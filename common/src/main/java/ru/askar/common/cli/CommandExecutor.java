@@ -1,15 +1,12 @@
 package ru.askar.common.cli;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.NoSuchCommandException;
 import ru.askar.common.object.Command;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-/**
- * Класс для аккумулирования команд и предоставления к ним доступа.
- */
+/** Класс для аккумулирования команд и предоставления к ним доступа. */
 public class CommandExecutor<T extends Command> {
     private final OutputWriter outputWriter;
     private final LinkedHashMap<String, T> commands = new LinkedHashMap<>();
@@ -64,9 +61,7 @@ public class CommandExecutor<T extends Command> {
         return commands.get(name);
     }
 
-    /**
-     * Копия экземпляра мапы со всеми доступными командами
-     */
+    /** Копия экземпляра мапы со всеми доступными командами */
     public Map<String, T> getAllCommands() {
         return new LinkedHashMap<>(commands);
     }

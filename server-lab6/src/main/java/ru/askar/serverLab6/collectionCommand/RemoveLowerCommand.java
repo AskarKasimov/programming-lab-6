@@ -9,13 +9,25 @@ public class RemoveLowerCommand extends CollectionCommand {
     private final CollectionManager collectionManager;
 
     public RemoveLowerCommand(CollectionManager collectionManager) {
-        super("remove_lower", 2);
+        super(
+                "remove_lower",
+                2,
+                "remove_lower name price - удалить из коллекции все элементы, меньшие, чем заданный");
         this.collectionManager = collectionManager;
     }
 
     @Override
-    public void execute(String[] args) throws InvalidInputFieldException, UserRejectedToFillFieldsException {
-        Ticket ticket = Ticket.createTicket(outputWriter, inputReader, 1L, args[0], Long.parseLong(args[1]), collectionManager.generateNextEventId(), scriptMode);
+    public void execute(String[] args)
+            throws InvalidInputFieldException, UserRejectedToFillFieldsException {
+        Ticket ticket =
+                Ticket.createTicket(
+                        outputWriter,
+                        inputReader,
+                        1L,
+                        args[0],
+                        Long.parseLong(args[1]),
+                        collectionManager.generateNextEventId(),
+                        scriptMode);
         int oldSize = collectionManager.getCollection().size();
         collectionManager.getCollection().values().removeIf(t -> t.compareTo(ticket) < 0);
         if (oldSize == collectionManager.getCollection().size()) {
@@ -23,10 +35,5 @@ public class RemoveLowerCommand extends CollectionCommand {
             return;
         }
         outputWriter.writeOnSuccess("Элементы удалены");
-    }
-
-    @Override
-    public String getInfo() {
-        return "remove_lower name price - удалить из коллекции все элементы, меньшие, чем заданный";
     }
 }

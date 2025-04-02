@@ -1,6 +1,5 @@
 package ru.askar.serverLab6.serverCommand;
 
-import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.object.Command;
 import ru.askar.serverLab6.connection.ServerHandler;
 
@@ -12,10 +11,9 @@ public abstract class ServerCommand extends Command {
      *
      * @param name
      * @param argsCount
-     * @param inputReader
      */
-    public ServerCommand(String name, int argsCount, InputReader inputReader, ServerHandler serverHandler) {
-        super(name, argsCount, inputReader);
+    public ServerCommand(String name, int argsCount, String info, ServerHandler serverHandler) {
+        super(name, argsCount, info, null);
         this.serverHandler = serverHandler;
     }
 }

@@ -7,7 +7,7 @@ public class RemoveByKeyCommand extends CollectionCommand {
     private final CollectionManager collectionManager;
 
     public RemoveByKeyCommand(CollectionManager collectionManager) {
-        super("remove_key", 1);
+        super("remove_key", 1, "remove_key key - удалить элемент из коллекции по его id");
         this.collectionManager = collectionManager;
     }
 
@@ -19,10 +19,5 @@ public class RemoveByKeyCommand extends CollectionCommand {
         } else {
             throw new NoSuchKeyException();
         }
-    }
-
-    @Override
-    public String getInfo() {
-        return "remove_key key - удалить элемент из коллекции по его id";
     }
 }

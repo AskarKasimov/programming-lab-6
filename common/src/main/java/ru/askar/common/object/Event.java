@@ -2,24 +2,27 @@ package ru.askar.common.object;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.Objects;
 import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.InvalidInputFieldException;
 import ru.askar.common.exception.UserRejectedToFillFieldsException;
 
-import java.util.Objects;
-
 public class Event implements Comparable<Event> {
-    private Integer id; //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
-    private String name; //Поле не может быть null, Строка не может быть пустой
-    private String description; //Длина строки не должна быть больше 1573, Поле не может быть null
-    private EventType eventType; //Поле может быть null
+    private Integer
+            id; // Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля
+    // должно быть уникальным, Значение этого поля должно генерироваться автоматически
+    private String name; // Поле не может быть null, Строка не может быть пустой
+    private String description; // Длина строки не должна быть больше 1573, Поле не может быть null
+    private EventType eventType; // Поле может быть null
 
     @JsonCreator
-    public Event(@JsonProperty("id") Integer id,
-                 @JsonProperty("name") String name,
-                 @JsonProperty("description") String description,
-                 @JsonProperty("eventType") EventType eventType) throws InvalidInputFieldException {
+    public Event(
+            @JsonProperty("id") Integer id,
+            @JsonProperty("name") String name,
+            @JsonProperty("description") String description,
+            @JsonProperty("eventType") EventType eventType)
+            throws InvalidInputFieldException {
         setId(id);
         setName(name);
         setDescription(description);
@@ -34,9 +37,11 @@ public class Event implements Comparable<Event> {
      * Создание экземпляра с пользовательским вводом.
      *
      * @param outputWriter - способ печати ответа
-     * @param inputReader  - способ считывания входных данных
+     * @param inputReader - способ считывания входных данных
      */
-    public static Event createEvent(OutputWriter outputWriter, InputReader inputReader, Integer id, boolean scriptMode) throws UserRejectedToFillFieldsException, InvalidInputFieldException {
+    public static Event createEvent(
+            OutputWriter outputWriter, InputReader inputReader, Integer id, boolean scriptMode)
+            throws UserRejectedToFillFieldsException, InvalidInputFieldException {
         Event event = new Event(id);
         outputWriter.writeOnSuccess("Ввод события");
         event.requestName(outputWriter, inputReader, scriptMode);
@@ -45,7 +50,8 @@ public class Event implements Comparable<Event> {
         return event;
     }
 
-    private void requestName(OutputWriter outputWriter, InputReader inputReader, boolean scriptMode) throws UserRejectedToFillFieldsException {
+    private void requestName(OutputWriter outputWriter, InputReader inputReader, boolean scriptMode)
+            throws UserRejectedToFillFieldsException {
         String name;
         do {
             outputWriter.write("Введите название события: ");
@@ -67,7 +73,9 @@ public class Event implements Comparable<Event> {
         } while (name == null);
     }
 
-    private void requestDescription(OutputWriter outputWriter, InputReader inputReader, boolean scriptMode) throws UserRejectedToFillFieldsException {
+    private void requestDescription(
+            OutputWriter outputWriter, InputReader inputReader, boolean scriptMode)
+            throws UserRejectedToFillFieldsException {
         String description;
         do {
             outputWriter.write("Введите описание события: ");
@@ -89,7 +97,9 @@ public class Event implements Comparable<Event> {
         } while (description == null);
     }
 
-    private void requestEventType(OutputWriter outputWriter, InputReader inputReader, boolean scriptMode) throws UserRejectedToFillFieldsException {
+    private void requestEventType(
+            OutputWriter outputWriter, InputReader inputReader, boolean scriptMode)
+            throws UserRejectedToFillFieldsException {
         outputWriter.writeOnWarning("Хотите ввести тип события? (y/n): ");
         String answer = inputReader.getInputString();
         if (answer != null && answer.equalsIgnoreCase("y")) {
@@ -101,7 +111,10 @@ public class Event implements Comparable<Event> {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Event event = (Event) o;
-        return Objects.equals(id, event.id) && Objects.equals(name, event.name) && Objects.equals(description, event.description) && eventType == event.eventType;
+        return Objects.equals(id, event.id)
+                && Objects.equals(name, event.name)
+                && Objects.equals(description, event.description)
+                && eventType == event.eventType;
     }
 
     @Override
@@ -125,11 +138,18 @@ public class Event implements Comparable<Event> {
 
     @Override
     public String toString() {
-        return "Событие" +
-                ": id=" + id +
-                ", название='" + name + "'" +
-                ", описание='" + description + "'" +
-                ", тип=" + eventType + ";";
+        return "Событие"
+                + ": id="
+                + id
+                + ", название='"
+                + name
+                + "'"
+                + ", описание='"
+                + description
+                + "'"
+                + ", тип="
+                + eventType
+                + ";";
     }
 
     public Integer getId() {
@@ -169,7 +189,8 @@ public class Event implements Comparable<Event> {
             throw new InvalidInputFieldException("Описание события не может быть null");
         }
         if (description.length() > 1573) {
-            throw new InvalidInputFieldException("Длина описания события не должна быть больше 1573");
+            throw new InvalidInputFieldException(
+                    "Длина описания события не должна быть больше 1573");
         }
         this.description = description;
     }

@@ -1,6 +1,5 @@
 package ru.askar.serverLab6.serverCommand;
 
-import ru.askar.common.cli.input.InputReader;
 import ru.askar.serverLab6.connection.ServerHandler;
 
 public class ServerStatusCommand extends ServerCommand {
@@ -10,8 +9,8 @@ public class ServerStatusCommand extends ServerCommand {
      * @param name
      * @param inputReader
      */
-    public ServerStatusCommand(InputReader inputReader, ServerHandler serverHandler) {
-        super("status", 0, inputReader, serverHandler);
+    public ServerStatusCommand(ServerHandler serverHandler) {
+        super("status", 0, "status - вывести информацию о состоянии сервера", serverHandler);
     }
 
     @Override
@@ -21,10 +20,5 @@ public class ServerStatusCommand extends ServerCommand {
         } else {
             System.out.println("Сервер не запущен");
         }
-    }
-
-    @Override
-    public String getInfo() {
-        return "status - вывести информацию о состоянии сервера";
     }
 }

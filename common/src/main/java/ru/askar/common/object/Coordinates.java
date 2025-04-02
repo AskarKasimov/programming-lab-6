@@ -2,36 +2,36 @@ package ru.askar.common.object;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.math.BigDecimal;
+import java.util.Objects;
 import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.InvalidInputFieldException;
 import ru.askar.common.exception.UserRejectedToFillFieldsException;
 
-import java.math.BigDecimal;
-import java.util.Objects;
-
 public class Coordinates {
-    private Float x; //Поле не может быть null
-    private Float y; //Максимальное значение поля: 654, Поле не может быть null
+    private Float x; // Поле не может быть null
+    private Float y; // Максимальное значение поля: 654, Поле не может быть null
 
     @JsonCreator
-    public Coordinates(@JsonProperty("x") Float x,
-                       @JsonProperty("y") BigDecimal y) throws InvalidInputFieldException {
+    public Coordinates(@JsonProperty("x") Float x, @JsonProperty("y") BigDecimal y)
+            throws InvalidInputFieldException {
         setX(x);
         setY(y);
     }
 
-    private Coordinates() {
-    }
+    private Coordinates() {}
 
     /**
      * Создание экземпляра с пользовательским вводом.
      *
      * @param outputWriter - способ печати ответа
-     * @param inputReader  - способ считывания входных данных
+     * @param inputReader - способ считывания входных данных
      * @return - созданный Coordinates
      */
-    public static Coordinates createCoordinates(OutputWriter outputWriter, InputReader inputReader, boolean scriptMode) throws UserRejectedToFillFieldsException {
+    public static Coordinates createCoordinates(
+            OutputWriter outputWriter, InputReader inputReader, boolean scriptMode)
+            throws UserRejectedToFillFieldsException {
         Coordinates coordinates = new Coordinates();
         outputWriter.write("Ввод координат: ");
         coordinates.requestX(outputWriter, inputReader, scriptMode);
@@ -39,7 +39,8 @@ public class Coordinates {
         return coordinates;
     }
 
-    private void requestX(OutputWriter outputWriter, InputReader inputReader, boolean scriptMode) throws UserRejectedToFillFieldsException {
+    private void requestX(OutputWriter outputWriter, InputReader inputReader, boolean scriptMode)
+            throws UserRejectedToFillFieldsException {
         Float x;
         do {
             outputWriter.write("Введите x: ");
@@ -61,7 +62,8 @@ public class Coordinates {
         } while (x == null);
     }
 
-    private void requestY(OutputWriter outputWriter, InputReader inputReader, boolean scriptMode) throws UserRejectedToFillFieldsException {
+    private void requestY(OutputWriter outputWriter, InputReader inputReader, boolean scriptMode)
+            throws UserRejectedToFillFieldsException {
         BigDecimal y;
         do {
             outputWriter.write("Введите y: ");
@@ -97,9 +99,7 @@ public class Coordinates {
 
     @Override
     public String toString() {
-        return "Координаты" +
-                ": x=" + x +
-                ", y=" + y;
+        return "Координаты" + ": x=" + x + ", y=" + y;
     }
 
     public Float getX() {

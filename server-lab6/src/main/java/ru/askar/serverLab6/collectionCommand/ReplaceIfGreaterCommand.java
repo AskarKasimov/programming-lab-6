@@ -9,12 +9,16 @@ public class ReplaceIfGreaterCommand extends CollectionCommand {
     private final CollectionManager collectionManager;
 
     public ReplaceIfGreaterCommand(CollectionManager collectionManager) {
-        super("replace_if_greater", 3);
+        super(
+                "replace_if_greater",
+                3,
+                "replace_if_greater id name price - заменить значение по ключу, если новое значение больше старого");
         this.collectionManager = collectionManager;
     }
 
     @Override
-    public void execute(String[] args) throws InvalidInputFieldException, UserRejectedToFillFieldsException {
+    public void execute(String[] args)
+            throws InvalidInputFieldException, UserRejectedToFillFieldsException {
         Long id = Long.parseLong(args[0]);
         Ticket oldTicket = collectionManager.getCollection().get(id);
         if (oldTicket == null) {
@@ -22,7 +26,15 @@ public class ReplaceIfGreaterCommand extends CollectionCommand {
             return;
         }
 
-        Ticket newTicket = Ticket.createTicket(outputWriter, inputReader, collectionManager.generateNextTicketId(), args[1], Long.parseLong(args[2]), collectionManager.generateNextEventId(), scriptMode);
+        Ticket newTicket =
+                Ticket.createTicket(
+                        outputWriter,
+                        inputReader,
+                        collectionManager.generateNextTicketId(),
+                        args[1],
+                        Long.parseLong(args[2]),
+                        collectionManager.generateNextEventId(),
+                        scriptMode);
 
         if (oldTicket.compareTo(newTicket) < 0) {
             collectionManager.getCollection().put(id, newTicket);
@@ -30,10 +42,5 @@ public class ReplaceIfGreaterCommand extends CollectionCommand {
         } else {
             outputWriter.writeOnFail("Новое значение не больше старого");
         }
-    }
-
-    @Override
-    public String getInfo() {
-        return "replace_if_greater id name price - заменить значение по ключу, если новое значение больше старого";
     }
 }

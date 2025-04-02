@@ -1,9 +1,7 @@
 package ru.askar.serverLab6.serverCommand;
 
-import ru.askar.common.cli.input.InputReader;
-import ru.askar.serverLab6.connection.ServerHandler;
-
 import java.io.IOException;
+import ru.askar.serverLab6.connection.ServerHandler;
 
 public class StopServerCommand extends ServerCommand {
     /**
@@ -11,8 +9,8 @@ public class StopServerCommand extends ServerCommand {
      *
      * @param inputReader
      */
-    public StopServerCommand(InputReader inputReader, ServerHandler serverHandler) {
-        super("stop", 0, inputReader, serverHandler);
+    public StopServerCommand(ServerHandler serverHandler) {
+        super("stop", 0, "stop - остановить сервер", serverHandler);
     }
 
     @Override
@@ -23,10 +21,5 @@ public class StopServerCommand extends ServerCommand {
         } else {
             System.out.println("Сервер не запущен");
         }
-    }
-
-    @Override
-    public String getInfo() {
-        return "stop - остановить сервер";
     }
 }

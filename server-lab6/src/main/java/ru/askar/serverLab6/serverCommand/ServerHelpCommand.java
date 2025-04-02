@@ -1,23 +1,17 @@
 package ru.askar.serverLab6.serverCommand;
 
-import ru.askar.common.object.Command;
-import ru.askar.common.cli.CommandExecutor;
-import ru.askar.common.cli.input.InputReader;
-import ru.askar.serverLab6.connection.ServerHandler;
-
 import java.util.ArrayList;
 import java.util.List;
+import ru.askar.common.cli.CommandExecutor;
+import ru.askar.common.object.Command;
+import ru.askar.serverLab6.connection.ServerHandler;
 
 public class ServerHelpCommand extends ServerCommand {
-    private final CommandExecutor executor;
+    private final CommandExecutor<ServerCommand> executor;
 
-    /**
-     * Заполнение имени и количества требуемых аргументов
-     *
-     * @param inputReader
-     */
-    public ServerHelpCommand(InputReader inputReader, ServerHandler serverHandler, CommandExecutor executor) {
-        super("help", 0, inputReader, serverHandler);
+    /** Заполнение имени и количества требуемых аргументов */
+    public ServerHelpCommand(ServerHandler serverHandler, CommandExecutor<ServerCommand> executor) {
+        super("help", 0, "help - вывести справку по доступным серверным командам", serverHandler);
         this.executor = executor;
     }
 
@@ -25,10 +19,5 @@ public class ServerHelpCommand extends ServerCommand {
     public void execute(String[] args) {
         List<Command> commands = new ArrayList<>(executor.getAllCommands().values());
         commands.forEach(command -> outputWriter.writeOnSuccess(command.getInfo()));
-    }
-
-    @Override
-    public String getInfo() {
-        return "status - вывести информацию о состоянии сервера";
     }
 }

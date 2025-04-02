@@ -1,5 +1,7 @@
 package ru.askar.serverLab6;
 
+import java.io.*;
+import java.util.ArrayList;
 import ru.askar.common.CommandAsList;
 import ru.askar.common.cli.CommandExecutor;
 import ru.askar.common.cli.CommandParser;
@@ -13,9 +15,6 @@ import ru.askar.serverLab6.collectionCommand.*;
 import ru.askar.serverLab6.connection.ServerHandler;
 import ru.askar.serverLab6.connection.TcpServerHandler;
 import ru.askar.serverLab6.serverCommand.*;
-
-import java.io.*;
-import java.util.ArrayList;
 
 public class Main {
 
@@ -62,7 +61,8 @@ public class Main {
         if (collectionManager.getCollection().isEmpty()) {
             outputWriter.writeOnWarning("Коллекция пуста");
         }
-        CommandExecutor<CollectionCommand> collectionCommandExecutor = new CommandExecutor<>(outputWriter);
+        CommandExecutor<CollectionCommand> collectionCommandExecutor =
+                new CommandExecutor<>(outputWriter);
         collectionCommandExecutor.register(new HelpCommand(collectionCommandExecutor));
         collectionCommandExecutor.register(new InfoCommand(collectionManager));
         collectionCommandExecutor.register(new ShowCommand(collectionManager));
@@ -79,24 +79,31 @@ public class Main {
         collectionCommandExecutor.register(new PrintFieldAscendingEventCommand(collectionManager));
         collectionCommandExecutor.register(new PrintFieldDescendingTypeCommand(collectionManager));
 
-
         CommandExecutor<ServerCommand> serverCommandExecutor = new CommandExecutor<>(outputWriter);
         CommandParser commandParser = new CommandParser();
 
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-        InputReader inputReader = new InputReader(serverCommandExecutor, commandParser, bufferedReader);
+        InputReader inputReader =
+                new InputReader(serverCommandExecutor, commandParser, bufferedReader);
         ArrayList<CommandAsList> commandList = new ArrayList<>();
-        collectionCommandExecutor.getAllCommands().forEach((name, command) -> {
-            commandList.add(new CommandAsList(command.getName(), command.getArgsCount(), command.getInfo(), command.getClassForFilling()));
-        });
+        collectionCommandExecutor
+                .getAllCommands()
+                .forEach(
+                        (name, command) -> {
+                            commandList.add(
+                                    new CommandAsList(
+                                            command.getName(),
+                                            command.getArgsCount(),
+                                            command.getInfo(),
+                                            command.getClassForFilling()));
+                        });
         ServerHandler serverHandler = new TcpServerHandler(commandList);
 
-        serverCommandExecutor.register(new StartServerCommand(inputReader, serverHandler, collectionCommandExecutor));
-        serverCommandExecutor.register(new ServerStatusCommand(inputReader, serverHandler));
-        serverCommandExecutor.register(new StopServerCommand(inputReader, serverHandler));
-        serverCommandExecutor.register(new ServerHelpCommand(inputReader, serverHandler, serverCommandExecutor));
-        serverCommandExecutor.register(new ServerExitCommand(inputReader, serverHandler));
-
+        serverCommandExecutor.register(new StartServerCommand(serverHandler));
+        serverCommandExecutor.register(new ServerStatusCommand(serverHandler));
+        serverCommandExecutor.register(new StopServerCommand(serverHandler));
+        serverCommandExecutor.register(new ServerHelpCommand(serverHandler, serverCommandExecutor));
+        serverCommandExecutor.register(new ServerExitCommand(serverHandler));
 
         try {
             inputReader.process();

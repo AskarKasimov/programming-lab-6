@@ -1,8 +1,7 @@
 package ru.askar.common.cli;
 
-import ru.askar.common.exception.InvalidCommandException;
-
 import java.util.Arrays;
+import ru.askar.common.exception.InvalidCommandException;
 
 /**
  * Класс для разграничения имени команды и аргументов к ней

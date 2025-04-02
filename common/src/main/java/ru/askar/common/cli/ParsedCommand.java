@@ -6,5 +6,4 @@ package ru.askar.common.cli;
  * @param name - название команды
  * @param args - аргументы к команде
  */
-public record ParsedCommand(String name, String[] args) {
-}
+public record ParsedCommand(String name, String[] args) {}
