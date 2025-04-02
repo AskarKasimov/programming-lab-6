@@ -7,7 +7,6 @@ public class StartServerCommand extends ServerCommand {
     /**
      * Заполнение имени и количества требуемых аргументов
      *
-     * @param name
      * @param inputReader
      */
     public StartServerCommand(InputReader inputReader, ServerHandler serverHandler) {
@@ -22,8 +21,14 @@ public class StartServerCommand extends ServerCommand {
             System.out.println("Сервер уже запущен на порту " + serverHandler.getPort());
         } else {
             serverHandler.setPort(port);
-            System.out.println("Сервер запускается на порту " + port);
-            Thread handlerThread = new Thread(serverHandler::start);
+            System.out.println("Запускаю...");
+            Thread handlerThread = new Thread(() -> {
+                try {
+                    serverHandler.start();
+                } catch (Exception e) {
+                    System.out.println("Ошибка при запуске сервера: " + e.getMessage());
+                }
+            });
             handlerThread.start();
         }
     }

@@ -1,15 +1,18 @@
 package ru.askar.serverLab6.serverCommand;
 
 import ru.askar.common.Command;
+import ru.askar.common.CommandDTO;
 import ru.askar.common.cli.CommandExecutor;
 import ru.askar.common.cli.input.InputReader;
 import ru.askar.serverLab6.connection.ServerHandler;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ServerHelpCommand extends ServerCommand {
     private final CommandExecutor executor;
+
     /**
      * Заполнение имени и количества требуемых аргументов
      *

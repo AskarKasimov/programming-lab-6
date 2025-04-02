@@ -3,11 +3,12 @@ package ru.askar.serverLab6.serverCommand;
 import ru.askar.common.cli.input.InputReader;
 import ru.askar.serverLab6.connection.ServerHandler;
 
+import java.io.IOException;
+
 public class StopServerCommand extends ServerCommand {
     /**
      * Заполнение имени и количества требуемых аргументов
      *
-     * @param name
      * @param inputReader
      */
     public StopServerCommand(InputReader inputReader, ServerHandler serverHandler) {
@@ -15,10 +16,10 @@ public class StopServerCommand extends ServerCommand {
     }
 
     @Override
-    public void execute(String[] args) {
+    public void execute(String[] args) throws IOException {
         if (serverHandler.getStatus()) {
+            System.out.println("Останавливаю сервер...");
             serverHandler.stop();
-            System.out.println("Сервер остановлен");
         } else {
             System.out.println("Сервер не запущен");
         }

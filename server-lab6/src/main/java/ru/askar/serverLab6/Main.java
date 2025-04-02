@@ -59,19 +59,19 @@ public class Main {
         if (collectionManager.getCollection().isEmpty()) {
             outputWriter.writeOnWarning("Коллекция пуста");
         }
-        CommandExecutor commandExecutor = new CommandExecutor(outputWriter);
+        CommandExecutor serverCommandExecutor = new CommandExecutor(outputWriter);
         CommandParser commandParser = new CommandParser();
 
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-        InputReader inputReader = new InputReader(commandExecutor, commandParser, bufferedReader);
+        InputReader inputReader = new InputReader(serverCommandExecutor, commandParser, bufferedReader);
 
-        ServerHandler serverHandler = new TcpServerHandler(collectionManager);
+        ServerHandler serverHandler = new TcpServerHandler();
 
-        commandExecutor.register(new StartServerCommand(inputReader, serverHandler));
-        commandExecutor.register(new ServerStatusCommand(inputReader, serverHandler));
-        commandExecutor.register(new StopServerCommand(inputReader, serverHandler));
-        commandExecutor.register(new ServerHelpCommand(inputReader, serverHandler, commandExecutor));
-        commandExecutor.register(new ServerExitCommand(inputReader, serverHandler));
+        serverCommandExecutor.register(new StartServerCommand(inputReader, serverHandler));
+        serverCommandExecutor.register(new ServerStatusCommand(inputReader, serverHandler));
+        serverCommandExecutor.register(new StopServerCommand(inputReader, serverHandler));
+        serverCommandExecutor.register(new ServerHelpCommand(inputReader, serverHandler, serverCommandExecutor));
+        serverCommandExecutor.register(new ServerExitCommand(inputReader, serverHandler));
 
 
         try {
