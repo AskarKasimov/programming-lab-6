@@ -1,12 +1,13 @@
 package ru.askar.common.object;
 
 import java.io.IOException;
+import java.io.Serializable;
 import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.*;
 
 /** Абстрактный класс для команд */
-public abstract class Command {
+public abstract class Command implements Serializable {
     protected final int argsCount;
     protected final String name;
     protected final String info;

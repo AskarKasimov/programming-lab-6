@@ -9,6 +9,7 @@ public class ClientStartCommand extends ClientCommand {
                 "start",
                 2,
                 "start host port - запуск клиента на указанный хост и порт",
+                null,
                 clientHandler);
     }
 

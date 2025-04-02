@@ -12,7 +12,8 @@ public class RemoveLowerCommand extends CollectionCommand {
         super(
                 "remove_lower",
                 2,
-                "remove_lower name price - удалить из коллекции все элементы, меньшие, чем заданный");
+                "remove_lower name price - удалить из коллекции все элементы, меньшие, чем заданный",
+                false);
         this.collectionManager = collectionManager;
     }
 

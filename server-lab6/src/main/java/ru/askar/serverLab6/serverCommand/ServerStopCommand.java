@@ -3,13 +3,13 @@ package ru.askar.serverLab6.serverCommand;
 import java.io.IOException;
 import ru.askar.serverLab6.connection.ServerHandler;
 
-public class StopServerCommand extends ServerCommand {
+public class ServerStopCommand extends ServerCommand {
     /**
      * Заполнение имени и количества требуемых аргументов
      *
      * @param inputReader
      */
-    public StopServerCommand(ServerHandler serverHandler) {
+    public ServerStopCommand(ServerHandler serverHandler) {
         super("stop", 0, "stop - остановить сервер", serverHandler);
     }
 

@@ -9,7 +9,8 @@ public class RemoveGreaterKeyCommand extends CollectionCommand {
         super(
                 "remove_greater_key",
                 1,
-                "remove_greater_key key - удалить элементы, ключ которых превышает заданный");
+                "remove_greater_key key - удалить элементы, ключ которых превышает заданный",
+                false);
         this.collectionManager = collectionManager;
     }
 

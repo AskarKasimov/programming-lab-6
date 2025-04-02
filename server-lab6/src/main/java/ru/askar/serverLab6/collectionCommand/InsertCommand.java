@@ -9,7 +9,7 @@ public class InsertCommand extends CollectionCommand {
     private final CollectionManager collectionManager;
 
     public InsertCommand(CollectionManager collectionManager) {
-        super("insert", 3, "insert id?null name price - добавить новый элемент");
+        super("insert", 3, "insert id?null name price - добавить новый элемент", true);
         this.collectionManager = collectionManager;
     }
 

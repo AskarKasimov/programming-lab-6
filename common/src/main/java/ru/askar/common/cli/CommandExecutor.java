@@ -46,6 +46,10 @@ public class CommandExecutor<T extends Command> {
         commands.put(command.getName(), command);
     }
 
+    public void clearCommands() {
+        commands.clear();
+    }
+
     /**
      * Получить команду по названию
      *

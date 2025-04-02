@@ -4,7 +4,7 @@ import ru.askar.common.exception.ExitCLIException;
 
 public class ExitCommand extends CollectionCommand {
     public ExitCommand() {
-        super("exit", 0, "exit - завершить программу (без сохранения в файл)");
+        super("exit", 0, "exit - завершить программу (без сохранения в файл)", false);
     }
 
     @Override

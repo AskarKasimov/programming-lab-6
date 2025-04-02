@@ -100,7 +100,7 @@ public class InputReader {
     /** Выполнение поступающих команд. */
     public void process() throws IOException {
         String line;
-        if (!scriptMode) commandExecutor.getOutputWriter().write("> ");
+        //        if (!scriptMode) commandExecutor.getOutputWriter().write("> ");
         while ((line = bufferedReader.readLine()) != null) {
             //            System.out.println(line);
             try {
@@ -136,9 +136,10 @@ public class InputReader {
                 commandExecutor.getOutputWriter().writeOnWarning("Возврат в CLI");
             } catch (ExitCLIException e) {
                 break;
-            } finally {
-                if (!scriptMode) commandExecutor.getOutputWriter().write("> ");
             }
+            //            finally {
+            //                if (!scriptMode) commandExecutor.getOutputWriter().write("> ");
+            //            }
         }
     }
 }

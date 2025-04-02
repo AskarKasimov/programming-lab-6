@@ -10,15 +10,27 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import ru.askar.clientLab6.clientCommand.ClientCommand;
+import ru.askar.clientLab6.clientCommand.ClientGenericCommand;
 import ru.askar.common.CommandAsList;
+import ru.askar.common.cli.CommandExecutor;
+import ru.askar.common.cli.input.InputReader;
 
 public class TcpClientHandler implements ClientHandler {
+    private final InputReader inputReader;
+    private final CommandExecutor<ClientCommand> commandExecutor;
     private final ConcurrentLinkedQueue<Object> outputQueue = new ConcurrentLinkedQueue<>();
     private String host = "";
     private int port = -1;
     private Selector selector;
     private SocketChannel channel;
     private volatile boolean running = false;
+
+    public TcpClientHandler(
+            InputReader inputReader, CommandExecutor<ClientCommand> commandExecutor) {
+        this.inputReader = inputReader;
+        this.commandExecutor = commandExecutor;
+    }
 
     @Override
     public void start() throws IOException {
@@ -98,8 +110,15 @@ public class TcpClientHandler implements ClientHandler {
                 if (dto instanceof ArrayList<?> list
                         && !list.isEmpty()
                         && list.get(0) instanceof CommandAsList) { // избегаю type erasure
+                    @SuppressWarnings("unchecked")
                     ArrayList<CommandAsList> commandsAsList = (ArrayList<CommandAsList>) list;
+                    commandExecutor.clearCommands();
+                    for (CommandAsList commandAsList : commandsAsList) {
+                        commandExecutor.register(
+                                new ClientGenericCommand(inputReader, commandAsList, this));
+                    }
                     System.out.println("Клиент получил команды от сервера: " + commandsAsList);
+                    System.out.println(commandExecutor.getAllCommands());
                 } else {
                     System.out.println("Клиент не смог обработать ответ сервера");
                 }

@@ -9,7 +9,8 @@ public class InfoCommand extends CollectionCommand {
         super(
                 "info",
                 0,
-                "info - вывести информацию о коллекции (тип, дата инициализации, количество элементов)");
+                "info - вывести информацию о коллекции (тип, дата инициализации, количество элементов)",
+                false);
         this.collectionManager = collectionManager;
     }
 

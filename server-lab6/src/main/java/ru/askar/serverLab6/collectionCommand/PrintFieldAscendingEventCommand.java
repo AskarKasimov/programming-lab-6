@@ -17,7 +17,8 @@ public class PrintFieldAscendingEventCommand extends CollectionCommand {
         super(
                 "print_field_ascending_event",
                 0,
-                "print_field_ascending_event - вывести значения поля event всех элементов в порядке возрастания");
+                "print_field_ascending_event - вывести значения поля event всех элементов в порядке возрастания",
+                false);
         this.collectionManager = collectionManager;
     }
 

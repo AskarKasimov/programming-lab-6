@@ -12,7 +12,8 @@ public class UpdateCommand extends CollectionCommand {
         super(
                 "update",
                 3,
-                "update id name price - обновить значение элемента коллекции, id которого равен заданному");
+                "update id name price - обновить значение элемента коллекции, id которого равен заданному",
+                true);
         this.collectionManager = collectionManager;
     }
 

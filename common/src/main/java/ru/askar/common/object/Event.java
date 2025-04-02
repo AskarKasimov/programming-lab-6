@@ -2,13 +2,14 @@ package ru.askar.common.object;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.Serializable;
 import java.util.Objects;
 import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.InvalidInputFieldException;
 import ru.askar.common.exception.UserRejectedToFillFieldsException;
 
-public class Event implements Comparable<Event> {
+public class Event implements Comparable<Event>, Serializable {
     private Integer
             id; // Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля
     // должно быть уникальным, Значение этого поля должно генерироваться автоматически

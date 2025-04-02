@@ -70,7 +70,6 @@ public class Main {
         collectionCommandExecutor.register(new UpdateCommand(collectionManager));
         collectionCommandExecutor.register(new RemoveByKeyCommand(collectionManager));
         collectionCommandExecutor.register(new ClearCommand(collectionManager));
-        collectionCommandExecutor.register(new ScriptCommand(collectionCommandExecutor));
         collectionCommandExecutor.register(new ExitCommand());
         collectionCommandExecutor.register(new RemoveLowerCommand(collectionManager));
         collectionCommandExecutor.register(new ReplaceIfGreaterCommand(collectionManager));
@@ -95,13 +94,13 @@ public class Main {
                                             command.getName(),
                                             command.getArgsCount(),
                                             command.getInfo(),
-                                            command.getClassForFilling()));
+                                            command.isNeedObject()));
                         });
-        ServerHandler serverHandler = new TcpServerHandler(commandList);
+        ServerHandler serverHandler = new TcpServerHandler(collectionCommandExecutor, commandList);
 
-        serverCommandExecutor.register(new StartServerCommand(serverHandler));
+        serverCommandExecutor.register(new ServerStartCommand(serverHandler));
         serverCommandExecutor.register(new ServerStatusCommand(serverHandler));
-        serverCommandExecutor.register(new StopServerCommand(serverHandler));
+        serverCommandExecutor.register(new ServerStopCommand(serverHandler));
         serverCommandExecutor.register(new ServerHelpCommand(serverHandler, serverCommandExecutor));
         serverCommandExecutor.register(new ServerExitCommand(serverHandler));
 

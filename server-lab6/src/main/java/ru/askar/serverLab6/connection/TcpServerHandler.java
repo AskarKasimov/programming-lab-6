@@ -13,8 +13,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import ru.askar.common.CommandAsList;
 import ru.askar.common.CommandToExecute;
+import ru.askar.common.cli.CommandExecutor;
+import ru.askar.serverLab6.collectionCommand.CollectionCommand;
 
 public class TcpServerHandler implements ServerHandler {
+    private final CommandExecutor<CollectionCommand> collectionCommandExecutor;
     private final ArrayList<CommandAsList> commandList;
     private final ConcurrentLinkedQueue<Object> outputQueue = new ConcurrentLinkedQueue<>();
     private int port = -1;
@@ -22,7 +25,10 @@ public class TcpServerHandler implements ServerHandler {
     private ServerSocketChannel serverChannel;
     private boolean running = false;
 
-    public TcpServerHandler(ArrayList<CommandAsList> commandList) {
+    public TcpServerHandler(
+            CommandExecutor<CollectionCommand> commandExecutor,
+            ArrayList<CommandAsList> commandList) {
+        this.collectionCommandExecutor = commandExecutor;
         this.commandList = commandList;
     }
 
@@ -106,8 +112,19 @@ public class TcpServerHandler implements ServerHandler {
             } else {
                 Object dto = deserialize(buf);
                 if (dto instanceof CommandToExecute command) {
-                    // Обработка команды
-                    System.out.println("Server received command: " + command);
+                    // execute
+                    try {
+                        System.out.println("Получена команда " + command);
+                        collectionCommandExecutor
+                                .getCommand(command.name())
+                                .execute(command.args(), command.object());
+                    } catch (Exception e) {
+                        System.out.println(
+                                "Ошибка при выполнении полученной команды "
+                                        + command.name()
+                                        + " : "
+                                        + e.getMessage());
+                    }
                 } else {
                     System.out.println("Сервер не смог обработать полученное сообщение");
                 }

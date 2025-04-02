@@ -2,9 +2,9 @@ package ru.askar.serverLab6.serverCommand;
 
 import ru.askar.serverLab6.connection.ServerHandler;
 
-public class StartServerCommand extends ServerCommand {
+public class ServerStartCommand extends ServerCommand {
     /** Заполнение имени и количества требуемых аргументов */
-    public StartServerCommand(ServerHandler serverHandler) {
+    public ServerStartCommand(ServerHandler serverHandler) {
         super("start", 1, "start port - запуск сервера на указанном порту", serverHandler);
     }
 

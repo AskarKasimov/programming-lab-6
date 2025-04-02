@@ -2,6 +2,7 @@ package ru.askar.common.object;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
 import ru.askar.common.cli.input.InputReader;
@@ -9,7 +10,7 @@ import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.InvalidInputFieldException;
 import ru.askar.common.exception.UserRejectedToFillFieldsException;
 
-public class Coordinates {
+public class Coordinates implements Serializable {
     private Float x; // Поле не может быть null
     private Float y; // Максимальное значение поля: 654, Поле не может быть null
 

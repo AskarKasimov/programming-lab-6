@@ -17,7 +17,8 @@ public class PrintFieldDescendingTypeCommand extends CollectionCommand {
         super(
                 "print_field_descending_type",
                 0,
-                "print_field_descending_type - вывести значения поля type всех элементов в порядке убывания");
+                "print_field_descending_type - вывести значения поля type всех элементов в порядке убывания",
+                false);
         this.collectionManager = collectionManager;
     }
 

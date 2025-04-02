@@ -12,7 +12,8 @@ public class ReplaceIfGreaterCommand extends CollectionCommand {
         super(
                 "replace_if_greater",
                 3,
-                "replace_if_greater id name price - заменить значение по ключу, если новое значение больше старого");
+                "replace_if_greater id name price - заменить значение по ключу, если новое значение больше старого",
+                true);
         this.collectionManager = collectionManager;
     }
 
