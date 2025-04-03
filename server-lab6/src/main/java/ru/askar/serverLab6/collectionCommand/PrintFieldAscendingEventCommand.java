@@ -3,9 +3,11 @@ package ru.askar.serverLab6.collectionCommand;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import ru.askar.common.exception.*;
 import ru.askar.common.object.Event;
 import ru.askar.common.object.Ticket;
 import ru.askar.serverLab6.collection.CollectionManager;
@@ -23,7 +25,14 @@ public class PrintFieldAscendingEventCommand extends CollectionCommand {
     }
 
     @Override
-    public void execute(String[] args) {
+    public void execute(String[] args)
+            throws NoSuchKeyException,
+                    InvalidInputFieldException,
+                    CollectionIsEmptyException,
+                    ExitCLIException,
+                    IOException,
+                    UserRejectedToFillFieldsException {
+        super.execute(args);
         List<Event> eventList =
                 collectionManager.getCollection().values().stream()
                         .map(Ticket::getEvent)

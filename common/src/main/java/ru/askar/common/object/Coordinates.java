@@ -15,7 +15,7 @@ public class Coordinates implements Serializable {
     private Float y; // Максимальное значение поля: 654, Поле не может быть null
 
     @JsonCreator
-    public Coordinates(@JsonProperty("x") Float x, @JsonProperty("y") BigDecimal y)
+    private Coordinates(@JsonProperty("x") Float x, @JsonProperty("y") BigDecimal y)
             throws InvalidInputFieldException {
         setX(x);
         setY(y);

@@ -1,12 +1,13 @@
 package ru.askar.common.object;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.UserRejectedToFillFieldsException;
 
-public enum TicketType {
+public enum TicketType implements Serializable {
     VIP,
     USUAL,
     BUDGETARY,

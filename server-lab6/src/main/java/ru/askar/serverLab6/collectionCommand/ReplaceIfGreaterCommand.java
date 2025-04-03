@@ -1,7 +1,7 @@
 package ru.askar.serverLab6.collectionCommand;
 
-import ru.askar.common.exception.InvalidInputFieldException;
-import ru.askar.common.exception.UserRejectedToFillFieldsException;
+import java.io.IOException;
+import ru.askar.common.exception.*;
 import ru.askar.common.object.Ticket;
 import ru.askar.serverLab6.collection.CollectionManager;
 
@@ -19,7 +19,13 @@ public class ReplaceIfGreaterCommand extends CollectionCommand {
 
     @Override
     public void execute(String[] args)
-            throws InvalidInputFieldException, UserRejectedToFillFieldsException {
+            throws InvalidInputFieldException,
+                    UserRejectedToFillFieldsException,
+                    NoSuchKeyException,
+                    CollectionIsEmptyException,
+                    ExitCLIException,
+                    IOException {
+        super.execute(args);
         Long id = Long.parseLong(args[0]);
         Ticket oldTicket = collectionManager.getCollection().get(id);
         if (oldTicket == null) {

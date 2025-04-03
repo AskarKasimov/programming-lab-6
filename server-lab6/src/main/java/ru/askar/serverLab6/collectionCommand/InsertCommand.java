@@ -1,8 +1,7 @@
 package ru.askar.serverLab6.collectionCommand;
 
-import ru.askar.common.exception.InvalidInputFieldException;
-import ru.askar.common.exception.UserRejectedToFillFieldsException;
-import ru.askar.common.object.Ticket;
+import java.io.IOException;
+import ru.askar.common.exception.*;
 import ru.askar.serverLab6.collection.CollectionManager;
 
 public class InsertCommand extends CollectionCommand {
@@ -15,38 +14,14 @@ public class InsertCommand extends CollectionCommand {
 
     @Override
     public void execute(String[] args)
-            throws InvalidInputFieldException, UserRejectedToFillFieldsException {
-        String name = args[1];
-        long price;
-        try {
-            price = Long.parseLong(args[2]);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("В поле price требуется число");
-        }
-
-        Long id;
-        if (args[0].equals("null")) {
-            id = collectionManager.generateNextTicketId();
-            outputWriter.writeOnWarning(
-                    "id не был указан, поэтому он был сгенерирован автоматически (минимальный из отсутствующих): "
-                            + id);
-        } else {
-            id = Long.parseLong(args[0]);
-            if (collectionManager.getCollection().containsKey(id)) {
-                throw new IllegalArgumentException("Такой id уже существует");
-            }
-        }
-
-        Ticket ticket =
-                Ticket.createTicket(
-                        outputWriter,
-                        inputReader,
-                        id,
-                        name,
-                        price,
-                        collectionManager.generateNextEventId(),
-                        scriptMode);
-        collectionManager.getCollection().put(ticket.getId(), ticket);
+            throws InvalidInputFieldException,
+                    UserRejectedToFillFieldsException,
+                    NoSuchKeyException,
+                    CollectionIsEmptyException,
+                    ExitCLIException,
+                    IOException {
+        super.execute(args);
+        collectionManager.getCollection().put(object.getId(), object);
         outputWriter.writeOnSuccess("Элемент добавлен в коллекцию");
     }
 }

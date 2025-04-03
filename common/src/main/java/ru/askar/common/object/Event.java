@@ -18,7 +18,7 @@ public class Event implements Comparable<Event>, Serializable {
     private EventType eventType; // Поле может быть null
 
     @JsonCreator
-    public Event(
+    private Event(
             @JsonProperty("id") Integer id,
             @JsonProperty("name") String name,
             @JsonProperty("description") String description,

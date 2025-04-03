@@ -1,6 +1,7 @@
 package ru.askar.serverLab6.collectionCommand;
 
-import ru.askar.common.exception.NoSuchKeyException;
+import java.io.IOException;
+import ru.askar.common.exception.*;
 import ru.askar.serverLab6.collection.CollectionManager;
 
 public class RemoveByKeyCommand extends CollectionCommand {
@@ -12,7 +13,14 @@ public class RemoveByKeyCommand extends CollectionCommand {
     }
 
     @Override
-    public void execute(String[] args) throws NoSuchKeyException {
+    public void execute(String[] args)
+            throws NoSuchKeyException,
+                    InvalidInputFieldException,
+                    CollectionIsEmptyException,
+                    ExitCLIException,
+                    IOException,
+                    UserRejectedToFillFieldsException {
+        super.execute(args);
         long id = Long.parseLong(args[0]);
         if (collectionManager.getCollection().remove(id) != null) {
             outputWriter.writeOnSuccess("Элемент удален");

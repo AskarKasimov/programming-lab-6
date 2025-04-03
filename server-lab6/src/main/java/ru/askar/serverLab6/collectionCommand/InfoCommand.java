@@ -1,5 +1,7 @@
 package ru.askar.serverLab6.collectionCommand;
 
+import java.io.IOException;
+import ru.askar.common.exception.*;
 import ru.askar.serverLab6.collection.CollectionManager;
 
 public class InfoCommand extends CollectionCommand {
@@ -15,7 +17,14 @@ public class InfoCommand extends CollectionCommand {
     }
 
     @Override
-    public void execute(String[] args) {
+    public void execute(String[] args)
+            throws NoSuchKeyException,
+                    InvalidInputFieldException,
+                    CollectionIsEmptyException,
+                    ExitCLIException,
+                    IOException,
+                    UserRejectedToFillFieldsException {
+        super.execute(args);
         outputWriter.writeOnSuccess(
                 "Тип коллекции: " + collectionManager.getCollection().getClass());
         outputWriter.writeOnSuccess("Дата инициализации: " + collectionManager.getDateOfCreation());

@@ -11,7 +11,7 @@ import ru.askar.common.exception.InvalidInputFieldException;
 import ru.askar.common.exception.UserRejectedToFillFieldsException;
 
 public class Ticket implements Comparable<Ticket>, Serializable {
-    private final LocalDateTime
+    private LocalDateTime
             creationDate; // Поле не может быть null, Значение этого поля должно генерироваться
     // автоматически
     private Long
@@ -23,11 +23,16 @@ public class Ticket implements Comparable<Ticket>, Serializable {
     private TicketType type; // Поле не может быть null
     private Event event; // Поле может быть null
 
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
+    }
+
     @JsonCreator
-    public Ticket(
+    private Ticket(
             @JsonProperty("id") Long id,
             @JsonProperty("name") String name,
             @JsonProperty("coordinates") Coordinates coordinates,
+            @JsonProperty("creationDate") LocalDateTime creationDate,
             @JsonProperty("price") long price,
             @JsonProperty("type") TicketType type,
             @JsonProperty("event") Event event)
@@ -35,7 +40,7 @@ public class Ticket implements Comparable<Ticket>, Serializable {
         setId(id);
         setName(name);
         setCoordinates(coordinates);
-        this.creationDate = LocalDateTime.now();
+        setCreationDate(creationDate);
         setPrice(price);
         setType(type);
         setEvent(event);

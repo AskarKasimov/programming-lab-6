@@ -1,8 +1,10 @@
 package ru.askar.serverLab6.collectionCommand;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import ru.askar.common.cli.CommandExecutor;
+import ru.askar.common.exception.*;
 import ru.askar.common.object.Command;
 
 public class HelpCommand extends CollectionCommand {
@@ -14,7 +16,14 @@ public class HelpCommand extends CollectionCommand {
     }
 
     @Override
-    public void execute(String[] args) {
+    public void execute(String[] args)
+            throws NoSuchKeyException,
+                    InvalidInputFieldException,
+                    CollectionIsEmptyException,
+                    ExitCLIException,
+                    IOException,
+                    UserRejectedToFillFieldsException {
+        super.execute(args);
         List<Command> commands = new ArrayList<>(executor.getAllCommands().values());
         commands.forEach(command -> outputWriter.writeOnSuccess(command.getInfo()));
     }

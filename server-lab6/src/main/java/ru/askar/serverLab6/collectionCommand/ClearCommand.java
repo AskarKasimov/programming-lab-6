@@ -1,6 +1,7 @@
 package ru.askar.serverLab6.collectionCommand;
 
-import ru.askar.common.exception.CollectionIsEmptyException;
+import java.io.IOException;
+import ru.askar.common.exception.*;
 import ru.askar.serverLab6.collection.CollectionManager;
 
 public class ClearCommand extends CollectionCommand {
@@ -12,7 +13,14 @@ public class ClearCommand extends CollectionCommand {
     }
 
     @Override
-    public void execute(String[] args) throws CollectionIsEmptyException {
+    public void execute(String[] args)
+            throws CollectionIsEmptyException,
+                    NoSuchKeyException,
+                    InvalidInputFieldException,
+                    ExitCLIException,
+                    IOException,
+                    UserRejectedToFillFieldsException {
+        super.execute(args);
         if (collectionManager.getCollection().isEmpty()) throw new CollectionIsEmptyException();
         else {
             collectionManager.getCollection().clear();
