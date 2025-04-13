@@ -7,7 +7,6 @@ import ru.askar.common.cli.CommandExecutor;
 import ru.askar.common.cli.CommandParser;
 import ru.askar.common.cli.ParsedCommand;
 import ru.askar.common.exception.*;
-import ru.askar.common.object.Coordinates;
 
 public class InputReader {
     /** Класс, ответственный за чтение ввода от пользователя и исполнение команд. */
@@ -66,11 +65,6 @@ public class InputReader {
         }
     }
 
-    /**
-     * Считыватель ввода числа с плавающей точкой.
-     *
-     * @see Coordinates
-     */
     public float getInputFloat() {
         // Сделано по большей части для Y и ограничения на 654.00000000000001 и прочую дичь
         try {

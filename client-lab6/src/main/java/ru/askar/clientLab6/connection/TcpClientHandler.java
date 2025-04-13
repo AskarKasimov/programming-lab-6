@@ -12,9 +12,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import ru.askar.clientLab6.clientCommand.ClientCommand;
 import ru.askar.clientLab6.clientCommand.ClientGenericCommand;
-import ru.askar.common.CommandAsList;
 import ru.askar.common.cli.CommandExecutor;
 import ru.askar.common.cli.input.InputReader;
+import ru.askar.common.dto.CommandAsList;
 
 public class TcpClientHandler implements ClientHandler {
     private final InputReader inputReader;

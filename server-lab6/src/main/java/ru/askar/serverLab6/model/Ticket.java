@@ -1,4 +1,4 @@
-package ru.askar.common.object;
+package ru.askar.serverLab6.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

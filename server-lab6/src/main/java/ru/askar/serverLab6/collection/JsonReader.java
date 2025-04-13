@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.TreeMap;
 import ru.askar.common.exception.InvalidCollectionFileException;
-import ru.askar.common.object.Ticket;
+import ru.askar.serverLab6.model.Ticket;
 
 public class JsonReader implements DataReader {
     private final TreeMap<Long, Ticket> collection = new TreeMap<>();

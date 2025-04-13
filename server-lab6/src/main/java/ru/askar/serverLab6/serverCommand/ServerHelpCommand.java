@@ -2,8 +2,8 @@ package ru.askar.serverLab6.serverCommand;
 
 import java.util.ArrayList;
 import java.util.List;
+import ru.askar.common.Command;
 import ru.askar.common.cli.CommandExecutor;
-import ru.askar.common.object.Command;
 import ru.askar.serverLab6.connection.ServerHandler;
 
 public class ServerHelpCommand extends ServerCommand {

@@ -2,12 +2,12 @@ package ru.askar.serverLab6;
 
 import java.io.*;
 import java.util.ArrayList;
-import ru.askar.common.CommandAsList;
 import ru.askar.common.cli.CommandExecutor;
 import ru.askar.common.cli.CommandParser;
 import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.cli.output.Stdout;
+import ru.askar.common.dto.CommandAsList;
 import ru.askar.serverLab6.collection.CollectionManager;
 import ru.askar.serverLab6.collection.DataReader;
 import ru.askar.serverLab6.collection.JsonReader;

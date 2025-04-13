@@ -8,9 +8,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import ru.askar.common.exception.*;
-import ru.askar.common.object.Event;
-import ru.askar.common.object.Ticket;
 import ru.askar.serverLab6.collection.CollectionManager;
+import ru.askar.serverLab6.model.Event;
+import ru.askar.serverLab6.model.Ticket;
 
 public class PrintFieldAscendingEventCommand extends CollectionCommand {
     private final CollectionManager collectionManager;

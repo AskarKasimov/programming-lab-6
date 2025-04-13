@@ -11,10 +11,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import ru.askar.common.CommandAsList;
-import ru.askar.common.CommandToExecute;
 import ru.askar.common.cli.CommandExecutor;
+import ru.askar.common.dto.CommandAsList;
+import ru.askar.common.dto.TransferredCommand;
 import ru.askar.serverLab6.collectionCommand.CollectionCommand;
+import ru.askar.serverLab6.model.Ticket;
 
 public class TcpServerHandler implements ServerHandler {
     private final CommandExecutor<CollectionCommand> collectionCommandExecutor;
@@ -111,13 +112,13 @@ public class TcpServerHandler implements ServerHandler {
                 key.attach(ByteBuffer.allocate(size)); // Новый буфер для данных
             } else {
                 Object dto = deserialize(buf);
-                if (dto instanceof CommandToExecute command) {
+                if (dto instanceof TransferredCommand command) {
                     // execute
                     try {
                         System.out.println("Получена команда " + command);
                         CollectionCommand collectionCommand =
                                 collectionCommandExecutor.getCommand(command.name());
-                        collectionCommand.setObject(command.object());
+                        collectionCommand.setObject((Ticket) command.object());
                         collectionCommand.execute(command.args());
                     } catch (Exception e) {
                         System.out.println(

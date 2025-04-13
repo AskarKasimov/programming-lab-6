@@ -1,9 +1,9 @@
 package ru.askar.serverLab6.collectionCommand;
 
 import java.io.IOException;
+import ru.askar.common.Command;
 import ru.askar.common.exception.*;
-import ru.askar.common.object.Command;
-import ru.askar.common.object.Ticket;
+import ru.askar.serverLab6.model.Ticket;
 
 public abstract class CollectionCommand extends Command {
     protected final boolean needObject;

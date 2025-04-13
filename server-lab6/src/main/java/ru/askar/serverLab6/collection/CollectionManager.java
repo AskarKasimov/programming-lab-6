@@ -9,8 +9,8 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 import ru.askar.common.exception.InvalidCollectionFileException;
 import ru.askar.common.exception.InvalidInputFieldException;
-import ru.askar.common.object.Event;
-import ru.askar.common.object.Ticket;
+import ru.askar.serverLab6.model.Event;
+import ru.askar.serverLab6.model.Ticket;
 
 /** Manager для коллекции билетов. */
 public class CollectionManager {

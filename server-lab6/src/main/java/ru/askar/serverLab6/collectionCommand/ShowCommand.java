@@ -6,8 +6,8 @@ import com.github.freva.asciitable.HorizontalAlign;
 import java.io.IOException;
 import java.util.Arrays;
 import ru.askar.common.exception.*;
-import ru.askar.common.object.Ticket;
 import ru.askar.serverLab6.collection.CollectionManager;
+import ru.askar.serverLab6.model.Ticket;
 
 public class ShowCommand extends CollectionCommand {
     private final CollectionManager collectionManager;

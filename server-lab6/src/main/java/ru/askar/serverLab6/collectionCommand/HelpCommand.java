@@ -3,9 +3,9 @@ package ru.askar.serverLab6.collectionCommand;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import ru.askar.common.Command;
 import ru.askar.common.cli.CommandExecutor;
 import ru.askar.common.exception.*;
-import ru.askar.common.object.Command;
 
 public class HelpCommand extends CollectionCommand {
     private final CommandExecutor<CollectionCommand> executor;

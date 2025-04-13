@@ -8,9 +8,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import ru.askar.common.exception.*;
-import ru.askar.common.object.Ticket;
-import ru.askar.common.object.TicketType;
 import ru.askar.serverLab6.collection.CollectionManager;
+import ru.askar.serverLab6.model.Ticket;
+import ru.askar.serverLab6.model.TicketType;
 
 public class PrintFieldDescendingTypeCommand extends CollectionCommand {
     private final CollectionManager collectionManager;

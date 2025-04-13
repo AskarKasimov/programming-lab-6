@@ -2,9 +2,9 @@ package ru.askar.clientLab6.clientCommand;
 
 import java.io.IOException;
 import ru.askar.clientLab6.connection.ClientHandler;
-import ru.askar.common.CommandAsList;
-import ru.askar.common.CommandToExecute;
 import ru.askar.common.cli.input.InputReader;
+import ru.askar.common.dto.CommandAsList;
+import ru.askar.common.dto.TransferredCommand;
 import ru.askar.common.exception.InvalidInputFieldException;
 import ru.askar.common.exception.UserRejectedToFillFieldsException;
 import ru.askar.common.object.Ticket;
@@ -51,13 +51,13 @@ public class ClientGenericCommand extends ClientCommand {
                     Ticket.createTicket(
                             outputWriter, inputReader, id, name, price, null, scriptMode);
             try {
-                clientHandler.sendMessage(new CommandToExecute(this.name, args, ticket));
+                clientHandler.sendMessage(new TransferredCommand(this.name, args, ticket));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         } else {
             try {
-                clientHandler.sendMessage(new CommandToExecute(name, args, null));
+                clientHandler.sendMessage(new TransferredCommand(name, args, null));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

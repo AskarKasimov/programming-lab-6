@@ -1,4 +1,4 @@
-package ru.askar.common.object;
+package ru.askar.serverLab6.model;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -7,11 +7,12 @@ import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.UserRejectedToFillFieldsException;
 
-public enum TicketType implements Serializable {
-    VIP,
-    USUAL,
-    BUDGETARY,
-    CHEAP;
+public enum EventType implements Serializable {
+    E_SPORTS,
+    FOOTBALL,
+    BASKETBALL,
+    OPERA,
+    EXPOSITION;
 
     /** Получить доступные типы в строковом представлении */
     public static String getStringValues() {
@@ -24,19 +25,19 @@ public enum TicketType implements Serializable {
      *
      * @param outputWriter - способ печати ответа
      * @param inputReader - способ считывания входных данных
-     * @return требуемый TicketType
+     * @return требуемый EventType
      */
-    public static TicketType createTicketType(
+    public static EventType createEventType(
             OutputWriter outputWriter, InputReader inputReader, boolean scriptMode)
             throws UserRejectedToFillFieldsException {
-        outputWriter.write("Выберите тип билета (" + getStringValues() + "): ");
-        TicketType ticketType;
+        outputWriter.write("Выберите тип события (" + getStringValues() + "): ");
+        EventType eventType;
         try {
             String value = inputReader.getInputString();
             if (value == null) {
                 throw new IllegalArgumentException();
             }
-            ticketType = valueOf(value);
+            eventType = valueOf(value);
         } catch (IllegalArgumentException e) {
             if (scriptMode) {
                 throw new UserRejectedToFillFieldsException();
@@ -47,8 +48,8 @@ public enum TicketType implements Serializable {
             if (answer != null && !answer.equalsIgnoreCase("y")) {
                 throw new UserRejectedToFillFieldsException();
             }
-            return createTicketType(outputWriter, inputReader, scriptMode);
+            return createEventType(outputWriter, inputReader, scriptMode);
         }
-        return ticketType;
+        return eventType;
     }
 }

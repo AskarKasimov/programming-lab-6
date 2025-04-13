@@ -1,4 +1,4 @@
-package ru.askar.common;
+package ru.askar.common.dto;
 
 import java.io.Serializable;
 

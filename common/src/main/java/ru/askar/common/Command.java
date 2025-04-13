@@ -1,4 +1,4 @@
-package ru.askar.common.object;
+package ru.askar.common;
 
 import java.io.IOException;
 import java.io.Serializable;
