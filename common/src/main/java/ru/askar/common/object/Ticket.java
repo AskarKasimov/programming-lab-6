@@ -78,7 +78,10 @@ public class Ticket implements Comparable<Ticket>, Serializable {
     private void requestEvent(
             OutputWriter outputWriter, InputReader inputReader, Integer eventId, boolean scriptMode)
             throws InvalidInputFieldException, UserRejectedToFillFieldsException {
-        outputWriter.writeOnWarning("Хотите ввести событие? (y/n): ");
+        outputWriter.write(
+                OutputWriter.ANSI_YELLOW
+                        + "Хотите ввести событие? (y/n): "
+                        + OutputWriter.ANSI_RESET);
         String answer = inputReader.getInputString();
         if (answer != null && answer.equalsIgnoreCase("y")) {
             this.setEvent(Event.createEvent(outputWriter, inputReader, eventId, scriptMode));

@@ -1,16 +1,18 @@
 package ru.askar.clientLab6.clientCommand;
 
 import ru.askar.clientLab6.connection.ClientHandler;
+import ru.askar.common.cli.output.OutputWriter;
 
 public class ClientStartCommand extends ClientCommand {
     /** Заполнение имени и количества требуемых аргументов */
-    public ClientStartCommand(ClientHandler clientHandler) {
+    public ClientStartCommand(ClientHandler clientHandler, OutputWriter outputWriter) {
         super(
                 "start",
                 2,
                 "start host port - запуск клиента на указанный хост и порт",
                 null,
-                clientHandler);
+                clientHandler,
+                outputWriter);
     }
 
     @Override

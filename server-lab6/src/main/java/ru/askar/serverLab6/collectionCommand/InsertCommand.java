@@ -1,5 +1,6 @@
 package ru.askar.serverLab6.collectionCommand;
 
+import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.InvalidInputFieldException;
 import ru.askar.common.exception.UserRejectedToFillFieldsException;
 import ru.askar.common.object.Ticket;
@@ -8,8 +9,13 @@ import ru.askar.serverLab6.collection.CollectionManager;
 public class InsertCommand extends CollectionCommand {
     private final CollectionManager collectionManager;
 
-    public InsertCommand(CollectionManager collectionManager) {
-        super("insert", 3, "insert id?null name price - добавить новый элемент", true);
+    public InsertCommand(CollectionManager collectionManager, OutputWriter outputWriter) {
+        super(
+                "insert",
+                3,
+                "insert id?null name price - добавить новый элемент",
+                outputWriter,
+                true);
         this.collectionManager = collectionManager;
     }
 
@@ -27,9 +33,11 @@ public class InsertCommand extends CollectionCommand {
         Long id;
         if (args[0].equals("null")) {
             id = collectionManager.generateNextTicketId();
-            outputWriter.writeOnWarning(
-                    "id не был указан, поэтому он был сгенерирован автоматически (минимальный из отсутствующих): "
-                            + id);
+            outputWriter.write(
+                    OutputWriter.ANSI_YELLOW
+                            + "id не был указан, поэтому он был сгенерирован автоматически (минимальный из отсутствующих): "
+                            + id
+                            + OutputWriter.ANSI_RESET);
         } else {
             id = Long.parseLong(args[0]);
             if (collectionManager.getCollection().containsKey(id)) {
@@ -47,6 +55,7 @@ public class InsertCommand extends CollectionCommand {
                         collectionManager.generateNextEventId(),
                         scriptMode);
         collectionManager.getCollection().put(ticket.getId(), ticket);
-        outputWriter.writeOnSuccess("Элемент добавлен в коллекцию");
+        outputWriter.write(
+                OutputWriter.ANSI_GREEN + "Элемент добавлен в коллекцию" + OutputWriter.ANSI_RESET);
     }
 }

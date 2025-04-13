@@ -7,23 +7,5 @@ public interface OutputWriter {
     String ANSI_YELLOW = "\u001B[33m";
     String ANSI_RESET = "\u001B[0m";
 
-    void write(String message);
-
-    void writeln(String message);
-
-    /**
-     * Печать успешного результата
-     *
-     * @param message - сообщение
-     */
-    void writeOnSuccess(String message);
-
-    /**
-     * Печать ошибки
-     *
-     * @param message - сообщение
-     */
-    void writeOnFail(String message);
-
-    void writeOnWarning(String message);
+    void write(Object message);
 }

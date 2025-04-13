@@ -42,8 +42,11 @@ public enum EventType implements Serializable {
             if (scriptMode) {
                 throw new UserRejectedToFillFieldsException();
             }
-            outputWriter.writeOnFail("Такого типа нет");
-            outputWriter.writeOnWarning("Хотите попробовать еще раз? (y/n): ");
+            outputWriter.write(OutputWriter.ANSI_RED + "Такого типа нет" + OutputWriter.ANSI_RESET);
+            outputWriter.write(
+                    OutputWriter.ANSI_YELLOW
+                            + "Хотите попробовать еще раз? (y/n): "
+                            + OutputWriter.ANSI_RESET);
             String answer = inputReader.getInputString();
             if (answer != null && !answer.equalsIgnoreCase("y")) {
                 throw new UserRejectedToFillFieldsException();

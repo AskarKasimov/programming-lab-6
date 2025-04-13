@@ -115,9 +115,13 @@ public class TcpServerHandler implements ServerHandler {
                     // execute
                     try {
                         System.out.println("Получена команда " + command);
-                        collectionCommandExecutor
-                                .getCommand(command.name())
-                                .execute(command.args(), command.object());
+                        CollectionCommand calledCollectionCommand =
+                                collectionCommandExecutor.getCommand(command.name());
+                        if (calledCollectionCommand != null) {
+                            if (calledCollectionCommand.isNeedObject()) // если нужен объект, даём
+                            calledCollectionCommand.setTicket(command.object());
+                            calledCollectionCommand.execute(command.args());
+                        } else System.out.println("Команда не найдена");
                     } catch (Exception e) {
                         System.out.println(
                                 "Ошибка при выполнении полученной команды "

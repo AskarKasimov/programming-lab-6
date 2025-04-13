@@ -13,25 +13,32 @@ import ru.askar.serverLab6.collection.DataReader;
 import ru.askar.serverLab6.collection.JsonReader;
 import ru.askar.serverLab6.collectionCommand.*;
 import ru.askar.serverLab6.connection.ServerHandler;
+import ru.askar.serverLab6.connection.ServerOutputWriter;
 import ru.askar.serverLab6.connection.TcpServerHandler;
 import ru.askar.serverLab6.serverCommand.*;
 
 public class Main {
 
     public static void main(String[] args) {
-        OutputWriter outputWriter = new Stdout();
         String filePath = System.getenv("COLLECTION_PATH");
         if (filePath == null) {
-            outputWriter.writeOnFail("Переменная окружения COLLECTION_PATH не установлена");
+            System.out.println(
+                    OutputWriter.ANSI_RED
+                            + "Переменная окружения COLLECTION_PATH не установлена"
+                            + OutputWriter.ANSI_RESET);
             return;
         }
-        outputWriter.writeOnSuccess("Файл: " + filePath);
+        System.out.println(OutputWriter.ANSI_GREEN + "Файл: " + filePath + OutputWriter.ANSI_RESET);
 
         BufferedInputStream bufferedInputStream = null;
         try {
             bufferedInputStream = new BufferedInputStream(new FileInputStream(filePath));
         } catch (FileNotFoundException | SecurityException e) {
-            outputWriter.writeOnFail("Файл не удаётся прочитать: " + e.getMessage());
+            System.out.println(
+                    OutputWriter.ANSI_RED
+                            + "Файл не удаётся прочитать: "
+                            + e.getMessage()
+                            + OutputWriter.ANSI_RESET);
         }
 
         DataReader dataReader = new JsonReader(filePath, bufferedInputStream);
@@ -43,12 +50,16 @@ public class Main {
         try {
             collectionManager = new CollectionManager(dataReader);
         } catch (Exception e) {
-            outputWriter.writeOnFail(e.getMessage());
+            System.out.println(OutputWriter.ANSI_RED + e.getMessage() + OutputWriter.ANSI_RESET);
         } finally {
             try {
                 if (bufferedInputStream != null) bufferedInputStream.close();
             } catch (IOException e) {
-                outputWriter.writeOnFail("Ошибка при закрытии файла: " + e.getMessage());
+                System.out.println(
+                        OutputWriter.ANSI_RED
+                                + "Ошибка при закрытии файла: "
+                                + e.getMessage()
+                                + OutputWriter.ANSI_RESET);
             }
         }
         if (collectionManager == null) {
@@ -59,32 +70,35 @@ public class Main {
             }
         }
         if (collectionManager.getCollection().isEmpty()) {
-            outputWriter.writeOnWarning("Коллекция пуста");
+            System.out.println(
+                    OutputWriter.ANSI_YELLOW + "Коллекция пуста" + OutputWriter.ANSI_RESET);
         }
-        CommandExecutor<CollectionCommand> collectionCommandExecutor =
-                new CommandExecutor<>(outputWriter);
-        collectionCommandExecutor.register(new HelpCommand(collectionCommandExecutor));
-        collectionCommandExecutor.register(new InfoCommand(collectionManager));
-        collectionCommandExecutor.register(new ShowCommand(collectionManager));
-        collectionCommandExecutor.register(new InsertCommand(collectionManager));
-        collectionCommandExecutor.register(new UpdateCommand(collectionManager));
-        collectionCommandExecutor.register(new RemoveByKeyCommand(collectionManager));
-        collectionCommandExecutor.register(new ClearCommand(collectionManager));
-        collectionCommandExecutor.register(new ExitCommand());
-        collectionCommandExecutor.register(new RemoveLowerCommand(collectionManager));
-        collectionCommandExecutor.register(new ReplaceIfGreaterCommand(collectionManager));
-        collectionCommandExecutor.register(new RemoveGreaterKeyCommand(collectionManager));
-        collectionCommandExecutor.register(new FilterStartsWithNameCommand(collectionManager));
-        collectionCommandExecutor.register(new PrintFieldAscendingEventCommand(collectionManager));
-        collectionCommandExecutor.register(new PrintFieldDescendingTypeCommand(collectionManager));
-
-        CommandExecutor<ServerCommand> serverCommandExecutor = new CommandExecutor<>(outputWriter);
-        CommandParser commandParser = new CommandParser();
-
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-        InputReader inputReader =
-                new InputReader(serverCommandExecutor, commandParser, bufferedReader);
         ArrayList<CommandAsList> commandList = new ArrayList<>();
+        CommandExecutor<CollectionCommand> collectionCommandExecutor = new CommandExecutor<>();
+
+        ServerHandler serverHandler = new TcpServerHandler(collectionCommandExecutor, commandList);
+        OutputWriter outputWriter = new ServerOutputWriter(serverHandler);
+        collectionCommandExecutor.setOutputWriter(outputWriter);
+        collectionCommandExecutor.register(
+                new HelpCommand(collectionCommandExecutor, outputWriter));
+        collectionCommandExecutor.register(new InfoCommand(collectionManager, outputWriter));
+        collectionCommandExecutor.register(new ShowCommand(collectionManager, outputWriter));
+        collectionCommandExecutor.register(new InsertCommand(collectionManager, outputWriter));
+        collectionCommandExecutor.register(new UpdateCommand(collectionManager, outputWriter));
+        collectionCommandExecutor.register(new RemoveByKeyCommand(collectionManager, outputWriter));
+        collectionCommandExecutor.register(new ClearCommand(collectionManager, outputWriter));
+        collectionCommandExecutor.register(new ExitCommand(outputWriter));
+        collectionCommandExecutor.register(new RemoveLowerCommand(collectionManager, outputWriter));
+        collectionCommandExecutor.register(
+                new ReplaceIfGreaterCommand(collectionManager, outputWriter));
+        collectionCommandExecutor.register(
+                new RemoveGreaterKeyCommand(collectionManager, outputWriter));
+        collectionCommandExecutor.register(
+                new FilterStartsWithNameCommand(collectionManager, outputWriter));
+        collectionCommandExecutor.register(
+                new PrintFieldAscendingEventCommand(collectionManager, outputWriter));
+        collectionCommandExecutor.register(
+                new PrintFieldDescendingTypeCommand(collectionManager, outputWriter));
         collectionCommandExecutor
                 .getAllCommands()
                 .forEach(
@@ -93,16 +107,24 @@ public class Main {
                                     new CommandAsList(
                                             command.getName(),
                                             command.getArgsCount(),
-                                            command.getInfo(),
                                             command.isNeedObject()));
                         });
-        ServerHandler serverHandler = new TcpServerHandler(collectionCommandExecutor, commandList);
 
-        serverCommandExecutor.register(new ServerStartCommand(serverHandler));
-        serverCommandExecutor.register(new ServerStatusCommand(serverHandler));
-        serverCommandExecutor.register(new ServerStopCommand(serverHandler));
-        serverCommandExecutor.register(new ServerHelpCommand(serverHandler, serverCommandExecutor));
-        serverCommandExecutor.register(new ServerExitCommand(serverHandler));
+        CommandExecutor<ServerCommand> serverCommandExecutor = new CommandExecutor<>();
+        OutputWriter stdout = new Stdout();
+        serverCommandExecutor.setOutputWriter(stdout);
+        CommandParser commandParser = new CommandParser();
+
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        InputReader inputReader =
+                new InputReader(serverCommandExecutor, commandParser, bufferedReader);
+
+        serverCommandExecutor.register(new ServerStartCommand(serverHandler, stdout));
+        serverCommandExecutor.register(new ServerStatusCommand(serverHandler, stdout));
+        serverCommandExecutor.register(new ServerStopCommand(serverHandler, stdout));
+        serverCommandExecutor.register(
+                new ServerHelpCommand(serverHandler, serverCommandExecutor, stdout));
+        serverCommandExecutor.register(new ServerExitCommand(serverHandler, stdout));
 
         try {
             inputReader.process();

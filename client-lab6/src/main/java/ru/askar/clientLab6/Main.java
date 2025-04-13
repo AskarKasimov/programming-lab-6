@@ -18,7 +18,8 @@ public class Main {
     public static void main(String[] args) {
         OutputWriter outputWriter = new Stdout();
 
-        CommandExecutor<ClientCommand> clientCommandExecutor = new CommandExecutor<>(outputWriter);
+        CommandExecutor<ClientCommand> clientCommandExecutor = new CommandExecutor<>();
+        clientCommandExecutor.setOutputWriter(outputWriter);
         CommandParser commandParser = new CommandParser();
 
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
@@ -27,8 +28,8 @@ public class Main {
 
         ClientHandler clientHandler = new TcpClientHandler(inputReader, clientCommandExecutor);
 
-        clientCommandExecutor.register(new ClientStartCommand(clientHandler));
-        clientCommandExecutor.register(new ClientScriptCommand(clientHandler));
+        clientCommandExecutor.register(new ClientStartCommand(clientHandler, outputWriter));
+        clientCommandExecutor.register(new ClientScriptCommand(clientHandler, outputWriter));
 
         try {
             inputReader.process();

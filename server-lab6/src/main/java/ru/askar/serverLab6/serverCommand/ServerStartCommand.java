@@ -1,11 +1,17 @@
 package ru.askar.serverLab6.serverCommand;
 
+import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.serverLab6.connection.ServerHandler;
 
 public class ServerStartCommand extends ServerCommand {
     /** Заполнение имени и количества требуемых аргументов */
-    public ServerStartCommand(ServerHandler serverHandler) {
-        super("start", 1, "start port - запуск сервера на указанном порту", serverHandler);
+    public ServerStartCommand(ServerHandler serverHandler, OutputWriter outputWriter) {
+        super(
+                "start",
+                1,
+                "start port - запуск сервера на указанном порту",
+                serverHandler,
+                outputWriter);
     }
 
     @Override

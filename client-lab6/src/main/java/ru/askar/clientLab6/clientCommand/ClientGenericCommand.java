@@ -6,6 +6,7 @@ import ru.askar.clientLab6.connection.ClientHandler;
 import ru.askar.common.CommandAsList;
 import ru.askar.common.CommandToExecute;
 import ru.askar.common.cli.input.InputReader;
+import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.InvalidInputFieldException;
 import ru.askar.common.object.Coordinates;
 import ru.askar.common.object.Ticket;
@@ -21,8 +22,11 @@ public class ClientGenericCommand extends ClientCommand {
      * @param inputReader
      */
     public ClientGenericCommand(
-            InputReader inputReader, CommandAsList rowCommand, ClientHandler clientHandler) {
-        super(rowCommand.name(), rowCommand.args(), rowCommand.info(), inputReader, clientHandler);
+            InputReader inputReader,
+            CommandAsList rowCommand,
+            ClientHandler clientHandler,
+            OutputWriter outputWriter) {
+        super(rowCommand.name(), rowCommand.args(), "", inputReader, clientHandler, outputWriter);
         this.clientHandler = clientHandler;
         this.needObject = rowCommand.needObject();
     }

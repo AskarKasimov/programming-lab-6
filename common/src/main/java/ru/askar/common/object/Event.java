@@ -44,7 +44,7 @@ public class Event implements Comparable<Event>, Serializable {
             OutputWriter outputWriter, InputReader inputReader, Integer id, boolean scriptMode)
             throws UserRejectedToFillFieldsException, InvalidInputFieldException {
         Event event = new Event(id);
-        outputWriter.writeOnSuccess("Ввод события");
+        outputWriter.write(OutputWriter.ANSI_GREEN + "Ввод события" + OutputWriter.ANSI_RESET);
         event.requestName(outputWriter, inputReader, scriptMode);
         event.requestDescription(outputWriter, inputReader, scriptMode);
         event.requestEventType(outputWriter, inputReader, scriptMode);
@@ -64,8 +64,12 @@ public class Event implements Comparable<Event>, Serializable {
                 if (scriptMode) {
                     throw new UserRejectedToFillFieldsException();
                 }
-                outputWriter.writeOnFail(e.getMessage());
-                outputWriter.writeOnWarning("Хотите попробовать еще раз? (y/n): ");
+                outputWriter.write(
+                        OutputWriter.ANSI_RED + e.getMessage() + OutputWriter.ANSI_RESET);
+                outputWriter.write(
+                        OutputWriter.ANSI_YELLOW
+                                + "Хотите попробовать еще раз? (y/n): "
+                                + OutputWriter.ANSI_RESET);
                 String answer = inputReader.getInputString();
                 if (answer != null && !answer.equalsIgnoreCase("y")) {
                     throw new UserRejectedToFillFieldsException();
@@ -88,8 +92,12 @@ public class Event implements Comparable<Event>, Serializable {
                 if (scriptMode) {
                     throw new UserRejectedToFillFieldsException();
                 }
-                outputWriter.writeOnFail(e.getMessage());
-                outputWriter.writeOnWarning("Хотите попробовать еще раз? (y/n): ");
+                outputWriter.write(
+                        OutputWriter.ANSI_RED + e.getMessage() + OutputWriter.ANSI_RESET);
+                outputWriter.write(
+                        OutputWriter.ANSI_YELLOW
+                                + "Хотите попробовать еще раз? (y/n): "
+                                + OutputWriter.ANSI_RESET);
                 String answer = inputReader.getInputString();
                 if (answer != null && !answer.equalsIgnoreCase("y")) {
                     throw new UserRejectedToFillFieldsException();
@@ -101,7 +109,10 @@ public class Event implements Comparable<Event>, Serializable {
     private void requestEventType(
             OutputWriter outputWriter, InputReader inputReader, boolean scriptMode)
             throws UserRejectedToFillFieldsException {
-        outputWriter.writeOnWarning("Хотите ввести тип события? (y/n): ");
+        outputWriter.write(
+                OutputWriter.ANSI_YELLOW
+                        + "Хотите ввести тип события? (y/n): "
+                        + OutputWriter.ANSI_RESET);
         String answer = inputReader.getInputString();
         if (answer != null && answer.equalsIgnoreCase("y")) {
             setEventType(EventType.createEventType(outputWriter, inputReader, scriptMode));

@@ -5,17 +5,20 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import java.util.Arrays;
 import java.util.List;
+import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.object.Ticket;
 import ru.askar.serverLab6.collection.CollectionManager;
 
 public class FilterStartsWithNameCommand extends CollectionCommand {
     private final CollectionManager collectionManager;
 
-    public FilterStartsWithNameCommand(CollectionManager collectionManager) {
+    public FilterStartsWithNameCommand(
+            CollectionManager collectionManager, OutputWriter outputWriter) {
         super(
                 "filter_starts_with_name",
                 1,
                 "filter_starts_with_name name - вывести элементы, значение поля name которых начинается с заданной подстроки",
+                outputWriter,
                 false);
         this.collectionManager = collectionManager;
     }
@@ -26,7 +29,7 @@ public class FilterStartsWithNameCommand extends CollectionCommand {
                 collectionManager.getCollection().values().stream()
                         .filter(t -> t.getName().startsWith(args[0]))
                         .toList();
-        outputWriter.writeln(
+        outputWriter.write(
                 AsciiTable.getTable(
                         ticketList,
                         Arrays.asList(

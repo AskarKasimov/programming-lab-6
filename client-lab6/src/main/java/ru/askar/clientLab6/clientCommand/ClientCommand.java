@@ -2,6 +2,7 @@ package ru.askar.clientLab6.clientCommand;
 
 import ru.askar.clientLab6.connection.ClientHandler;
 import ru.askar.common.cli.input.InputReader;
+import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.object.Command;
 
 public abstract class ClientCommand extends Command {
@@ -18,8 +19,9 @@ public abstract class ClientCommand extends Command {
             int argsCount,
             String info,
             InputReader inputReader,
-            ClientHandler clientHandler) {
-        super(name, argsCount, info, inputReader);
+            ClientHandler clientHandler,
+            OutputWriter outputWriter) {
+        super(name, argsCount, info, inputReader, outputWriter);
         this.clientHandler = clientHandler;
     }
 }

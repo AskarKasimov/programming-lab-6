@@ -1,20 +1,17 @@
 package ru.askar.clientLab6.clientCommand;
 
 import ru.askar.clientLab6.connection.ClientHandler;
+import ru.askar.common.cli.output.OutputWriter;
 
 public class ClientScriptCommand extends ClientCommand {
-    /**
-     * Заполнение имени и количества требуемых аргументов
-     *
-     * @param clientHandler
-     */
-    public ClientScriptCommand(ClientHandler clientHandler) {
+    public ClientScriptCommand(ClientHandler clientHandler, OutputWriter outputWriter) {
         super(
                 "execute_script",
                 1,
                 "execute_script filename - считать и исполнить скрипт из указанного файла",
                 null,
-                clientHandler);
+                clientHandler,
+                outputWriter);
     }
 
     @Override

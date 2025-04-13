@@ -8,27 +8,24 @@ import ru.askar.common.object.Command;
 
 /** Класс для аккумулирования команд и предоставления к ним доступа. */
 public class CommandExecutor<T extends Command> {
-    private final OutputWriter outputWriter;
+    private OutputWriter outputWriter;
     private final LinkedHashMap<String, T> commands = new LinkedHashMap<>();
     private boolean scriptMode;
 
-    /**
-     * Создание реестра команд с регистрацией способа вывода.
-     *
-     * @param outputWriter - куда выводятся ответы CLI.
-     */
-    public CommandExecutor(OutputWriter outputWriter) {
-        this.outputWriter = outputWriter;
+    public CommandExecutor() {
         this.scriptMode = false;
     }
 
-    public CommandExecutor(OutputWriter outputWriter, boolean scriptMode) {
-        this(outputWriter);
+    public CommandExecutor(boolean scriptMode) {
         this.scriptMode = scriptMode;
     }
 
     public void setOutputWriterToCommands(OutputWriter outputWriter) {
         commands.forEach((name, command) -> command.setOutputWriter(outputWriter));
+    }
+
+    public void setOutputWriter(OutputWriter outputWriter) {
+        this.outputWriter = outputWriter;
     }
 
     public OutputWriter getOutputWriter() {
@@ -44,6 +41,11 @@ public class CommandExecutor<T extends Command> {
         command.setOutputWriter(this.outputWriter);
         command.setScriptMode(this.scriptMode);
         commands.put(command.getName(), command);
+    }
+
+    public void changeScriptMode(boolean scriptMode) {
+        this.scriptMode = scriptMode;
+        commands.forEach((name, command) -> command.setScriptMode(scriptMode));
     }
 
     public void clearCommands() {

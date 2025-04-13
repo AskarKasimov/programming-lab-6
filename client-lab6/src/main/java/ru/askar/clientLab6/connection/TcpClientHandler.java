@@ -115,11 +115,16 @@ public class TcpClientHandler implements ClientHandler {
                     commandExecutor.clearCommands();
                     for (CommandAsList commandAsList : commandsAsList) {
                         commandExecutor.register(
-                                new ClientGenericCommand(inputReader, commandAsList, this));
+                                new ClientGenericCommand(
+                                        inputReader,
+                                        commandAsList,
+                                        this,
+                                        commandExecutor.getOutputWriter()));
                     }
                     System.out.println("Клиент получил команды от сервера: " + commandsAsList);
                     System.out.println(commandExecutor.getAllCommands());
                 } else {
+                    System.out.println(dto.toString());
                     System.out.println("Клиент не смог обработать ответ сервера");
                 }
                 key.attach(null); // Сброс состояния

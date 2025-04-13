@@ -21,11 +21,17 @@ public abstract class Command implements Serializable {
      * @param name
      * @param argsCount
      */
-    public Command(String name, int argsCount, String info, InputReader inputReader) {
+    public Command(
+            String name,
+            int argsCount,
+            String info,
+            InputReader inputReader,
+            OutputWriter outputWriter) {
         this.name = name;
         this.argsCount = argsCount;
         this.info = info;
         this.inputReader = inputReader;
+        this.outputWriter = outputWriter;
     }
 
     public void setInputReader(InputReader inputReader) {

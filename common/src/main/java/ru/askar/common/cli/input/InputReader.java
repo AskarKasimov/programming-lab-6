@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import ru.askar.common.cli.CommandExecutor;
 import ru.askar.common.cli.CommandParser;
 import ru.askar.common.cli.ParsedCommand;
+import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.*;
 import ru.askar.common.object.Coordinates;
 
@@ -108,20 +109,27 @@ public class InputReader {
                 try {
                     parsedCommand = commandParser.parse(line.split(" "));
                 } catch (InvalidCommandException e) {
-                    commandExecutor.getOutputWriter().writeOnFail(e.getMessage());
+                    commandExecutor
+                            .getOutputWriter()
+                            .write(
+                                    OutputWriter.ANSI_RED
+                                            + e.getMessage()
+                                            + OutputWriter.ANSI_RESET);
                     continue;
                 }
                 if (parsedCommand.args().length
                         != commandExecutor.getCommand(parsedCommand.name()).getArgsCount()) {
                     commandExecutor
                             .getOutputWriter()
-                            .writeOnFail(
-                                    "Неверное количество аргументов: для команды "
+                            .write(
+                                    OutputWriter.ANSI_RED
+                                            + "Неверное количество аргументов: для команды "
                                             + parsedCommand.name()
                                             + " требуется "
                                             + commandExecutor
                                                     .getCommand(parsedCommand.name())
-                                                    .getArgsCount());
+                                                    .getArgsCount()
+                                            + OutputWriter.ANSI_RESET);
                     continue;
                 }
                 commandExecutor.getCommand(parsedCommand.name()).execute(parsedCommand.args());
@@ -131,9 +139,16 @@ public class InputReader {
                     | NoSuchKeyException
                     | IllegalArgumentException
                     | InvalidInputFieldException e) {
-                commandExecutor.getOutputWriter().writeOnFail(e.getMessage());
+                commandExecutor
+                        .getOutputWriter()
+                        .write(OutputWriter.ANSI_RED + e.getMessage() + OutputWriter.ANSI_RESET);
             } catch (UserRejectedToFillFieldsException e) {
-                commandExecutor.getOutputWriter().writeOnWarning("Возврат в CLI");
+                commandExecutor
+                        .getOutputWriter()
+                        .write(
+                                OutputWriter.ANSI_YELLOW
+                                        + "Возврат в CLI"
+                                        + OutputWriter.ANSI_RESET);
             } catch (ExitCLIException e) {
                 break;
             }

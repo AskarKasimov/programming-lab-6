@@ -6,6 +6,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.object.Ticket;
 import ru.askar.common.object.TicketType;
 import ru.askar.serverLab6.collection.CollectionManager;
@@ -13,11 +14,13 @@ import ru.askar.serverLab6.collection.CollectionManager;
 public class PrintFieldDescendingTypeCommand extends CollectionCommand {
     private final CollectionManager collectionManager;
 
-    public PrintFieldDescendingTypeCommand(CollectionManager collectionManager) {
+    public PrintFieldDescendingTypeCommand(
+            CollectionManager collectionManager, OutputWriter outputWriter) {
         super(
                 "print_field_descending_type",
                 0,
                 "print_field_descending_type - вывести значения поля type всех элементов в порядке убывания",
+                outputWriter,
                 false);
         this.collectionManager = collectionManager;
     }
@@ -30,7 +33,7 @@ public class PrintFieldDescendingTypeCommand extends CollectionCommand {
                         .filter(Objects::nonNull)
                         .sorted()
                         .toList();
-        outputWriter.writeln(
+        outputWriter.write(
                 AsciiTable.getTable(
                         ticketTypes,
                         Collections.singletonList(
