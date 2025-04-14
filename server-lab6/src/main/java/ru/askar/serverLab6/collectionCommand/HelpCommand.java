@@ -19,6 +19,6 @@ public class HelpCommand extends CollectionCommand {
         StringBuilder builder = new StringBuilder();
         List<Command> commands = new ArrayList<>(executor.getAllCommands().values());
         commands.forEach(command -> builder.append(command.getInfo()).append("\n"));
-        return new CommandResponse(0, builder.toString());
+        return new CommandResponse(0, builder.substring(0, builder.toString().length() - 1));
     }
 }
