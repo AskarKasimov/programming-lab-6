@@ -1,14 +1,13 @@
 package ru.askar.serverLab6.collectionCommand;
 
 import ru.askar.common.CommandResponse;
-import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.serverLab6.collection.CollectionManager;
 
 public class ClearCommand extends CollectionCommand {
     private final CollectionManager collectionManager;
 
-    public ClearCommand(CollectionManager collectionManager, OutputWriter outputWriter) {
-        super("clear", 0, "clear - очистить коллекцию", outputWriter, false);
+    public ClearCommand(CollectionManager collectionManager) {
+        super("clear", 0, "clear - очистить коллекцию", false);
         this.collectionManager = collectionManager;
     }
 

@@ -124,7 +124,6 @@ public class TcpClientHandler implements ClientHandler {
                                         commandExecutor.getOutputWriter()));
                     }
                     System.out.println("Клиент получил команды от сервера: " + commandsAsList);
-                    System.out.println(commandExecutor.getAllCommands());
                 } else if (dto instanceof CommandResponse) {
                     if (((CommandResponse) dto).code() == 0) {
                         commandExecutor.getOutputWriter().write(((CommandResponse) dto).response());
@@ -202,7 +201,7 @@ public class TcpClientHandler implements ClientHandler {
     }
 
     @Override
-    public boolean getStatus() {
+    public boolean getRunning() {
         return running;
     }
 

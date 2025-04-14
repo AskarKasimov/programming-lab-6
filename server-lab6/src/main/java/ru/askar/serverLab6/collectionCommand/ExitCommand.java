@@ -1,16 +1,24 @@
 package ru.askar.serverLab6.collectionCommand;
 
+import java.io.IOException;
 import ru.askar.common.CommandResponse;
-import ru.askar.common.cli.output.OutputWriter;
-import ru.askar.common.exception.ExitCLIException;
+import ru.askar.serverLab6.connection.ServerHandler;
 
 public class ExitCommand extends CollectionCommand {
-    public ExitCommand(OutputWriter outputWriter) {
-        super("exit", 0, "exit - завершить программу (без сохранения в файл)", outputWriter, false);
+    private final ServerHandler serverHandler;
+
+    public ExitCommand(ServerHandler serverHandler) {
+        super("exit", 0, "exit - завершить программу (без сохранения в файл)", false);
+        this.serverHandler = serverHandler;
     }
 
     @Override
-    public CommandResponse execute(String[] args) throws ExitCLIException {
-        throw new ExitCLIException();
+    public CommandResponse execute(String[] args) {
+        try {
+            serverHandler.stop();
+        } catch (IOException e) {
+            return new CommandResponse(3, e.getMessage());
+        }
+        return new CommandResponse(0, "Завершение работы программы");
     }
 }

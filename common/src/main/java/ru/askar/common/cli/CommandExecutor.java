@@ -16,14 +16,6 @@ public class CommandExecutor<T extends Command> {
         this.scriptMode = false;
     }
 
-    public CommandExecutor(boolean scriptMode) {
-        this.scriptMode = scriptMode;
-    }
-
-    public void setOutputWriterToCommands(OutputWriter outputWriter) {
-        commands.forEach((name, command) -> command.setOutputWriter(outputWriter));
-    }
-
     public OutputWriter getOutputWriter() {
         return outputWriter;
     }
@@ -38,7 +30,6 @@ public class CommandExecutor<T extends Command> {
      * @param command - команда
      */
     public void register(T command) {
-        command.setOutputWriter(this.outputWriter);
         command.setScriptMode(this.scriptMode);
         commands.put(command.getName(), command);
     }

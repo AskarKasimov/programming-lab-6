@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import ru.askar.clientLab6.clientCommand.ClientCommand;
+import ru.askar.clientLab6.clientCommand.ClientExitCommand;
 import ru.askar.clientLab6.clientCommand.ClientScriptCommand;
 import ru.askar.clientLab6.clientCommand.ClientStartCommand;
 import ru.askar.clientLab6.connection.ClientHandler;
@@ -28,8 +29,9 @@ public class Main {
 
         ClientHandler clientHandler = new TcpClientHandler(inputReader, clientCommandExecutor);
 
-        clientCommandExecutor.register(new ClientStartCommand(clientHandler, outputWriter));
-        clientCommandExecutor.register(new ClientScriptCommand(clientHandler, outputWriter));
+        clientCommandExecutor.register(new ClientStartCommand(clientHandler));
+        clientCommandExecutor.register(new ClientScriptCommand(clientHandler));
+        clientCommandExecutor.register(new ClientExitCommand(clientHandler));
 
         try {
             inputReader.process();

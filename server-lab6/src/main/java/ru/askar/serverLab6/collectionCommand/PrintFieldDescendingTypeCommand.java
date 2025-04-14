@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import ru.askar.common.CommandResponse;
-import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.object.Ticket;
 import ru.askar.common.object.TicketType;
 import ru.askar.serverLab6.collection.CollectionManager;
@@ -15,13 +14,11 @@ import ru.askar.serverLab6.collection.CollectionManager;
 public class PrintFieldDescendingTypeCommand extends CollectionCommand {
     private final CollectionManager collectionManager;
 
-    public PrintFieldDescendingTypeCommand(
-            CollectionManager collectionManager, OutputWriter outputWriter) {
+    public PrintFieldDescendingTypeCommand(CollectionManager collectionManager) {
         super(
                 "print_field_descending_type",
                 0,
                 "print_field_descending_type - вывести значения поля type всех элементов в порядке убывания",
-                outputWriter,
                 false);
         this.collectionManager = collectionManager;
     }

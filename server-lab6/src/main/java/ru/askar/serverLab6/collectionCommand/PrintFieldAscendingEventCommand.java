@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import ru.askar.common.CommandResponse;
-import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.object.Event;
 import ru.askar.common.object.Ticket;
 import ru.askar.serverLab6.collection.CollectionManager;
@@ -15,13 +14,11 @@ import ru.askar.serverLab6.collection.CollectionManager;
 public class PrintFieldAscendingEventCommand extends CollectionCommand {
     private final CollectionManager collectionManager;
 
-    public PrintFieldAscendingEventCommand(
-            CollectionManager collectionManager, OutputWriter outputWriter) {
+    public PrintFieldAscendingEventCommand(CollectionManager collectionManager) {
         super(
                 "print_field_ascending_event",
                 0,
                 "print_field_ascending_event - вывести значения поля event всех элементов в порядке возрастания",
-                outputWriter,
                 false);
         this.collectionManager = collectionManager;
     }

@@ -1,6 +1,7 @@
 package ru.askar.serverLab6.collectionCommand;
 
 import ru.askar.common.CommandResponse;
+import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.InvalidInputFieldException;
 import ru.askar.common.exception.UserRejectedToFillFieldsException;
@@ -8,16 +9,18 @@ import ru.askar.common.object.Ticket;
 import ru.askar.serverLab6.collection.CollectionManager;
 
 public class InsertCommand extends CollectionCommand {
+    private final InputReader inputReader;
     private final CollectionManager collectionManager;
+    private final OutputWriter outputWriter;
 
-    public InsertCommand(CollectionManager collectionManager, OutputWriter outputWriter) {
-        super(
-                "insert",
-                3,
-                "insert id?null name price - добавить новый элемент",
-                outputWriter,
-                true);
+    public InsertCommand(
+            InputReader inputReader,
+            CollectionManager collectionManager,
+            OutputWriter outputWriter) {
+        super("insert", 3, "insert id?null name price - добавить новый элемент", true);
+        this.inputReader = inputReader;
         this.collectionManager = collectionManager;
+        this.outputWriter = outputWriter;
     }
 
     @Override

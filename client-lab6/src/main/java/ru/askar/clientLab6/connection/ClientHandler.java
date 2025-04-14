@@ -7,7 +7,7 @@ public interface ClientHandler {
 
     void stop() throws IOException;
 
-    boolean getStatus();
+    boolean getRunning();
 
     int getPort();
 

@@ -1,17 +1,11 @@
 package ru.askar.serverLab6.serverCommand;
 
 import ru.askar.common.CommandResponse;
-import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.serverLab6.connection.ServerHandler;
 
 public class ServerStatusCommand extends ServerCommand {
-    public ServerStatusCommand(ServerHandler serverHandler, OutputWriter outputWriter) {
-        super(
-                "status",
-                0,
-                "status - вывести информацию о состоянии сервера",
-                serverHandler,
-                outputWriter);
+    public ServerStatusCommand(ServerHandler serverHandler) {
+        super("status", 0, "status - вывести информацию о состоянии сервера", serverHandler);
     }
 
     @Override

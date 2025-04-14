@@ -9,7 +9,7 @@
         <version>1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>tcpClientHandler-lab6</artifactId>
+    <artifactId>client-lab6</artifactId>
 
     <build>
         <plugins>

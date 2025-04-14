@@ -45,7 +45,7 @@ public class TcpServerHandler implements ServerHandler {
         serverChannel.register(selector, SelectionKey.OP_ACCEPT);
         outputQueue.clear();
         running = true;
-        System.out.println("Сервер запущен на порту " + port);
+        //        System.out.println("Сервер запущен на порту " + port);
 
         new Thread(
                         () -> {
@@ -82,6 +82,7 @@ public class TcpServerHandler implements ServerHandler {
         SocketChannel clientChannel = ((ServerSocketChannel) key.channel()).accept();
         clientChannel.configureBlocking(false);
         clientChannel.register(selector, SelectionKey.OP_READ);
+        System.out.println(commandList.toString());
         sendMessage(commandList);
         System.out.println(
                 "Клиент подключен: "
@@ -119,8 +120,9 @@ public class TcpServerHandler implements ServerHandler {
                         CollectionCommand calledCollectionCommand =
                                 collectionCommandExecutor.getCommand(command.name());
                         if (calledCollectionCommand != null) {
-                            if (calledCollectionCommand.isNeedObject()) // если нужен объект, даём
-                            calledCollectionCommand.setTicket(command.object());
+                            if (calledCollectionCommand.isNeedObject())
+                                calledCollectionCommand.setObject(
+                                        command.object()); // если нужен объект, даём
                             CommandResponse commandResponse =
                                     calledCollectionCommand.execute(command.args());
                             sendMessage(commandResponse);

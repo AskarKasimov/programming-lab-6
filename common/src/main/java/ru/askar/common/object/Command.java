@@ -2,8 +2,6 @@ package ru.askar.common.object;
 
 import java.io.Serializable;
 import ru.askar.common.CommandResponse;
-import ru.askar.common.cli.input.InputReader;
-import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.ExitCLIException;
 
 /** Абстрактный класс для команд */
@@ -11,9 +9,7 @@ public abstract class Command implements Serializable {
     protected final int argsCount;
     protected final String name;
     protected final String info;
-    protected OutputWriter outputWriter;
     protected boolean scriptMode = false;
-    protected InputReader inputReader;
 
     /**
      * Заполнение имени и количества требуемых аргументов
@@ -21,21 +17,10 @@ public abstract class Command implements Serializable {
      * @param name
      * @param argsCount
      */
-    public Command(
-            String name,
-            int argsCount,
-            String info,
-            InputReader inputReader,
-            OutputWriter outputWriter) {
+    public Command(String name, int argsCount, String info) {
         this.name = name;
         this.argsCount = argsCount;
         this.info = info;
-        this.inputReader = inputReader;
-        this.outputWriter = outputWriter;
-    }
-
-    public void setInputReader(InputReader inputReader) {
-        this.inputReader = inputReader;
     }
 
     public void setScriptMode(boolean scriptMode) {
@@ -61,14 +46,5 @@ public abstract class Command implements Serializable {
 
     public int getArgsCount() {
         return argsCount;
-    }
-
-    /**
-     * Задать вывод результата исполнения команды
-     *
-     * @see OutputWriter
-     */
-    public void setOutputWriter(OutputWriter newOutputWriter) {
-        outputWriter = newOutputWriter;
     }
 }

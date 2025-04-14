@@ -4,14 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import ru.askar.common.CommandResponse;
 import ru.askar.common.cli.CommandExecutor;
-import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.object.Command;
 
 public class HelpCommand extends CollectionCommand {
     private final CommandExecutor<CollectionCommand> executor;
 
-    public HelpCommand(CommandExecutor<CollectionCommand> executor, OutputWriter outputWriter) {
-        super("help", 0, "help - вывести справку по доступным командам", outputWriter, false);
+    public HelpCommand(CommandExecutor<CollectionCommand> executor) {
+        super("help", 0, "help - вывести справку по доступным командам", false);
         this.executor = executor;
     }
 

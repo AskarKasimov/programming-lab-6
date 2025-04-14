@@ -79,26 +79,24 @@ public class Main {
         ServerHandler serverHandler = new TcpServerHandler(collectionCommandExecutor, commandList);
         OutputWriter outputWriter = new ServerOutputWriter(serverHandler);
         collectionCommandExecutor.setOutputWriter(outputWriter);
+        collectionCommandExecutor.register(new HelpCommand(collectionCommandExecutor));
+        collectionCommandExecutor.register(new InfoCommand(collectionManager));
+        collectionCommandExecutor.register(new ShowCommand(collectionManager));
         collectionCommandExecutor.register(
-                new HelpCommand(collectionCommandExecutor, outputWriter));
-        collectionCommandExecutor.register(new InfoCommand(collectionManager, outputWriter));
-        collectionCommandExecutor.register(new ShowCommand(collectionManager, outputWriter));
-        collectionCommandExecutor.register(new InsertCommand(collectionManager, outputWriter));
-        collectionCommandExecutor.register(new UpdateCommand(collectionManager, outputWriter));
-        collectionCommandExecutor.register(new RemoveByKeyCommand(collectionManager, outputWriter));
-        collectionCommandExecutor.register(new ClearCommand(collectionManager, outputWriter));
-        collectionCommandExecutor.register(new ExitCommand(outputWriter));
-        collectionCommandExecutor.register(new RemoveLowerCommand(collectionManager, outputWriter));
+                new InsertCommand(null, collectionManager, outputWriter));
         collectionCommandExecutor.register(
-                new ReplaceIfGreaterCommand(collectionManager, outputWriter));
+                new UpdateCommand(null, collectionManager, outputWriter));
+        collectionCommandExecutor.register(new RemoveByKeyCommand(collectionManager));
+        collectionCommandExecutor.register(new ClearCommand(collectionManager));
+        collectionCommandExecutor.register(new ExitCommand(serverHandler));
         collectionCommandExecutor.register(
-                new RemoveGreaterKeyCommand(collectionManager, outputWriter));
+                new RemoveLowerCommand(null, collectionManager, outputWriter));
         collectionCommandExecutor.register(
-                new FilterStartsWithNameCommand(collectionManager, outputWriter));
-        collectionCommandExecutor.register(
-                new PrintFieldAscendingEventCommand(collectionManager, outputWriter));
-        collectionCommandExecutor.register(
-                new PrintFieldDescendingTypeCommand(collectionManager, outputWriter));
+                new ReplaceIfGreaterCommand(null, collectionManager, outputWriter));
+        collectionCommandExecutor.register(new RemoveGreaterKeyCommand(collectionManager));
+        collectionCommandExecutor.register(new FilterStartsWithNameCommand(collectionManager));
+        collectionCommandExecutor.register(new PrintFieldAscendingEventCommand(collectionManager));
+        collectionCommandExecutor.register(new PrintFieldDescendingTypeCommand(collectionManager));
         collectionCommandExecutor
                 .getAllCommands()
                 .forEach(
@@ -119,12 +117,11 @@ public class Main {
         InputReader inputReader =
                 new InputReader(serverCommandExecutor, commandParser, bufferedReader);
 
-        serverCommandExecutor.register(new ServerStartCommand(serverHandler, stdout));
-        serverCommandExecutor.register(new ServerStatusCommand(serverHandler, stdout));
-        serverCommandExecutor.register(new ServerStopCommand(serverHandler, stdout));
-        serverCommandExecutor.register(
-                new ServerHelpCommand(serverHandler, serverCommandExecutor, stdout));
-        serverCommandExecutor.register(new ServerExitCommand(serverHandler, stdout));
+        serverCommandExecutor.register(new ServerStartCommand(serverHandler));
+        serverCommandExecutor.register(new ServerStatusCommand(serverHandler));
+        serverCommandExecutor.register(new ServerStopCommand(serverHandler));
+        serverCommandExecutor.register(new ServerHelpCommand(serverHandler, serverCommandExecutor));
+        serverCommandExecutor.register(new ServerExitCommand(serverHandler));
 
         try {
             inputReader.process();

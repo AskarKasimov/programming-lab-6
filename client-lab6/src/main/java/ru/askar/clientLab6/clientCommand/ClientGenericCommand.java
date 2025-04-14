@@ -12,6 +12,8 @@ import ru.askar.common.exception.UserRejectedToFillFieldsException;
 import ru.askar.common.object.Ticket;
 
 public class ClientGenericCommand extends ClientCommand {
+    private final InputReader inputReader;
+    private final OutputWriter outputWriter;
     private final ClientHandler clientHandler;
     private final boolean needObject;
 
@@ -25,9 +27,11 @@ public class ClientGenericCommand extends ClientCommand {
             CommandAsList rowCommand,
             ClientHandler clientHandler,
             OutputWriter outputWriter) {
-        super(rowCommand.name(), rowCommand.args(), "", inputReader, clientHandler, outputWriter);
+        super(rowCommand.name(), rowCommand.args(), "", clientHandler);
         this.clientHandler = clientHandler;
         this.needObject = rowCommand.needObject();
+        this.outputWriter = outputWriter;
+        this.inputReader = inputReader;
     }
 
     @Override
@@ -38,7 +42,7 @@ public class ClientGenericCommand extends ClientCommand {
             try {
                 price = Long.parseLong(args[2]);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("В поле price требуется число");
+                return new CommandResponse(3, "В поле price требуется число");
             }
 
             Long id;

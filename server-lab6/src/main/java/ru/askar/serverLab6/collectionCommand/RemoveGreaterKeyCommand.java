@@ -1,18 +1,16 @@
 package ru.askar.serverLab6.collectionCommand;
 
 import ru.askar.common.CommandResponse;
-import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.serverLab6.collection.CollectionManager;
 
 public class RemoveGreaterKeyCommand extends CollectionCommand {
     private final CollectionManager collectionManager;
 
-    public RemoveGreaterKeyCommand(CollectionManager collectionManager, OutputWriter outputWriter) {
+    public RemoveGreaterKeyCommand(CollectionManager collectionManager) {
         super(
                 "remove_greater_key",
                 1,
                 "remove_greater_key key - удалить элементы, ключ которых превышает заданный",
-                outputWriter,
                 false);
         this.collectionManager = collectionManager;
     }
