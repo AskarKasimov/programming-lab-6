@@ -1,8 +1,8 @@
 package ru.askar.clientLab6.clientCommand;
 
-import java.io.IOException;
 import ru.askar.clientLab6.connection.ClientHandler;
 import ru.askar.common.CommandResponse;
+import ru.askar.common.exception.ExitCLIException;
 
 public class ClientExitCommand extends ClientCommand {
     public ClientExitCommand(ClientHandler clientHandler) {
@@ -10,15 +10,7 @@ public class ClientExitCommand extends ClientCommand {
     }
 
     @Override
-    public CommandResponse execute(String[] args) {
-        if (!clientHandler.getRunning()) {
-            return new CommandResponse(3, "Клиент не подключен к серверу");
-        }
-        try {
-            clientHandler.stop();
-        } catch (IOException e) {
-            return new CommandResponse(3, e.getMessage());
-        }
-        return new CommandResponse(1, "Отключён от сервера");
+    public CommandResponse execute(String[] args) throws ExitCLIException {
+        throw new ExitCLIException();
     }
 }

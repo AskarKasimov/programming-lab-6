@@ -15,6 +15,7 @@ import ru.askar.common.CommandResponse;
 import ru.askar.common.CommandToExecute;
 import ru.askar.common.cli.CommandExecutor;
 import ru.askar.serverLab6.collectionCommand.CollectionCommand;
+import ru.askar.serverLab6.collectionCommand.ExitCommand;
 
 public class TcpServerHandler implements ServerHandler {
     private final CommandExecutor<CollectionCommand> collectionCommandExecutor;
@@ -54,8 +55,11 @@ public class TcpServerHandler implements ServerHandler {
                                     processSelectedKeys();
                                     processOutputQueue();
                                 }
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                            } catch (Exception e) {
+                                if (running) {
+                                    System.out.println(
+                                            "Ошибка в потоке хэндлера: " + e.getMessage());
+                                } // а иначе тупо сервер оказался закрыт извне)))
                             } finally {
                                 closeResources();
                             }
@@ -140,6 +144,10 @@ public class TcpServerHandler implements ServerHandler {
         try {
             CollectionCommand calledCommand = collectionCommandExecutor.getCommand(command.name());
             if (calledCommand != null) {
+                if (calledCommand instanceof ExitCommand) { // отлов намеренного дисконнекта клиента
+                    handleDisconnect(channel.keyFor(selector), channel);
+                    return;
+                }
                 if (calledCommand.isNeedObject()) {
                     calledCommand.setObject(command.object());
                 }
@@ -209,6 +217,7 @@ public class TcpServerHandler implements ServerHandler {
         }
     }
 
+    @Override
     public void sendMessage(SocketChannel channel, Object message) {
         ConcurrentLinkedQueue<Object> queue = clientOutputQueues.get(channel);
         if (queue != null) {
@@ -235,6 +244,7 @@ public class TcpServerHandler implements ServerHandler {
     }
 
     private void closeResources() {
+        running = false;
         try {
             for (SocketChannel channel : clientOutputQueues.keySet()) {
                 try {
@@ -259,8 +269,7 @@ public class TcpServerHandler implements ServerHandler {
     }
 
     @Override
-    public void stop() throws IOException {
-        running = false;
+    public void stop() {
         closeResources();
     }
 
@@ -277,10 +286,5 @@ public class TcpServerHandler implements ServerHandler {
     @Override
     public void setPort(int port) {
         this.port = port;
-    }
-
-    @Override
-    public void sendMessage(Object message) {
-        throw new UnsupportedOperationException("Используйте sendMessage(SocketChannel, Object)");
     }
 }

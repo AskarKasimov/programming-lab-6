@@ -1,6 +1,7 @@
 package ru.askar.serverLab6.connection;
 
 import java.io.IOException;
+import java.nio.channels.SocketChannel;
 
 public interface ServerHandler {
     void start() throws IOException;
@@ -13,5 +14,5 @@ public interface ServerHandler {
 
     void setPort(int port);
 
-    void sendMessage(Object object) throws IOException;
+    void sendMessage(SocketChannel channel, Object message);
 }

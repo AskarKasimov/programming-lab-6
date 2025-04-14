@@ -5,15 +5,11 @@ import java.io.IOException;
 public interface ClientHandler {
     void start() throws IOException;
 
-    void stop() throws IOException;
+    void stop();
 
     boolean getRunning();
 
-    int getPort();
-
     void setPort(int port);
-
-    String getHost();
 
     void setHost(String host);
 

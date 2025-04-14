@@ -13,7 +13,6 @@ import ru.askar.serverLab6.collection.DataReader;
 import ru.askar.serverLab6.collection.JsonReader;
 import ru.askar.serverLab6.collectionCommand.*;
 import ru.askar.serverLab6.connection.ServerHandler;
-import ru.askar.serverLab6.connection.ServerOutputWriter;
 import ru.askar.serverLab6.connection.TcpServerHandler;
 import ru.askar.serverLab6.serverCommand.*;
 
@@ -77,22 +76,17 @@ public class Main {
         CommandExecutor<CollectionCommand> collectionCommandExecutor = new CommandExecutor<>();
 
         ServerHandler serverHandler = new TcpServerHandler(collectionCommandExecutor, commandList);
-        OutputWriter outputWriter = new ServerOutputWriter(serverHandler);
-        collectionCommandExecutor.setOutputWriter(outputWriter);
         collectionCommandExecutor.register(new HelpCommand(collectionCommandExecutor));
         collectionCommandExecutor.register(new InfoCommand(collectionManager));
         collectionCommandExecutor.register(new ShowCommand(collectionManager));
-        collectionCommandExecutor.register(
-                new InsertCommand(null, collectionManager, outputWriter));
-        collectionCommandExecutor.register(
-                new UpdateCommand(null, collectionManager, outputWriter));
+        collectionCommandExecutor.register(new InsertCommand(null, collectionManager, null));
+        collectionCommandExecutor.register(new UpdateCommand(null, collectionManager, null));
         collectionCommandExecutor.register(new RemoveByKeyCommand(collectionManager));
         collectionCommandExecutor.register(new ClearCommand(collectionManager));
-        collectionCommandExecutor.register(new ExitCommand(serverHandler));
+        collectionCommandExecutor.register(new ExitCommand());
+        collectionCommandExecutor.register(new RemoveLowerCommand(null, collectionManager, null));
         collectionCommandExecutor.register(
-                new RemoveLowerCommand(null, collectionManager, outputWriter));
-        collectionCommandExecutor.register(
-                new ReplaceIfGreaterCommand(null, collectionManager, outputWriter));
+                new ReplaceIfGreaterCommand(null, collectionManager, null));
         collectionCommandExecutor.register(new RemoveGreaterKeyCommand(collectionManager));
         collectionCommandExecutor.register(new FilterStartsWithNameCommand(collectionManager));
         collectionCommandExecutor.register(new PrintFieldAscendingEventCommand(collectionManager));

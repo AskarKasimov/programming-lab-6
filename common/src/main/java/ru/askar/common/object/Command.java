@@ -31,7 +31,6 @@ public abstract class Command implements Serializable {
      * Выполнение логики команды
      *
      * @param args - аргументы
-     * @throws ExitCLIException - выход из CLI команда
      */
     public abstract CommandResponse execute(String[] args) throws ExitCLIException;
 

@@ -170,8 +170,8 @@ public class InputReader {
             } catch (ExitCLIException e) {
                 commandExecutor
                         .getOutputWriter()
-                        .write(OutputWriter.ANSI_GREEN + "Закрытие CLI" + OutputWriter.ANSI_RESET);
-                break;
+                        .write(OutputWriter.ANSI_YELLOW + e.getMessage() + OutputWriter.ANSI_RESET);
+                return;
             }
         }
     }

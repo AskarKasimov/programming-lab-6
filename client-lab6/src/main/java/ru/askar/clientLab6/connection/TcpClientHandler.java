@@ -3,11 +3,13 @@ package ru.askar.clientLab6.connection;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.channels.CancelledKeyException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import ru.askar.clientLab6.clientCommand.ClientCommand;
@@ -15,11 +17,12 @@ import ru.askar.clientLab6.clientCommand.ClientGenericCommand;
 import ru.askar.common.CommandAsList;
 import ru.askar.common.CommandResponse;
 import ru.askar.common.cli.CommandExecutor;
+import ru.askar.common.cli.CommandParser;
 import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.cli.output.OutputWriter;
 
 public class TcpClientHandler implements ClientHandler {
-    private final InputReader inputReader;
+    private final InputReader inputReader; // основной InputReader
     private final CommandExecutor<ClientCommand> commandExecutor;
     private final ConcurrentLinkedQueue<Object> outputQueue = new ConcurrentLinkedQueue<>();
     private String host = "";
@@ -27,6 +30,10 @@ public class TcpClientHandler implements ClientHandler {
     private Selector selector;
     private SocketChannel channel;
     private volatile boolean running = false;
+
+    // Для вложенного режима
+    private InputReader nestedInputReader = null;
+    private final List<ClientCommand> originalCommands = new ArrayList<>();
 
     public TcpClientHandler(
             InputReader inputReader, CommandExecutor<ClientCommand> commandExecutor) {
@@ -48,6 +55,10 @@ public class TcpClientHandler implements ClientHandler {
         running = true;
         System.out.println("Подключён к серверу " + host + ":" + port);
 
+        // Сохраняем оригинальные команды клиента
+        originalCommands.clear();
+        originalCommands.addAll(commandExecutor.getAllCommands().values());
+
         new Thread(
                         () -> {
                             try {
@@ -57,7 +68,9 @@ public class TcpClientHandler implements ClientHandler {
                                     processOutputQueue();
                                 }
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                handleDisconnect();
+                            } finally {
+                                closeResources();
                             }
                         })
                 .start();
@@ -71,6 +84,8 @@ public class TcpClientHandler implements ClientHandler {
             SelectionKey key = iter.next();
             iter.remove();
 
+            if (!key.isValid()) continue;
+
             if (key.isConnectable()) {
                 handleConnect(key);
             } else if (key.isReadable()) {
@@ -79,94 +94,153 @@ public class TcpClientHandler implements ClientHandler {
         }
     }
 
-    private void handleConnect(SelectionKey key) throws IOException {
-        SocketChannel channel = (SocketChannel) key.channel();
-        if (channel.finishConnect()) {
-            channel.register(selector, SelectionKey.OP_READ);
+    private void handleConnect(SelectionKey key) {
+        try {
+            SocketChannel channel = (SocketChannel) key.channel();
+            if (channel.finishConnect()) {
+                channel.register(selector, SelectionKey.OP_READ);
+            }
+        } catch (IOException e) {
+            handleDisconnect();
         }
     }
 
-    private void handleRead(SelectionKey key) throws IOException {
+    private void handleRead(SelectionKey key) {
         SocketChannel channel = (SocketChannel) key.channel();
         ByteBuffer buf = (ByteBuffer) key.attachment();
 
-        if (buf == null) {
-            buf = ByteBuffer.allocate(4); // Буфер для размера
-            key.attach(buf);
-        }
-
-        int read = channel.read(buf);
-        if (read == -1) {
-            channel.close();
-            return;
-        }
-
-        if (!buf.hasRemaining()) {
-            buf.flip();
-
-            if (buf.capacity() == 4) {
-                int size = buf.getInt();
-                key.attach(ByteBuffer.allocate(size)); // Новый буфер для данных
-            } else {
-                Object dto = deserialize(buf);
-                if (dto instanceof ArrayList<?> list
-                        && !list.isEmpty()
-                        && list.get(0) instanceof CommandAsList) { // избегаю type erasure
-                    @SuppressWarnings("unchecked")
-                    ArrayList<CommandAsList> commandsAsList = (ArrayList<CommandAsList>) list;
-                    commandExecutor.clearCommands();
-                    for (CommandAsList commandAsList : commandsAsList) {
-                        commandExecutor.register(
-                                new ClientGenericCommand(
-                                        inputReader,
-                                        commandAsList,
-                                        this,
-                                        commandExecutor.getOutputWriter()));
-                    }
-                    System.out.println("Клиент получил команды от сервера: " + commandsAsList);
-                } else if (dto instanceof CommandResponse) {
-                    if (((CommandResponse) dto).code() == 0) {
-                        commandExecutor.getOutputWriter().write(((CommandResponse) dto).response());
-                    } else if (((CommandResponse) dto).code() == -1) {
-                        // игнорим
-                    } else if (((CommandResponse) dto).code() == 1) {
-                        commandExecutor
-                                .getOutputWriter()
-                                .write(
-                                        OutputWriter.ANSI_GREEN
-                                                + ((CommandResponse) dto).response()
-                                                + OutputWriter.ANSI_RESET);
-                    } else if (((CommandResponse) dto).code() == 2) {
-                        commandExecutor
-                                .getOutputWriter()
-                                .write(
-                                        OutputWriter.ANSI_YELLOW
-                                                + ((CommandResponse) dto).response()
-                                                + OutputWriter.ANSI_RESET);
-                    } else {
-                        commandExecutor
-                                .getOutputWriter()
-                                .write(
-                                        OutputWriter.ANSI_RED
-                                                + ((CommandResponse) dto).response()
-                                                + OutputWriter.ANSI_RESET);
-                    }
-                } else {
-                    System.out.println("Получено неизвестное сообщение");
-                }
-                key.attach(null); // Сброс состояния
+        try {
+            if (buf == null) {
+                buf = ByteBuffer.allocate(4);
+                key.attach(buf);
             }
+
+            int read = channel.read(buf);
+            if (read == -1) {
+                handleDisconnect();
+                return;
+            }
+
+            if (!buf.hasRemaining()) {
+                buf.flip();
+
+                // Проверка размера данных
+                if (buf.capacity() == 4) {
+                    int size = buf.getInt();
+                    if (size <= 0 || size > 10_000_000) { // Максимальный размер 10MB
+                        throw new IOException("Некорректный размер данных: " + size);
+                    }
+                    key.attach(ByteBuffer.allocate(size));
+                } else {
+                    Object dto = deserialize(buf);
+                    if (dto instanceof ArrayList<?> list
+                            && !list.isEmpty()
+                            && list.get(0) instanceof CommandAsList) {
+                        @SuppressWarnings("unchecked")
+                        ArrayList<CommandAsList> commandsAsList = (ArrayList<CommandAsList>) list;
+
+                        // Сохраняем оригинальные команды только при первом входе в режим вложенного
+                        // InputReader
+                        if (nestedInputReader == null) {
+                            commandExecutor.clearCommands();
+                            nestedInputReader =
+                                    new InputReader(
+                                            commandExecutor,
+                                            new CommandParser(),
+                                            inputReader.getBufferedReader());
+                            commandExecutor
+                                    .getOutputWriter()
+                                    .write(
+                                            OutputWriter.ANSI_GREEN
+                                                    + "Вход в режим полученных команд сервера"
+                                                    + OutputWriter.ANSI_RESET);
+                        } else {
+                            commandExecutor.clearCommands();
+                        }
+
+                        for (CommandAsList commandAsList : commandsAsList) {
+                            commandExecutor.register(
+                                    new ClientGenericCommand(
+                                            nestedInputReader,
+                                            commandAsList,
+                                            this,
+                                            commandExecutor.getOutputWriter()));
+                        }
+                    } else if (dto instanceof CommandResponse) {
+                        CommandResponse resp = (CommandResponse) dto;
+                        if (resp.code() == 0) {
+                            commandExecutor.getOutputWriter().write(resp.response());
+                        } else if (resp.code() == -1) {
+                            // игнорим
+                        } else if (resp.code() == 1) {
+                            commandExecutor
+                                    .getOutputWriter()
+                                    .write(
+                                            OutputWriter.ANSI_GREEN
+                                                    + resp.response()
+                                                    + OutputWriter.ANSI_RESET);
+                        } else if (resp.code() == 2) {
+                            commandExecutor
+                                    .getOutputWriter()
+                                    .write(
+                                            OutputWriter.ANSI_YELLOW
+                                                    + resp.response()
+                                                    + OutputWriter.ANSI_RESET);
+                        } else {
+                            commandExecutor
+                                    .getOutputWriter()
+                                    .write(
+                                            OutputWriter.ANSI_RED
+                                                    + resp.response()
+                                                    + OutputWriter.ANSI_RESET);
+                        }
+                    } else {
+                        System.out.println("Клиент не смог распознать сообщение");
+                    }
+                    key.attach(null);
+                }
+            }
+        } catch (IOException | IllegalArgumentException | ClassNotFoundException e) {
+            System.err.println("Ошибка чтения: " + e.getMessage());
+            handleDisconnect();
         }
     }
 
-    private void processOutputQueue() throws IOException {
-        if (channel.isConnected()) {
-            while (!outputQueue.isEmpty()) {
-                Object message = outputQueue.poll();
-                ByteBuffer data = serialize(message);
-                ByteBuffer header = ByteBuffer.allocate(4).putInt(data.limit()).flip();
-                channel.write(new ByteBuffer[] {header, data});
+    private void handleDisconnect() {
+        running = false;
+
+        // Если был вложенный InputReader, уничтожаем его и возвращаем команды клиента
+        if (nestedInputReader != null) {
+            commandExecutor
+                    .getOutputWriter()
+                    .write(
+                            OutputWriter.ANSI_YELLOW
+                                    + "Отключение от сервера. Возврат к локальному режиму."
+                                    + OutputWriter.ANSI_RESET);
+            commandExecutor.clearCommands();
+            for (ClientCommand command : originalCommands) {
+                commandExecutor.register(command);
             }
+            nestedInputReader = null;
+        }
+
+        closeResources();
+    }
+
+    private void processOutputQueue() {
+        try {
+            if (channel != null && channel.isConnected()) {
+                while (!outputQueue.isEmpty()) {
+                    Object message = outputQueue.poll();
+                    ByteBuffer data = serialize(message);
+                    ByteBuffer header = ByteBuffer.allocate(4);
+                    header.putInt(data.limit());
+                    header.flip();
+                    channel.write(new ByteBuffer[] {header, data});
+                }
+            }
+        } catch (IOException | CancelledKeyException e) {
+            handleDisconnect();
         }
     }
 
@@ -183,21 +257,34 @@ public class TcpClientHandler implements ClientHandler {
         }
     }
 
-    private Object deserialize(ByteBuffer buffer) throws IOException {
+    private Object deserialize(ByteBuffer buffer) throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois =
                 new ObjectInputStream(
                         new ByteArrayInputStream(buffer.array(), 0, buffer.limit()))) {
             return ois.readObject();
-        } catch (ClassNotFoundException e) {
-            throw new IOException(e);
+        }
+    }
+
+    private void closeResources() {
+        try {
+            if (channel != null && channel.isOpen()) {
+                channel.close();
+            }
+            if (selector != null && selector.isOpen()) {
+                selector.close();
+            }
+        } catch (IOException e) {
+            System.err.println("Ошибка при закрытии ресурсов: " + e.getMessage());
+        } finally {
+            running = false;
+            outputQueue.clear();
+            // Не очищаем команды здесь, чтобы handleDisconnect мог их восстановить
         }
     }
 
     @Override
-    public void stop() throws IOException {
-        running = false;
-        selector.close();
-        channel.close();
+    public void stop() {
+        closeResources();
     }
 
     @Override
@@ -206,18 +293,8 @@ public class TcpClientHandler implements ClientHandler {
     }
 
     @Override
-    public int getPort() {
-        return port;
-    }
-
-    @Override
     public void setPort(int port) {
         this.port = port;
-    }
-
-    @Override
-    public String getHost() {
-        return host;
     }
 
     @Override
