@@ -1,6 +1,7 @@
 package ru.askar.clientLab6.clientCommand;
 
 import ru.askar.clientLab6.connection.ClientHandler;
+import ru.askar.common.CommandResponse;
 import ru.askar.common.cli.output.OutputWriter;
 
 public class ClientStartCommand extends ClientCommand {
@@ -16,16 +17,15 @@ public class ClientStartCommand extends ClientCommand {
     }
 
     @Override
-    public void execute(String[] args) {
+    public CommandResponse execute(String[] args) {
         String host = args[0];
         int port = Integer.parseInt(args[1]);
 
         if (clientHandler.getStatus()) {
-            System.out.println("Клиент уже запущен!");
+            return new CommandResponse(3, "Клиент уже запущен!");
         } else {
             clientHandler.setHost(host);
             clientHandler.setPort(port);
-            System.out.println("Запускаю...");
             Thread handlerThread =
                     new Thread(
                             () -> {
@@ -37,6 +37,7 @@ public class ClientStartCommand extends ClientCommand {
                                 }
                             });
             handlerThread.start();
+            return new CommandResponse(1, "Клиент запускается");
         }
     }
 }

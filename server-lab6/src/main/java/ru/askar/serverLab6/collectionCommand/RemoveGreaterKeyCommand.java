@@ -1,5 +1,6 @@
 package ru.askar.serverLab6.collectionCommand;
 
+import ru.askar.common.CommandResponse;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.serverLab6.collection.CollectionManager;
 
@@ -17,16 +18,14 @@ public class RemoveGreaterKeyCommand extends CollectionCommand {
     }
 
     @Override
-    public void execute(String[] args) {
+    public CommandResponse execute(String[] args) {
         Long key = Long.parseLong(args[0]);
         int lastSize = collectionManager.getCollection().size();
         collectionManager.getCollection().entrySet().removeIf(e -> e.getKey() > key);
         if (lastSize == collectionManager.getCollection().size()) {
-            outputWriter.write(
-                    OutputWriter.ANSI_RED + "Элементы не найдены" + OutputWriter.ANSI_RESET);
+            return new CommandResponse(3, "Элементы не найдены");
         } else {
-            outputWriter.write(
-                    OutputWriter.ANSI_GREEN + "Элементы удалены" + OutputWriter.ANSI_RESET);
+            return new CommandResponse(1, "Элементы удалены");
         }
     }
 }

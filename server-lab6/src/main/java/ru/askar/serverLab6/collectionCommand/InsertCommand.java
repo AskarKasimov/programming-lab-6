@@ -1,5 +1,6 @@
 package ru.askar.serverLab6.collectionCommand;
 
+import ru.askar.common.CommandResponse;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.InvalidInputFieldException;
 import ru.askar.common.exception.UserRejectedToFillFieldsException;
@@ -20,42 +21,40 @@ public class InsertCommand extends CollectionCommand {
     }
 
     @Override
-    public void execute(String[] args)
-            throws InvalidInputFieldException, UserRejectedToFillFieldsException {
+    public CommandResponse execute(String[] args) {
         String name = args[1];
         long price;
         try {
             price = Long.parseLong(args[2]);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("В поле price требуется число");
+            return new CommandResponse(3, "В поле price требуется число");
         }
 
         Long id;
         if (args[0].equals("null")) {
             id = collectionManager.generateNextTicketId();
-            outputWriter.write(
-                    OutputWriter.ANSI_YELLOW
-                            + "id не был указан, поэтому он был сгенерирован автоматически (минимальный из отсутствующих): "
-                            + id
-                            + OutputWriter.ANSI_RESET);
         } else {
             id = Long.parseLong(args[0]);
             if (collectionManager.getCollection().containsKey(id)) {
-                throw new IllegalArgumentException("Такой id уже существует");
+                return new CommandResponse(3, "Такой id уже существует");
             }
         }
 
-        Ticket ticket =
-                Ticket.createTicket(
-                        outputWriter,
-                        inputReader,
-                        id,
-                        name,
-                        price,
-                        collectionManager.generateNextEventId(),
-                        scriptMode);
+        Ticket ticket;
+        try {
+            ticket =
+                    Ticket.createTicket(
+                            outputWriter,
+                            inputReader,
+                            id,
+                            name,
+                            price,
+                            collectionManager.generateNextEventId(),
+                            scriptMode);
+        } catch (InvalidInputFieldException | UserRejectedToFillFieldsException e) {
+            return new CommandResponse(3, e.getMessage());
+        }
         collectionManager.getCollection().put(ticket.getId(), ticket);
-        outputWriter.write(
-                OutputWriter.ANSI_GREEN + "Элемент добавлен в коллекцию" + OutputWriter.ANSI_RESET);
+        return new CommandResponse(1, "Элемент добавлен в коллекцию (id=" + ticket.getId() + ")");
     }
 }

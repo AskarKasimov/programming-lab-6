@@ -1,7 +1,7 @@
 package ru.askar.serverLab6.collectionCommand;
 
+import ru.askar.common.CommandResponse;
 import ru.askar.common.cli.output.OutputWriter;
-import ru.askar.common.exception.NoSuchKeyException;
 import ru.askar.serverLab6.collection.CollectionManager;
 
 public class RemoveByKeyCommand extends CollectionCommand {
@@ -18,13 +18,12 @@ public class RemoveByKeyCommand extends CollectionCommand {
     }
 
     @Override
-    public void execute(String[] args) throws NoSuchKeyException {
+    public CommandResponse execute(String[] args) {
         long id = Long.parseLong(args[0]);
         if (collectionManager.getCollection().remove(id) != null) {
-            outputWriter.write(
-                    OutputWriter.ANSI_GREEN + "Элемент удален" + OutputWriter.ANSI_RESET);
+            return new CommandResponse(1, "Элемент удален");
         } else {
-            throw new NoSuchKeyException();
+            return new CommandResponse(3, "Элемент с таким id не найден");
         }
     }
 }

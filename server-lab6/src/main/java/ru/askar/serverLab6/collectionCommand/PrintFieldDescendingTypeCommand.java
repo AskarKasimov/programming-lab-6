@@ -6,6 +6,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import ru.askar.common.CommandResponse;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.object.Ticket;
 import ru.askar.common.object.TicketType;
@@ -26,14 +27,15 @@ public class PrintFieldDescendingTypeCommand extends CollectionCommand {
     }
 
     @Override
-    public void execute(String[] args) {
+    public CommandResponse execute(String[] args) {
         List<TicketType> ticketTypes =
                 collectionManager.getCollection().values().stream()
                         .map(Ticket::getType)
                         .filter(Objects::nonNull)
                         .sorted()
                         .toList();
-        outputWriter.write(
+        return new CommandResponse(
+                0,
                 AsciiTable.getTable(
                         ticketTypes,
                         Collections.singletonList(

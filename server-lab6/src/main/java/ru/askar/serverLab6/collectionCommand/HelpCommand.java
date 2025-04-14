@@ -2,6 +2,7 @@ package ru.askar.serverLab6.collectionCommand;
 
 import java.util.ArrayList;
 import java.util.List;
+import ru.askar.common.CommandResponse;
 import ru.askar.common.cli.CommandExecutor;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.object.Command;
@@ -15,13 +16,10 @@ public class HelpCommand extends CollectionCommand {
     }
 
     @Override
-    public void execute(String[] args) {
+    public CommandResponse execute(String[] args) {
+        StringBuilder builder = new StringBuilder();
         List<Command> commands = new ArrayList<>(executor.getAllCommands().values());
-        commands.forEach(
-                command ->
-                        outputWriter.write(
-                                OutputWriter.ANSI_GREEN
-                                        + command.getInfo()
-                                        + OutputWriter.ANSI_RESET));
+        commands.forEach(command -> builder.append(command.getInfo()).append("\n"));
+        return new CommandResponse(0, builder.toString());
     }
 }

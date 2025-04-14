@@ -4,6 +4,7 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import java.util.Arrays;
+import ru.askar.common.CommandResponse;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.object.Ticket;
 import ru.askar.serverLab6.collection.CollectionManager;
@@ -22,8 +23,9 @@ public class ShowCommand extends CollectionCommand {
     }
 
     @Override
-    public void execute(String[] args) {
-        outputWriter.write(
+    public CommandResponse execute(String[] args) {
+        return new CommandResponse(
+                0,
                 AsciiTable.getTable(
                         collectionManager.getCollection().values(),
                         Arrays.asList(

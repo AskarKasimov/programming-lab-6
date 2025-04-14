@@ -1,5 +1,6 @@
 package ru.askar.serverLab6.collectionCommand;
 
+import ru.askar.common.CommandResponse;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.ExitCLIException;
 
@@ -9,7 +10,7 @@ public class ExitCommand extends CollectionCommand {
     }
 
     @Override
-    public void execute(String[] args) throws ExitCLIException {
+    public CommandResponse execute(String[] args) throws ExitCLIException {
         throw new ExitCLIException();
     }
 }

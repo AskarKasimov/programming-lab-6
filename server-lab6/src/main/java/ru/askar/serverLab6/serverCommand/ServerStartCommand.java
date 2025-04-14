@@ -1,5 +1,6 @@
 package ru.askar.serverLab6.serverCommand;
 
+import ru.askar.common.CommandResponse;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.serverLab6.connection.ServerHandler;
 
@@ -15,14 +16,13 @@ public class ServerStartCommand extends ServerCommand {
     }
 
     @Override
-    public void execute(String[] args) {
+    public CommandResponse execute(String[] args) {
         int port = Integer.parseInt(args[0]);
 
         if (serverHandler.getStatus()) {
-            System.out.println("Сервер уже запущен на порту " + serverHandler.getPort());
+            return new CommandResponse(2, "Сервер уже запущен на порту " + serverHandler.getPort());
         } else {
             serverHandler.setPort(port);
-            System.out.println("Запускаю...");
             Thread handlerThread =
                     new Thread(
                             () -> {
@@ -34,6 +34,7 @@ public class ServerStartCommand extends ServerCommand {
                                 }
                             });
             handlerThread.start();
+            return new CommandResponse(1, "Сервер запускается на порту " + serverHandler.getPort());
         }
     }
 }

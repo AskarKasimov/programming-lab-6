@@ -1,5 +1,6 @@
 package ru.askar.serverLab6.serverCommand;
 
+import ru.askar.common.CommandResponse;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.ExitCLIException;
 import ru.askar.serverLab6.connection.ServerHandler;
@@ -10,7 +11,7 @@ public class ServerExitCommand extends ServerCommand {
     }
 
     @Override
-    public void execute(String[] args) throws ExitCLIException {
+    public CommandResponse execute(String[] args) throws ExitCLIException {
         throw new ExitCLIException();
     }
 }

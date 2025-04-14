@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import ru.askar.common.CommandAsList;
+import ru.askar.common.CommandResponse;
 import ru.askar.common.CommandToExecute;
 import ru.askar.common.cli.CommandExecutor;
 import ru.askar.serverLab6.collectionCommand.CollectionCommand;
@@ -120,7 +121,9 @@ public class TcpServerHandler implements ServerHandler {
                         if (calledCollectionCommand != null) {
                             if (calledCollectionCommand.isNeedObject()) // если нужен объект, даём
                             calledCollectionCommand.setTicket(command.object());
-                            calledCollectionCommand.execute(command.args());
+                            CommandResponse commandResponse =
+                                    calledCollectionCommand.execute(command.args());
+                            sendMessage(commandResponse);
                         } else System.out.println("Команда не найдена");
                     } catch (Exception e) {
                         System.out.println(

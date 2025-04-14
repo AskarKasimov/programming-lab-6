@@ -13,8 +13,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import ru.askar.clientLab6.clientCommand.ClientCommand;
 import ru.askar.clientLab6.clientCommand.ClientGenericCommand;
 import ru.askar.common.CommandAsList;
+import ru.askar.common.CommandResponse;
 import ru.askar.common.cli.CommandExecutor;
 import ru.askar.common.cli.input.InputReader;
+import ru.askar.common.cli.output.OutputWriter;
 
 public class TcpClientHandler implements ClientHandler {
     private final InputReader inputReader;
@@ -123,9 +125,35 @@ public class TcpClientHandler implements ClientHandler {
                     }
                     System.out.println("Клиент получил команды от сервера: " + commandsAsList);
                     System.out.println(commandExecutor.getAllCommands());
+                } else if (dto instanceof CommandResponse) {
+                    if (((CommandResponse) dto).code() == 0) {
+                        commandExecutor.getOutputWriter().write(((CommandResponse) dto).response());
+                    } else if (((CommandResponse) dto).code() == -1) {
+                        // игнорим
+                    } else if (((CommandResponse) dto).code() == 1) {
+                        commandExecutor
+                                .getOutputWriter()
+                                .write(
+                                        OutputWriter.ANSI_GREEN
+                                                + ((CommandResponse) dto).response()
+                                                + OutputWriter.ANSI_RESET);
+                    } else if (((CommandResponse) dto).code() == 2) {
+                        commandExecutor
+                                .getOutputWriter()
+                                .write(
+                                        OutputWriter.ANSI_YELLOW
+                                                + ((CommandResponse) dto).response()
+                                                + OutputWriter.ANSI_RESET);
+                    } else {
+                        commandExecutor
+                                .getOutputWriter()
+                                .write(
+                                        OutputWriter.ANSI_RED
+                                                + ((CommandResponse) dto).response()
+                                                + OutputWriter.ANSI_RESET);
+                    }
                 } else {
-                    System.out.println(dto.toString());
-                    System.out.println("Клиент не смог обработать ответ сервера");
+                    System.out.println("Получено неизвестное сообщение");
                 }
                 key.attach(null); // Сброс состояния
             }

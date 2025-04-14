@@ -3,11 +3,14 @@ package ru.askar.common.cli.input;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.math.BigDecimal;
+import ru.askar.common.CommandResponse;
 import ru.askar.common.cli.CommandExecutor;
 import ru.askar.common.cli.CommandParser;
 import ru.askar.common.cli.ParsedCommand;
 import ru.askar.common.cli.output.OutputWriter;
-import ru.askar.common.exception.*;
+import ru.askar.common.exception.ExitCLIException;
+import ru.askar.common.exception.InvalidCommandException;
+import ru.askar.common.exception.NoSuchCommandException;
 import ru.askar.common.object.Coordinates;
 
 public class InputReader {
@@ -101,9 +104,7 @@ public class InputReader {
     /** Выполнение поступающих команд. */
     public void process() throws IOException {
         String line;
-        //        if (!scriptMode) commandExecutor.getOutputWriter().write("> ");
         while ((line = bufferedReader.readLine()) != null) {
-            //            System.out.println(line);
             try {
                 ParsedCommand parsedCommand;
                 try {
@@ -132,29 +133,46 @@ public class InputReader {
                                             + OutputWriter.ANSI_RESET);
                     continue;
                 }
-                commandExecutor.getCommand(parsedCommand.name()).execute(parsedCommand.args());
-            } catch (CollectionIsEmptyException
-                    | NoSuchCommandException
-                    | IOException
-                    | NoSuchKeyException
-                    | IllegalArgumentException
-                    | InvalidInputFieldException e) {
+                CommandResponse commandResponse =
+                        commandExecutor
+                                .getCommand(parsedCommand.name())
+                                .execute(parsedCommand.args());
+                if (commandResponse.code() == 0) {
+                    commandExecutor.getOutputWriter().write(commandResponse.response());
+                } else if (commandResponse.code() == -1) {
+                    // игнорим
+                } else if (commandResponse.code() == 1) {
+                    commandExecutor
+                            .getOutputWriter()
+                            .write(
+                                    OutputWriter.ANSI_GREEN
+                                            + commandResponse.response()
+                                            + OutputWriter.ANSI_RESET);
+                } else if (commandResponse.code() == 2) {
+                    commandExecutor
+                            .getOutputWriter()
+                            .write(
+                                    OutputWriter.ANSI_YELLOW
+                                            + commandResponse.response()
+                                            + OutputWriter.ANSI_RESET);
+                } else {
+                    commandExecutor
+                            .getOutputWriter()
+                            .write(
+                                    OutputWriter.ANSI_RED
+                                            + commandResponse.response()
+                                            + OutputWriter.ANSI_RESET);
+                }
+            } catch (NoSuchCommandException e) {
                 commandExecutor
                         .getOutputWriter()
                         .write(OutputWriter.ANSI_RED + e.getMessage() + OutputWriter.ANSI_RESET);
-            } catch (UserRejectedToFillFieldsException e) {
+            } catch (ExitCLIException e) {
                 commandExecutor
                         .getOutputWriter()
-                        .write(
-                                OutputWriter.ANSI_YELLOW
-                                        + "Возврат в CLI"
-                                        + OutputWriter.ANSI_RESET);
-            } catch (ExitCLIException e) {
+                        .write(OutputWriter.ANSI_GREEN + "Закрытие CLI" + OutputWriter.ANSI_RESET);
                 break;
             }
-            //            finally {
-            //                if (!scriptMode) commandExecutor.getOutputWriter().write("> ");
-            //            }
         }
     }
 }

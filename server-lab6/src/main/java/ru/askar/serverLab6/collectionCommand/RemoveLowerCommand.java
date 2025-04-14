@@ -1,5 +1,6 @@
 package ru.askar.serverLab6.collectionCommand;
 
+import ru.askar.common.CommandResponse;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.InvalidInputFieldException;
 import ru.askar.common.exception.UserRejectedToFillFieldsException;
@@ -20,24 +21,26 @@ public class RemoveLowerCommand extends CollectionCommand {
     }
 
     @Override
-    public void execute(String[] args)
-            throws InvalidInputFieldException, UserRejectedToFillFieldsException {
-        Ticket ticket =
-                Ticket.createTicket(
-                        outputWriter,
-                        inputReader,
-                        1L,
-                        args[0],
-                        Long.parseLong(args[1]),
-                        collectionManager.generateNextEventId(),
-                        scriptMode);
+    public CommandResponse execute(String[] args) {
+        Ticket ticket;
+        try {
+            ticket =
+                    Ticket.createTicket(
+                            outputWriter,
+                            inputReader,
+                            1L,
+                            args[0],
+                            Long.parseLong(args[1]),
+                            collectionManager.generateNextEventId(),
+                            scriptMode);
+        } catch (InvalidInputFieldException | UserRejectedToFillFieldsException e) {
+            return new CommandResponse(3, e.getMessage());
+        }
         int oldSize = collectionManager.getCollection().size();
         collectionManager.getCollection().values().removeIf(t -> t.compareTo(ticket) < 0);
         if (oldSize == collectionManager.getCollection().size()) {
-            outputWriter.write(
-                    OutputWriter.ANSI_RED + "Элементы не найдены" + OutputWriter.ANSI_RESET);
-            return;
+            return new CommandResponse(3, "Элементы не найдены");
         }
-        outputWriter.write(OutputWriter.ANSI_GREEN + "Элементы удалены" + OutputWriter.ANSI_RESET);
+        return new CommandResponse(1, "Элементы удалены");
     }
 }

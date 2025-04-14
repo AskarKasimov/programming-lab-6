@@ -1,5 +1,6 @@
 package ru.askar.serverLab6.collectionCommand;
 
+import ru.askar.common.CommandResponse;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.serverLab6.collection.CollectionManager;
 
@@ -17,21 +18,14 @@ public class InfoCommand extends CollectionCommand {
     }
 
     @Override
-    public void execute(String[] args) {
-        outputWriter.write(
-                OutputWriter.ANSI_GREEN
-                        + "Тип коллекции: "
-                        + collectionManager.getCollection().getClass()
-                        + OutputWriter.ANSI_RESET);
-        outputWriter.write(
-                OutputWriter.ANSI_GREEN
-                        + "Дата инициализации: "
-                        + collectionManager.getDateOfCreation()
-                        + OutputWriter.ANSI_RESET);
-        outputWriter.write(
-                OutputWriter.ANSI_GREEN
-                        + "Количество элементов: "
-                        + collectionManager.getCollection().size()
-                        + OutputWriter.ANSI_RESET);
+    public CommandResponse execute(String[] args) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Тип коллекции: ")
+                .append(collectionManager.getCollection().getClass())
+                .append("\nДата инициализации: ")
+                .append(collectionManager.getDateOfCreation())
+                .append("\nКоличество элементов: ")
+                .append(collectionManager.getCollection().size());
+        return new CommandResponse(0, builder.toString());
     }
 }

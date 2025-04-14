@@ -6,6 +6,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import ru.askar.common.CommandResponse;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.object.Event;
 import ru.askar.common.object.Ticket;
@@ -26,14 +27,15 @@ public class PrintFieldAscendingEventCommand extends CollectionCommand {
     }
 
     @Override
-    public void execute(String[] args) {
+    public CommandResponse execute(String[] args) {
         List<Event> eventList =
                 collectionManager.getCollection().values().stream()
                         .map(Ticket::getEvent)
                         .filter(Objects::nonNull)
                         .sorted()
                         .toList();
-        outputWriter.write(
+        return new CommandResponse(
+                0,
                 AsciiTable.getTable(
                         eventList,
                         Arrays.asList(

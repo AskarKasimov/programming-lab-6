@@ -8,8 +8,8 @@ import ru.askar.common.object.Command;
 
 /** Класс для аккумулирования команд и предоставления к ним доступа. */
 public class CommandExecutor<T extends Command> {
-    private OutputWriter outputWriter;
     private final LinkedHashMap<String, T> commands = new LinkedHashMap<>();
+    private OutputWriter outputWriter;
     private boolean scriptMode;
 
     public CommandExecutor() {
@@ -24,12 +24,12 @@ public class CommandExecutor<T extends Command> {
         commands.forEach((name, command) -> command.setOutputWriter(outputWriter));
     }
 
-    public void setOutputWriter(OutputWriter outputWriter) {
-        this.outputWriter = outputWriter;
-    }
-
     public OutputWriter getOutputWriter() {
         return outputWriter;
+    }
+
+    public void setOutputWriter(OutputWriter outputWriter) {
+        this.outputWriter = outputWriter;
     }
 
     /**

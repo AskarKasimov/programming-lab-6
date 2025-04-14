@@ -1,5 +1,6 @@
 package ru.askar.serverLab6.collectionCommand;
 
+import ru.askar.common.CommandResponse;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.InvalidInputFieldException;
 import ru.askar.common.exception.UserRejectedToFillFieldsException;
@@ -20,37 +21,33 @@ public class ReplaceIfGreaterCommand extends CollectionCommand {
     }
 
     @Override
-    public void execute(String[] args)
-            throws InvalidInputFieldException, UserRejectedToFillFieldsException {
+    public CommandResponse execute(String[] args) {
         Long id = Long.parseLong(args[0]);
         Ticket oldTicket = collectionManager.getCollection().get(id);
         if (oldTicket == null) {
-            outputWriter.write(
-                    OutputWriter.ANSI_RED
-                            + "Элемент с таким id не найден"
-                            + OutputWriter.ANSI_RESET);
-            return;
+            return new CommandResponse(3, "Элемент с таким id не найден");
         }
 
-        Ticket newTicket =
-                Ticket.createTicket(
-                        outputWriter,
-                        inputReader,
-                        collectionManager.generateNextTicketId(),
-                        args[1],
-                        Long.parseLong(args[2]),
-                        collectionManager.generateNextEventId(),
-                        scriptMode);
+        Ticket newTicket;
+        try {
+            newTicket =
+                    Ticket.createTicket(
+                            outputWriter,
+                            inputReader,
+                            collectionManager.generateNextTicketId(),
+                            args[1],
+                            Long.parseLong(args[2]),
+                            collectionManager.generateNextEventId(),
+                            scriptMode);
+        } catch (InvalidInputFieldException | UserRejectedToFillFieldsException e) {
+            return new CommandResponse(3, e.getMessage());
+        }
 
         if (oldTicket.compareTo(newTicket) < 0) {
             collectionManager.getCollection().put(id, newTicket);
-            outputWriter.write(
-                    OutputWriter.ANSI_GREEN + "Элемент обновлен" + OutputWriter.ANSI_RESET);
+            return new CommandResponse(1, "Элемент обновлен");
         } else {
-            outputWriter.write(
-                    OutputWriter.ANSI_RED
-                            + "Новое значение не больше старого"
-                            + OutputWriter.ANSI_RESET);
+            return new CommandResponse(3, "Новое значение не больше старого");
         }
     }
 }

@@ -1,10 +1,10 @@
 package ru.askar.common.object;
 
-import java.io.IOException;
 import java.io.Serializable;
+import ru.askar.common.CommandResponse;
 import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.cli.output.OutputWriter;
-import ru.askar.common.exception.*;
+import ru.askar.common.exception.ExitCLIException;
 
 /** Абстрактный класс для команд */
 public abstract class Command implements Serializable {
@@ -46,19 +46,9 @@ public abstract class Command implements Serializable {
      * Выполнение логики команды
      *
      * @param args - аргументы
-     * @throws IOException - ошибка чтения ввода
-     * @throws CollectionIsEmptyException - коллекция пуста
-     * @throws ExitCLIException - выход из CLI
-     * @throws NoSuchKeyException - нет такого ключа в коллекции, на который пытается сослаться
-     *     команда
+     * @throws ExitCLIException - выход из CLI команда
      */
-    public abstract void execute(String[] args)
-            throws IOException,
-                    CollectionIsEmptyException,
-                    ExitCLIException,
-                    NoSuchKeyException,
-                    InvalidInputFieldException,
-                    UserRejectedToFillFieldsException;
+    public abstract CommandResponse execute(String[] args) throws ExitCLIException;
 
     /** Выдать справку об использовании команды */
     public String getInfo() {

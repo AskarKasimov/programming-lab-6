@@ -1,7 +1,7 @@
 package ru.askar.serverLab6.collectionCommand;
 
+import ru.askar.common.CommandResponse;
 import ru.askar.common.cli.output.OutputWriter;
-import ru.askar.common.exception.CollectionIsEmptyException;
 import ru.askar.serverLab6.collection.CollectionManager;
 
 public class ClearCommand extends CollectionCommand {
@@ -13,12 +13,12 @@ public class ClearCommand extends CollectionCommand {
     }
 
     @Override
-    public void execute(String[] args) throws CollectionIsEmptyException {
-        if (collectionManager.getCollection().isEmpty()) throw new CollectionIsEmptyException();
+    public CommandResponse execute(String[] args) {
+        if (collectionManager.getCollection().isEmpty())
+            return new CommandResponse(2, "Коллекция пуста");
         else {
             collectionManager.getCollection().clear();
-            outputWriter.write(
-                    OutputWriter.ANSI_GREEN + "Коллекция очищена" + OutputWriter.ANSI_RESET);
+            return new CommandResponse(1, "Коллекция очищена");
         }
     }
 }

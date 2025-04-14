@@ -5,6 +5,7 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import java.util.Arrays;
 import java.util.List;
+import ru.askar.common.CommandResponse;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.object.Ticket;
 import ru.askar.serverLab6.collection.CollectionManager;
@@ -24,12 +25,13 @@ public class FilterStartsWithNameCommand extends CollectionCommand {
     }
 
     @Override
-    public void execute(String[] args) {
+    public CommandResponse execute(String[] args) {
         List<Ticket> ticketList =
                 collectionManager.getCollection().values().stream()
                         .filter(t -> t.getName().startsWith(args[0]))
                         .toList();
-        outputWriter.write(
+        return new CommandResponse(
+                0,
                 AsciiTable.getTable(
                         ticketList,
                         Arrays.asList(
