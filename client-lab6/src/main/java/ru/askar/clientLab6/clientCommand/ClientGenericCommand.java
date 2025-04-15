@@ -27,7 +27,7 @@ public class ClientGenericCommand extends ClientCommand {
             CommandAsList rowCommand,
             ClientHandler clientHandler,
             OutputWriter outputWriter) {
-        super(rowCommand.name(), rowCommand.args(), "", clientHandler);
+        super(rowCommand.name(), rowCommand.args(), null, clientHandler);
         this.clientHandler = clientHandler;
         this.needObject = rowCommand.needObject();
         this.outputWriter = outputWriter;
@@ -37,7 +37,7 @@ public class ClientGenericCommand extends ClientCommand {
     @Override
     public CommandResponse execute(String[] args) {
         if (needObject) {
-            String name = args[1];
+            String ticketName = args[1];
             long price;
             try {
                 price = Long.parseLong(args[2]);
@@ -55,8 +55,8 @@ public class ClientGenericCommand extends ClientCommand {
                 Ticket ticket;
                 ticket =
                         Ticket.createTicket(
-                                outputWriter, inputReader, id, name, price, null, scriptMode);
-                clientHandler.sendMessage(new CommandToExecute(name, args, ticket));
+                                outputWriter, inputReader, id, ticketName, price, null, scriptMode);
+                clientHandler.sendMessage(new CommandToExecute(this.name, args, ticket));
             } catch (IOException
                     | InvalidInputFieldException
                     | UserRejectedToFillFieldsException e) {
@@ -64,7 +64,7 @@ public class ClientGenericCommand extends ClientCommand {
             }
         } else {
             try {
-                clientHandler.sendMessage(new CommandToExecute(name, args, null));
+                clientHandler.sendMessage(new CommandToExecute(this.name, args, null));
             } catch (IOException e) {
                 return new CommandResponse(3, e.getMessage());
             }

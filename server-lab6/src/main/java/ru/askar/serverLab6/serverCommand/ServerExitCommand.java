@@ -11,6 +11,7 @@ public class ServerExitCommand extends ServerCommand {
 
     @Override
     public CommandResponse execute(String[] args) throws ExitCLIException {
+        new ServerStopCommand(serverHandler).execute(new String[] {});
         throw new ExitCLIException();
     }
 }

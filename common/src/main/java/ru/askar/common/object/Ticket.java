@@ -41,7 +41,7 @@ public class Ticket implements Comparable<Ticket>, Serializable {
         setEvent(event);
     }
 
-    private Ticket(Long ticketId, String name, long price) throws InvalidInputFieldException {
+    private Ticket(Long ticketId, String name, long price) {
         setId(ticketId);
         setName(name);
         setPrice(price);
@@ -77,7 +77,7 @@ public class Ticket implements Comparable<Ticket>, Serializable {
 
     private void requestEvent(
             OutputWriter outputWriter, InputReader inputReader, Integer eventId, boolean scriptMode)
-            throws InvalidInputFieldException, UserRejectedToFillFieldsException {
+            throws UserRejectedToFillFieldsException {
         outputWriter.write(
                 OutputWriter.ANSI_YELLOW
                         + "Хотите ввести событие? (y/n): "
@@ -144,13 +144,7 @@ public class Ticket implements Comparable<Ticket>, Serializable {
         return id;
     }
 
-    public void setId(Long id) throws InvalidInputFieldException {
-        if (id == null) {
-            throw new InvalidInputFieldException("ID билета не может быть null");
-        }
-        if (id <= 0) {
-            throw new InvalidInputFieldException("ID билета должен быть больше 0");
-        }
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -158,10 +152,7 @@ public class Ticket implements Comparable<Ticket>, Serializable {
         return name;
     }
 
-    public void setName(String name) throws InvalidInputFieldException {
-        if (name == null || name.isEmpty()) {
-            throw new InvalidInputFieldException("Название билета не может быть null или пустым");
-        }
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -169,10 +160,7 @@ public class Ticket implements Comparable<Ticket>, Serializable {
         return coordinates;
     }
 
-    public void setCoordinates(Coordinates coordinates) throws InvalidInputFieldException {
-        if (coordinates == null) {
-            throw new InvalidInputFieldException("Координаты билета не могут быть null");
-        }
+    public void setCoordinates(Coordinates coordinates) {
         this.coordinates = coordinates;
     }
 
@@ -184,10 +172,7 @@ public class Ticket implements Comparable<Ticket>, Serializable {
         return price;
     }
 
-    public void setPrice(long price) throws InvalidInputFieldException {
-        if (price <= 0) {
-            throw new InvalidInputFieldException("Цена билета должна быть больше 0");
-        }
+    public void setPrice(long price) {
         this.price = price;
     }
 
@@ -195,10 +180,7 @@ public class Ticket implements Comparable<Ticket>, Serializable {
         return type;
     }
 
-    public void setType(TicketType type) throws InvalidInputFieldException {
-        if (type == null) {
-            throw new InvalidInputFieldException("Тип билета не может быть null");
-        }
+    public void setType(TicketType type) {
         this.type = type;
     }
 

@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.util.Objects;
 import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.cli.output.OutputWriter;
-import ru.askar.common.exception.InvalidInputFieldException;
 import ru.askar.common.exception.UserRejectedToFillFieldsException;
 
 public class Event implements Comparable<Event>, Serializable {
@@ -22,15 +21,14 @@ public class Event implements Comparable<Event>, Serializable {
             @JsonProperty("id") Integer id,
             @JsonProperty("name") String name,
             @JsonProperty("description") String description,
-            @JsonProperty("eventType") EventType eventType)
-            throws InvalidInputFieldException {
+            @JsonProperty("eventType") EventType eventType) {
         setId(id);
         setName(name);
         setDescription(description);
         setEventType(eventType);
     }
 
-    private Event(Integer id) throws InvalidInputFieldException {
+    private Event(Integer id) {
         setId(id);
     }
 
@@ -42,7 +40,7 @@ public class Event implements Comparable<Event>, Serializable {
      */
     public static Event createEvent(
             OutputWriter outputWriter, InputReader inputReader, Integer id, boolean scriptMode)
-            throws UserRejectedToFillFieldsException, InvalidInputFieldException {
+            throws UserRejectedToFillFieldsException {
         Event event = new Event(id);
         outputWriter.write(OutputWriter.ANSI_GREEN + "Ввод события" + OutputWriter.ANSI_RESET);
         event.requestName(outputWriter, inputReader, scriptMode);
@@ -59,7 +57,7 @@ public class Event implements Comparable<Event>, Serializable {
             try {
                 name = inputReader.getInputString();
                 this.setName(name);
-            } catch (InvalidInputFieldException e) {
+            } catch (IllegalArgumentException e) {
                 name = null;
                 if (scriptMode) {
                     throw new UserRejectedToFillFieldsException();
@@ -87,7 +85,7 @@ public class Event implements Comparable<Event>, Serializable {
             try {
                 description = inputReader.getInputString();
                 this.setDescription(description);
-            } catch (InvalidInputFieldException e) {
+            } catch (IllegalArgumentException e) {
                 description = null;
                 if (scriptMode) {
                     throw new UserRejectedToFillFieldsException();
@@ -168,13 +166,7 @@ public class Event implements Comparable<Event>, Serializable {
         return id;
     }
 
-    public void setId(Integer id) throws InvalidInputFieldException {
-        if (id == null) {
-            throw new InvalidInputFieldException("ID события не может быть null");
-        }
-        if (id <= 0) {
-            throw new InvalidInputFieldException("ID события должен быть больше 0");
-        }
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -182,13 +174,7 @@ public class Event implements Comparable<Event>, Serializable {
         return name;
     }
 
-    public void setName(String name) throws InvalidInputFieldException {
-        if (name == null) {
-            throw new InvalidInputFieldException("Название события не может быть null");
-        }
-        if (name.isEmpty()) {
-            throw new InvalidInputFieldException("Название события не может быть пустым");
-        }
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -196,14 +182,7 @@ public class Event implements Comparable<Event>, Serializable {
         return description;
     }
 
-    public void setDescription(String description) throws InvalidInputFieldException {
-        if (description == null) {
-            throw new InvalidInputFieldException("Описание события не может быть null");
-        }
-        if (description.length() > 1573) {
-            throw new InvalidInputFieldException(
-                    "Длина описания события не должна быть больше 1573");
-        }
+    public void setDescription(String description) {
         this.description = description;
     }
 

@@ -16,15 +16,15 @@ import ru.askar.common.object.Ticket;
 public class CollectionManager {
     private final LocalDateTime dateOfInitialization;
     private final TreeMap<Long, Ticket> collection;
-    private final DataReader starterDataReader;
 
     public CollectionManager(DataReader dataReader) throws InvalidInputFieldException, IOException {
         this.dateOfInitialization = LocalDateTime.now();
+        DataReader starterDataReader;
         if (dataReader == null) {
-            this.starterDataReader =
+            starterDataReader =
                     new DataReader() {
                         @Override
-                        public void readData() throws IOException {}
+                        public void readData() {}
 
                         @Override
                         public TreeMap<Long, Ticket> getData() {
@@ -36,9 +36,9 @@ public class CollectionManager {
                             return null;
                         }
                     };
-        } else this.starterDataReader = dataReader;
+        } else starterDataReader = dataReader;
         try {
-            this.starterDataReader.readData();
+            starterDataReader.readData();
         } catch (JsonMappingException e) {
             Throwable cause = e.getCause();
             if (cause != null) {
@@ -54,11 +54,7 @@ public class CollectionManager {
         } catch (IOException e) {
             throw new IOException("Ошибка при чтении файла: " + e.getMessage());
         }
-        this.collection = this.starterDataReader.getData();
-    }
-
-    public String getStarterSource() {
-        return starterDataReader.getSource();
+        this.collection = starterDataReader.getData();
     }
 
     public Long generateNextTicketId() {
@@ -89,6 +85,93 @@ public class CollectionManager {
     }
 
     public TreeMap<Long, Ticket> getCollection() {
-        return collection;
+        // безопасно возвращаем копию коллекции
+        return new TreeMap<>(collection);
+    }
+
+    public void put(Ticket ticket) throws InvalidInputFieldException {
+        validateTicket(ticket);
+        collection.put(ticket.getId(), ticket);
+    }
+
+    public void validateTicket(Ticket object) throws InvalidInputFieldException {
+        // ticket id
+        if (object.getId() == null) {
+            throw new InvalidInputFieldException("Поле id не может быть null");
+        }
+        if (object.getId() < 1) {
+            throw new InvalidInputFieldException("Поле id должно быть больше 0");
+        }
+        if (collection.containsKey(object.getId())) {
+            throw new InvalidInputFieldException("Элемент с таким id уже существует");
+        }
+        // ticket name
+        if (object.getName() == null) {
+            throw new InvalidInputFieldException("Поле name не может быть null");
+        }
+        if (object.getName().isEmpty()) {
+            throw new InvalidInputFieldException("Поле name не может быть пустым");
+        }
+        // ticket coordinates
+        if (object.getCoordinates() == null) {
+            throw new InvalidInputFieldException("Поле coordinates не может быть null");
+        }
+        if (object.getCoordinates().getX() == null) {
+            throw new InvalidInputFieldException("Поле coordinates.x не может быть null");
+        }
+        if (object.getCoordinates().getY() == null) {
+            throw new InvalidInputFieldException("Поле coordinates.y не может быть null");
+        }
+        if (object.getCoordinates().getY() > 654) {
+            throw new InvalidInputFieldException("Поле coordinates.y не может быть больше 654");
+        }
+        // ticket creationDate
+        if (object.getCreationDate() == null) {
+            throw new InvalidInputFieldException("Поле creationDate не может быть null");
+        }
+        // ticket price
+        if (object.getPrice() < 1) {
+            throw new InvalidInputFieldException("Поле price должно быть больше 0");
+        }
+        // ticket type
+        if (object.getType() == null) {
+            throw new InvalidInputFieldException("Поле type не может быть null");
+        }
+        // ticket event
+        if (object.getEvent() != null) {
+            // event id
+            if (object.getEvent().getId() == null) {
+                throw new InvalidInputFieldException("Поле event.id не может быть null");
+            }
+            if (object.getEvent().getId() < 1) {
+                throw new InvalidInputFieldException("Поле event.id должно быть больше 0");
+            }
+            if (collection.values().stream()
+                    .map(Ticket::getEvent)
+                    .map(Event::getId)
+                    .filter(Objects::nonNull)
+                    .anyMatch(id -> id.equals(object.getEvent().getId()))) {
+                throw new InvalidInputFieldException("Event с таким id уже существует");
+            }
+            // event name
+            if (object.getEvent().getName() == null) {
+                throw new InvalidInputFieldException("Поле event.name не может быть null");
+            }
+            if (object.getEvent().getName().isEmpty()) {
+                throw new InvalidInputFieldException("Поле event.name не может быть пустым");
+            }
+            // event description
+            if (object.getEvent().getDescription() == null) {
+                throw new InvalidInputFieldException("Поле event.description не может быть null");
+            }
+            if (object.getEvent().getDescription().length() > 1573) {
+                throw new InvalidInputFieldException(
+                        "Поле event.description не может быть больше 1573");
+            }
+            // event type
+            if (object.getEvent().getEventType() == null) {
+                throw new InvalidInputFieldException("Поле event.eventType не может быть null");
+            }
+        }
     }
 }

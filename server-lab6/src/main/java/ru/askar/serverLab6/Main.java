@@ -79,7 +79,7 @@ public class Main {
         collectionCommandExecutor.register(new HelpCommand(collectionCommandExecutor));
         collectionCommandExecutor.register(new InfoCommand(collectionManager));
         collectionCommandExecutor.register(new ShowCommand(collectionManager));
-        collectionCommandExecutor.register(new InsertCommand(null, collectionManager, null));
+        collectionCommandExecutor.register(new InsertCommand(collectionManager));
         collectionCommandExecutor.register(new UpdateCommand(null, collectionManager, null));
         collectionCommandExecutor.register(new RemoveByKeyCommand(collectionManager));
         collectionCommandExecutor.register(new ClearCommand(collectionManager));

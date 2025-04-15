@@ -48,7 +48,7 @@ public class Coordinates implements Serializable {
             try {
                 x = inputReader.getInputFloat();
                 this.setX(x);
-            } catch (InvalidInputFieldException | IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 x = null;
                 if (scriptMode) {
                     throw new UserRejectedToFillFieldsException();
@@ -75,7 +75,7 @@ public class Coordinates implements Serializable {
             try {
                 y = inputReader.getInputBigDecimal();
                 this.setY(y);
-            } catch (InvalidInputFieldException | IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 y = null;
                 if (scriptMode) {
                     throw new UserRejectedToFillFieldsException();
@@ -115,13 +115,7 @@ public class Coordinates implements Serializable {
         return x;
     }
 
-    public void setX(Float x) throws InvalidInputFieldException {
-        if (x == null) {
-            throw new InvalidInputFieldException("Координата X не может быть null");
-        }
-        if (x.isInfinite()) {
-            throw new InvalidInputFieldException("Координата X слишком большая");
-        }
+    public void setX(Float x) {
         this.x = x;
     }
 
@@ -129,16 +123,7 @@ public class Coordinates implements Serializable {
         return y;
     }
 
-    public void setY(BigDecimal y) throws InvalidInputFieldException {
-        if (y == null) {
-            throw new InvalidInputFieldException("Координата Y не может быть null");
-        }
-        if (Float.valueOf(y.floatValue()).isInfinite()) {
-            throw new InvalidInputFieldException("Координата Y слишком большая");
-        }
-        if (y.compareTo(new BigDecimal("654.0")) > 0) {
-            throw new InvalidInputFieldException("Координата Y не может быть больше 654.0");
-        }
+    public void setY(BigDecimal y) {
         this.y = y.floatValue();
     }
 }
