@@ -48,7 +48,9 @@ public class ClientGenericCommand extends ClientCommand {
             }
 
             Long id;
-            if (args[args.length - 3].equalsIgnoreCase("null")) {
+            if (args.length == 2) {
+                id = null;
+            } else if (args[args.length - 3].equalsIgnoreCase("null")) {
                 id = null;
             } else {
                 try {
