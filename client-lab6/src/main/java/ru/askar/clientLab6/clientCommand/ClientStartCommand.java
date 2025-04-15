@@ -1,10 +1,14 @@
 package ru.askar.clientLab6.clientCommand;
 
+import java.io.IOException;
+import ru.askar.clientLab6.NeedToReconnectException;
 import ru.askar.clientLab6.connection.ClientHandler;
 import ru.askar.common.CommandResponse;
 import ru.askar.common.cli.CommandResponseCode;
 
 public class ClientStartCommand extends ClientCommand {
+    private static final int TIME_FOR_RETRY = 2000;
+
     public ClientStartCommand(ClientHandler clientHandler) {
         super(
                 "start",
@@ -28,13 +32,23 @@ public class ClientStartCommand extends ClientCommand {
                             () -> {
                                 try {
                                     clientHandler.start();
-                                } catch (Exception e) {
+                                } catch (IOException e) {
                                     System.out.println(
-                                            "Ошибка при запуске клиента: " + e.getMessage());
+                                            "Произошла ошибка на клиенте: " + e.getMessage());
+                                } catch (NeedToReconnectException e) {
+                                    System.out.println("Переподключаюсь");
+                                    try {
+                                        Thread.sleep(TIME_FOR_RETRY);
+                                    } catch (InterruptedException ex) {
+                                        throw new RuntimeException(ex);
+                                    }
+                                    execute(args);
                                 }
                             });
             handlerThread.start();
-            return new CommandResponse(CommandResponseCode.SUCCESS, "Клиент запускается");
+
+            return new CommandResponse(
+                    CommandResponseCode.INFO, "Пытаюсь подключиться к " + host + ":" + port);
         }
     }
 }

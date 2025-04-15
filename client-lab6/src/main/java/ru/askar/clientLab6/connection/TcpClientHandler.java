@@ -3,15 +3,13 @@ package ru.askar.clientLab6.connection;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.CancelledKeyException;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.SocketChannel;
+import java.nio.channels.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import ru.askar.clientLab6.NeedToReconnectException;
 import ru.askar.clientLab6.clientCommand.ClientCommand;
 import ru.askar.clientLab6.clientCommand.ClientGenericCommand;
 import ru.askar.common.CommandAsList;
@@ -30,6 +28,20 @@ public class TcpClientHandler implements ClientHandler {
     private Selector selector;
     private SocketChannel channel;
     private volatile boolean running = false;
+    private int depth = 0;
+    private final int maxDepth = 3;
+
+    public int getMaxDepth() {
+        return maxDepth;
+    }
+
+    public int getDepth() {
+        return depth;
+    }
+
+    public void setDepth(int depth) {
+        this.depth = depth;
+    }
 
     // Для вложенного режима
     private InputReader nestedInputReader = null;
@@ -42,41 +54,42 @@ public class TcpClientHandler implements ClientHandler {
     }
 
     @Override
-    public void start() throws IOException {
+    public void start() throws IOException, NeedToReconnectException {
         if (host.isEmpty() || port == -1) {
             throw new IllegalStateException("Нужно указать хост и порт");
         }
         selector = Selector.open();
         channel = SocketChannel.open();
         channel.configureBlocking(false);
-        channel.connect(new InetSocketAddress(host, port));
+        try {
+            channel.connect(new InetSocketAddress(host, port));
+        } catch (UnresolvedAddressException e) {
+            throw new IOException("Некорректный адрес: " + host);
+        } catch (SecurityException e) {
+            throw new IOException("Ошибка безопасности: " + e.getMessage());
+        } catch (IllegalArgumentException | IOException | IllegalStateException e) {
+            throw new IOException(
+                    e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
+        }
         channel.register(selector, SelectionKey.OP_CONNECT);
         outputQueue.clear();
         running = true;
-        System.out.println("Подключён к серверу " + host + ":" + port);
 
-        // Сохраняем оригинальные команды клиента
         originalCommands.clear();
         originalCommands.addAll(commandExecutor.getAllCommands().values());
-
-        new Thread(
-                        () -> {
-                            try {
-                                while (running) {
-                                    selector.select(100);
-                                    processSelectedKeys();
-                                    processOutputQueue();
-                                }
-                            } catch (IOException e) {
-                                handleDisconnect();
-                            } finally {
-                                closeResources();
-                            }
-                        })
-                .start();
+        try {
+            while (running) {
+                selector.select(100);
+                processSelectedKeys();
+                processOutputQueue();
+            }
+        } catch (IOException e) {
+        } finally {
+            closeResources();
+        }
     }
 
-    private void processSelectedKeys() throws IOException {
+    private void processSelectedKeys() throws IOException, NeedToReconnectException {
         Set<SelectionKey> keys = selector.selectedKeys();
         Iterator<SelectionKey> iter = keys.iterator();
 
@@ -94,18 +107,19 @@ public class TcpClientHandler implements ClientHandler {
         }
     }
 
-    private void handleConnect(SelectionKey key) {
+    private void handleConnect(SelectionKey key) throws NeedToReconnectException {
         try {
             SocketChannel channel = (SocketChannel) key.channel();
             if (channel.finishConnect()) {
                 channel.register(selector, SelectionKey.OP_READ);
             }
         } catch (IOException e) {
+            retryConnection();
             handleDisconnect();
         }
     }
 
-    private void handleRead(SelectionKey key) {
+    private void handleRead(SelectionKey key) throws NeedToReconnectException {
         SocketChannel channel = (SocketChannel) key.channel();
         ByteBuffer buf = (ByteBuffer) key.attachment();
 
@@ -139,8 +153,6 @@ public class TcpClientHandler implements ClientHandler {
                         @SuppressWarnings("unchecked")
                         ArrayList<CommandAsList> commandsAsList = (ArrayList<CommandAsList>) list;
 
-                        // Сохраняем оригинальные команды только при первом входе в режим вложенного
-                        // InputReader
                         if (nestedInputReader == null) {
                             commandExecutor.clearCommands();
                             nestedInputReader =
@@ -165,8 +177,7 @@ public class TcpClientHandler implements ClientHandler {
                                             this,
                                             commandExecutor.getOutputWriter()));
                         }
-                    } else if (dto instanceof CommandResponse) {
-                        CommandResponse commandResponse = (CommandResponse) dto;
+                    } else if (dto instanceof CommandResponse commandResponse) {
                         commandExecutor
                                 .getOutputWriter()
                                 .write(
@@ -180,15 +191,28 @@ public class TcpClientHandler implements ClientHandler {
                 }
             }
         } catch (IOException | IllegalArgumentException | ClassNotFoundException e) {
-            System.err.println("Ошибка чтения: " + e.getMessage());
+            System.err.println("Сетевая ошибка");
+            retryConnection();
             handleDisconnect();
         }
     }
 
+    private void retryConnection() throws NeedToReconnectException {
+        commandExecutor
+                .getOutputWriter()
+                .write(
+                        CommandResponseCode.ERROR.getColoredMessage(
+                                "Потеряно соединение с сервером"));
+        if (depth < maxDepth) throw new NeedToReconnectException(++depth);
+        else
+            commandExecutor
+                    .getOutputWriter()
+                    .write(CommandResponseCode.ERROR.getColoredMessage("Попытки кончились"));
+    }
+
     private void handleDisconnect() {
         running = false;
-
-        // Если был вложенный InputReader, уничтожаем его и возвращаем команды клиента
+        depth = 0;
         if (nestedInputReader != null) {
             commandExecutor
                     .getOutputWriter()
@@ -205,7 +229,7 @@ public class TcpClientHandler implements ClientHandler {
         closeResources();
     }
 
-    private void processOutputQueue() {
+    private void processOutputQueue() throws NeedToReconnectException {
         try {
             if (channel != null && channel.isConnected()) {
                 while (!outputQueue.isEmpty()) {
@@ -218,6 +242,7 @@ public class TcpClientHandler implements ClientHandler {
                 }
             }
         } catch (IOException | CancelledKeyException e) {
+            retryConnection();
             handleDisconnect();
         }
     }
@@ -256,7 +281,6 @@ public class TcpClientHandler implements ClientHandler {
         } finally {
             running = false;
             outputQueue.clear();
-            // Не очищаем команды здесь, чтобы handleDisconnect мог их восстановить
         }
     }
 

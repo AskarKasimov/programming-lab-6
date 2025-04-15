@@ -7,10 +7,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import ru.askar.common.CommandResponse;
 import ru.askar.common.cli.CommandResponseCode;
+import ru.askar.serverLab6.collection.CollectionManager;
 
 public class SaveCommand extends CollectionCommand {
-    public SaveCommand() {
-        super("help", 0, "save - сохранить коллекцию в файл", null);
+    public SaveCommand(CollectionManager collectionManager) {
+        super("save", 0, "save - сохранить коллекцию в файл", collectionManager);
     }
 
     @Override

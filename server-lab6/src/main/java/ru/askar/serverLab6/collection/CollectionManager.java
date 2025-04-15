@@ -15,7 +15,7 @@ import ru.askar.common.object.Ticket;
 /** Manager для коллекции билетов. */
 public class CollectionManager {
     private final LocalDateTime dateOfInitialization;
-    private final TreeMap<Long, Ticket> collection;
+    private final TreeMap<Long, Ticket> collection = new TreeMap<>();
     private final DataReader starterDataReader;
 
     public CollectionManager(DataReader dataReader) throws InvalidInputFieldException, IOException {
@@ -54,7 +54,9 @@ public class CollectionManager {
         } catch (IOException e) {
             throw new IOException("Ошибка при чтении файла: " + e.getMessage());
         }
-        this.collection = starterDataReader.getData();
+        for (Ticket ticket : starterDataReader.getData().values()) {
+            putWithValidation(ticket);
+        }
     }
 
     public String getStarterSource() {

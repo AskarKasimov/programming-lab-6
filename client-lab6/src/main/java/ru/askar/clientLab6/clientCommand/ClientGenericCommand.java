@@ -44,7 +44,7 @@ public class ClientGenericCommand extends ClientCommand {
                 price = Long.parseLong(args[args.length - 1]);
             } catch (NumberFormatException e) {
                 return new CommandResponse(
-                        CommandResponseCode.ERROR, "В поле price требуется число");
+                        CommandResponseCode.ERROR, "В поле price требуется число (Long)");
             }
 
             Long id;

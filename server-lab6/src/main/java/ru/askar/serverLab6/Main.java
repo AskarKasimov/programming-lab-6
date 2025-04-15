@@ -77,6 +77,7 @@ public class Main {
         collectionCommandExecutor.register(new UpdateCommand(collectionManager));
         collectionCommandExecutor.register(new RemoveByKeyCommand(collectionManager));
         collectionCommandExecutor.register(new ClearCommand(collectionManager));
+        collectionCommandExecutor.register(new SaveCommand(collectionManager));
         collectionCommandExecutor.register(new ExitCommand());
         collectionCommandExecutor.register(new RemoveLowerCommand(collectionManager));
         collectionCommandExecutor.register(new ReplaceIfGreaterCommand(collectionManager));

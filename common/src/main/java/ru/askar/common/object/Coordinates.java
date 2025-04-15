@@ -8,7 +8,6 @@ import java.util.Objects;
 import ru.askar.common.cli.CommandResponseCode;
 import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.cli.output.OutputWriter;
-import ru.askar.common.exception.InvalidInputFieldException;
 import ru.askar.common.exception.UserRejectedToFillFieldsException;
 
 public class Coordinates implements Serializable {
@@ -16,8 +15,7 @@ public class Coordinates implements Serializable {
     private Float y;
 
     @JsonCreator
-    public Coordinates(@JsonProperty("x") Float x, @JsonProperty("y") BigDecimal y)
-            throws InvalidInputFieldException {
+    public Coordinates(@JsonProperty("x") BigDecimal x, @JsonProperty("y") BigDecimal y) {
         setX(x);
         setY(y);
     }
@@ -43,11 +41,11 @@ public class Coordinates implements Serializable {
 
     private void requestX(OutputWriter outputWriter, InputReader inputReader, boolean scriptMode)
             throws UserRejectedToFillFieldsException {
-        Float x;
+        BigDecimal x;
         do {
             outputWriter.write("Введите x: ");
             try {
-                x = inputReader.getInputFloat();
+                x = inputReader.getInputBigDecimal();
                 this.setX(x);
             } catch (IllegalArgumentException e) {
                 x = null;
@@ -112,8 +110,14 @@ public class Coordinates implements Serializable {
         return x;
     }
 
-    public void setX(Float x) {
-        this.x = x;
+    public void setX(BigDecimal x) {
+        float floatValue = x.floatValue();
+        BigDecimal restored = new BigDecimal(floatValue);
+        if (x.compareTo(restored) != 0) {
+            throw new IllegalArgumentException(
+                    "Число " + x + " нельзя адекватно запихнуть в Float");
+        }
+        this.x = x.floatValue();
     }
 
     public Float getY() {
@@ -121,6 +125,12 @@ public class Coordinates implements Serializable {
     }
 
     public void setY(BigDecimal y) {
+        float floatValue = y.floatValue();
+        BigDecimal restored = new BigDecimal(floatValue);
+        if (y.compareTo(restored) != 0) {
+            throw new IllegalArgumentException(
+                    "Число " + y + " нельзя адекватно запихнуть в Float");
+        }
         this.y = y.floatValue();
     }
 }

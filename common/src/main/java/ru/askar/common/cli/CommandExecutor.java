@@ -33,11 +33,6 @@ public class CommandExecutor<T extends Command> {
         commands.put(command.getName(), command);
     }
 
-    public void changeScriptMode(boolean scriptMode) {
-        this.scriptMode = scriptMode;
-        commands.forEach((name, command) -> command.setScriptMode(scriptMode));
-    }
-
     public void clearCommands() {
         commands.clear();
     }

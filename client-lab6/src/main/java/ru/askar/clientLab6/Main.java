@@ -27,7 +27,7 @@ public class Main {
         ClientHandler clientHandler = new TcpClientHandler(inputReader, clientCommandExecutor);
 
         clientCommandExecutor.register(new ClientStartCommand(clientHandler));
-        clientCommandExecutor.register(new ClientScriptCommand(clientHandler));
+        clientCommandExecutor.register(new ClientScriptCommand(clientHandler, inputReader));
         clientCommandExecutor.register(new ClientExitCommand(clientHandler));
         clientCommandExecutor.register(new ClientHelpCommand(clientHandler, clientCommandExecutor));
 

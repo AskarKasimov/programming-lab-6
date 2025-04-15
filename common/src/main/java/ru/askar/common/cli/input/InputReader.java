@@ -11,7 +11,6 @@ import ru.askar.common.cli.ParsedCommand;
 import ru.askar.common.exception.ExitCLIException;
 import ru.askar.common.exception.InvalidCommandException;
 import ru.askar.common.exception.NoSuchCommandException;
-import ru.askar.common.object.Coordinates;
 
 public class InputReader {
     /** Класс, ответственный за чтение ввода от пользователя и исполнение команд. */
@@ -70,30 +69,18 @@ public class InputReader {
         }
     }
 
-    /**
-     * Считыватель ввода числа с плавающей точкой.
-     *
-     * @see Coordinates
-     */
-    public float getInputFloat() {
-        // Сделано по большей части для Y и ограничения на 654.00000000000001 и прочую дичь
-        try {
-            float value = new BigDecimal(bufferedReader.readLine()).floatValue();
-            if (Float.isInfinite(value)) {
-                throw new IllegalArgumentException("Число слишком большое");
-            }
-            return value;
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Требуется число с точкой");
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Ошибка ввода");
-        }
-    }
-
     public BigDecimal getInputBigDecimal() {
         // Сделано по большей части для Y и ограничения на 654.00000000000001 и прочую дичь
         try {
-            return new BigDecimal(bufferedReader.readLine());
+            BigDecimal input = new BigDecimal(bufferedReader.readLine());
+            float floatValue = input.floatValue();
+            // обратное преобразование сохраняет значение
+            BigDecimal restored = new BigDecimal(floatValue);
+            if (input.compareTo(restored) != 0) {
+                throw new IllegalArgumentException(
+                        "Число " + input + " нельзя адекватно запихнуть в Float");
+            }
+            return input;
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Требуется число с точкой");
         } catch (IOException e) {
@@ -148,6 +135,13 @@ public class InputReader {
                         .getOutputWriter()
                         .write(CommandResponseCode.WARNING.getColoredMessage(e.getMessage()));
                 return;
+            }
+            if (scriptMode) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
