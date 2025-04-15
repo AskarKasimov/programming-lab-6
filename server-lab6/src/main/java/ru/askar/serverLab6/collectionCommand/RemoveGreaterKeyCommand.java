@@ -15,9 +15,16 @@ public class RemoveGreaterKeyCommand extends CollectionCommand {
 
     @Override
     public CommandResponse execute(String[] args) {
-        Long key = Long.parseLong(args[0]);
+        Long key;
+        try {
+            key = Long.parseLong(args[0]);
+        } catch (NumberFormatException e) {
+            return new CommandResponse(CommandResponseCode.ERROR, "В поле key требуется число");
+        }
         int lastSize = collectionManager.getCollection().size();
-        collectionManager.getCollection().entrySet().removeIf(e -> e.getKey() > key);
+        collectionManager.getCollection().values().stream()
+                .filter(t -> t.getId() > key)
+                .forEach(t -> collectionManager.remove(t.getId()));
         if (lastSize == collectionManager.getCollection().size()) {
             return new CommandResponse(CommandResponseCode.ERROR, "Элементы не найдены");
         } else {
