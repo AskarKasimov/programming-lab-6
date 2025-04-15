@@ -1,6 +1,6 @@
 package ru.askar.serverLab6.serverCommand;
 
-import ru.askar.common.object.Command;
+import ru.askar.common.cli.Command;
 import ru.askar.serverLab6.connection.ServerHandler;
 
 public abstract class ServerCommand extends Command {

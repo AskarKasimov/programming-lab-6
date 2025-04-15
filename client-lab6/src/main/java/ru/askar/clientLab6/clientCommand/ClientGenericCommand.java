@@ -5,6 +5,7 @@ import ru.askar.clientLab6.connection.ClientHandler;
 import ru.askar.common.CommandAsList;
 import ru.askar.common.CommandResponse;
 import ru.askar.common.CommandToExecute;
+import ru.askar.common.cli.CommandResponseCode;
 import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.InvalidInputFieldException;
@@ -42,7 +43,8 @@ public class ClientGenericCommand extends ClientCommand {
             try {
                 price = Long.parseLong(args[2]);
             } catch (NumberFormatException e) {
-                return new CommandResponse(3, "В поле price требуется число");
+                return new CommandResponse(
+                        CommandResponseCode.ERROR, "В поле price требуется число");
             }
 
             Long id;
@@ -60,15 +62,15 @@ public class ClientGenericCommand extends ClientCommand {
             } catch (IOException
                     | InvalidInputFieldException
                     | UserRejectedToFillFieldsException e) {
-                return new CommandResponse(3, e.getMessage());
+                return new CommandResponse(CommandResponseCode.ERROR, e.getMessage());
             }
         } else {
             try {
                 clientHandler.sendMessage(new CommandToExecute(this.name, args, null));
             } catch (IOException e) {
-                return new CommandResponse(3, e.getMessage());
+                return new CommandResponse(CommandResponseCode.ERROR, e.getMessage());
             }
         }
-        return new CommandResponse(-1, "Команда отправлена на сервер");
+        return new CommandResponse(CommandResponseCode.HIDDEN, "Команда отправлена на сервер");
     }
 }

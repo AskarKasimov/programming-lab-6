@@ -1,6 +1,7 @@
 package ru.askar.serverLab6.collectionCommand;
 
 import ru.askar.common.CommandResponse;
+import ru.askar.common.cli.CommandResponseCode;
 import ru.askar.serverLab6.collection.CollectionManager;
 
 public class ClearCommand extends CollectionCommand {
@@ -11,10 +12,10 @@ public class ClearCommand extends CollectionCommand {
     @Override
     public CommandResponse execute(String[] args) {
         if (collectionManager.getCollection().isEmpty())
-            return new CommandResponse(2, "Коллекция пуста");
+            return new CommandResponse(CommandResponseCode.WARNING, "Коллекция пуста");
         else {
             collectionManager.getCollection().clear();
-            return new CommandResponse(1, "Коллекция очищена");
+            return new CommandResponse(CommandResponseCode.SUCCESS, "Коллекция очищена");
         }
     }
 }

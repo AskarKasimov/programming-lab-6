@@ -167,32 +167,47 @@ public class TcpClientHandler implements ClientHandler {
                                             commandExecutor.getOutputWriter()));
                         }
                     } else if (dto instanceof CommandResponse) {
-                        CommandResponse resp = (CommandResponse) dto;
-                        if (resp.code() == 0) {
-                            commandExecutor.getOutputWriter().write(resp.response());
-                        } else if (resp.code() == -1) {
-                            // игнорим
-                        } else if (resp.code() == 1) {
-                            commandExecutor
-                                    .getOutputWriter()
-                                    .write(
-                                            OutputWriter.ANSI_GREEN
-                                                    + resp.response()
-                                                    + OutputWriter.ANSI_RESET);
-                        } else if (resp.code() == 2) {
-                            commandExecutor
-                                    .getOutputWriter()
-                                    .write(
-                                            OutputWriter.ANSI_YELLOW
-                                                    + resp.response()
-                                                    + OutputWriter.ANSI_RESET);
-                        } else {
-                            commandExecutor
-                                    .getOutputWriter()
-                                    .write(
-                                            OutputWriter.ANSI_RED
-                                                    + resp.response()
-                                                    + OutputWriter.ANSI_RESET);
+                        CommandResponse commandResponse = (CommandResponse) dto;
+                        switch (commandResponse.code()) {
+                            case HIDDEN -> {
+                                // игнорируем
+                            }
+                            case INFO -> {
+                                commandExecutor.getOutputWriter().write(commandResponse.response());
+                            }
+                            case SUCCESS -> {
+                                commandExecutor
+                                        .getOutputWriter()
+                                        .write(
+                                                OutputWriter.ANSI_GREEN
+                                                        + commandResponse.response()
+                                                        + OutputWriter.ANSI_RESET);
+                            }
+                            case WARNING -> {
+                                commandExecutor
+                                        .getOutputWriter()
+                                        .write(
+                                                OutputWriter.ANSI_YELLOW
+                                                        + commandResponse.response()
+                                                        + OutputWriter.ANSI_RESET);
+                            }
+                            case ERROR -> {
+                                commandExecutor
+                                        .getOutputWriter()
+                                        .write(
+                                                OutputWriter.ANSI_RED
+                                                        + commandResponse.response()
+                                                        + OutputWriter.ANSI_RESET);
+                            }
+                            default -> {
+                                commandExecutor
+                                        .getOutputWriter()
+                                        .write(
+                                                OutputWriter.ANSI_RED
+                                                        + "Сервер вернул неизвестный код ответа команды: "
+                                                        + commandResponse.code()
+                                                        + OutputWriter.ANSI_RESET);
+                            }
                         }
                     } else {
                         System.out.println("Клиент не смог распознать сообщение");

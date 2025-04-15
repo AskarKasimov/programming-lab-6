@@ -4,7 +4,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.NoSuchCommandException;
-import ru.askar.common.object.Command;
 
 /** Класс для аккумулирования команд и предоставления к ним доступа. */
 public class CommandExecutor<T extends Command> {

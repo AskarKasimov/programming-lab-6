@@ -2,6 +2,7 @@ package ru.askar.serverLab6.serverCommand;
 
 import java.io.IOException;
 import ru.askar.common.CommandResponse;
+import ru.askar.common.cli.CommandResponseCode;
 import ru.askar.serverLab6.connection.ServerHandler;
 
 public class ServerStopCommand extends ServerCommand {
@@ -15,11 +16,11 @@ public class ServerStopCommand extends ServerCommand {
             try {
                 serverHandler.stop();
             } catch (IOException e) {
-                return new CommandResponse(3, e.getMessage());
+                return new CommandResponse(CommandResponseCode.ERROR, e.getMessage());
             }
         } else {
-            return new CommandResponse(3, "Сервер не запущен");
+            return new CommandResponse(CommandResponseCode.ERROR, "Сервер не запущен");
         }
-        return new CommandResponse(1, "Сервер остановлен");
+        return new CommandResponse(CommandResponseCode.SUCCESS, "Сервер остановлен");
     }
 }

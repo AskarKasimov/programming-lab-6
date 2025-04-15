@@ -1,24 +1,43 @@
 package ru.askar.serverLab6.collectionCommand;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import ru.askar.common.CommandResponse;
-import ru.askar.common.cli.CommandExecutor;
-import ru.askar.common.object.Command;
+import ru.askar.common.cli.CommandResponseCode;
 
 public class SaveCommand extends CollectionCommand {
-    private final CommandExecutor<CollectionCommand> executor;
-
-    public SaveCommand(CommandExecutor<CollectionCommand> executor) {
+    public SaveCommand() {
         super("help", 0, "save - сохранить коллекцию в файл", null);
-        this.executor = executor;
     }
 
     @Override
     public CommandResponse execute(String[] args) {
-        StringBuilder builder = new StringBuilder();
-        List<Command> commands = new ArrayList<>(executor.getAllCommands().values());
-        commands.forEach(command -> builder.append(command.getInfo()).append("\n"));
-        return new CommandResponse(0, builder.substring(0, builder.toString().length() - 1));
+        if (collectionManager.getStarterSource() == null
+                || collectionManager.getStarterSource().isEmpty()) {
+            return new CommandResponse(
+                    CommandResponseCode.ERROR,
+                    "Невозможно сохранить коллекцию в файл, так как исходный файл не был указан.");
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        // Отключаем вывод даты в виде массива
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        try (FileOutputStream fileOutputStream =
+                new FileOutputStream(collectionManager.getStarterSource())) {
+            objectMapper
+                    .writerWithDefaultPrettyPrinter()
+                    .writeValue(fileOutputStream, collectionManager.getCollection().values());
+            return new CommandResponse(
+                    CommandResponseCode.SUCCESS,
+                    "JSON успешно записан в первоначальный серверный файл "
+                            + collectionManager.getStarterSource());
+        } catch (IOException e) {
+            return new CommandResponse(
+                    CommandResponseCode.ERROR,
+                    "Ошибка при записи коллекции в файл " + e.getMessage());
+        }
     }
 }

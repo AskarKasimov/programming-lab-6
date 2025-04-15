@@ -2,6 +2,7 @@ package ru.askar.clientLab6.clientCommand;
 
 import ru.askar.clientLab6.connection.ClientHandler;
 import ru.askar.common.CommandResponse;
+import ru.askar.common.cli.CommandResponseCode;
 
 public class ClientScriptCommand extends ClientCommand {
     public ClientScriptCommand(ClientHandler clientHandler) {
@@ -14,6 +15,7 @@ public class ClientScriptCommand extends ClientCommand {
 
     @Override
     public CommandResponse execute(String[] args) {
-        return new CommandResponse(3, "execute_script не поддерживается на клиенте");
+        return new CommandResponse(
+                CommandResponseCode.ERROR, "execute_script не поддерживается на клиенте");
     }
 }

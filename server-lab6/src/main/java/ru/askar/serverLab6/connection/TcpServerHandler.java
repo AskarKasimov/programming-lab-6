@@ -14,6 +14,7 @@ import ru.askar.common.CommandAsList;
 import ru.askar.common.CommandResponse;
 import ru.askar.common.CommandToExecute;
 import ru.askar.common.cli.CommandExecutor;
+import ru.askar.common.cli.CommandResponseCode;
 import ru.askar.serverLab6.collectionCommand.CollectionCommand;
 import ru.askar.serverLab6.collectionCommand.ExitCommand;
 import ru.askar.serverLab6.collectionCommand.ObjectCollectionCommand;
@@ -137,7 +138,7 @@ public class TcpServerHandler implements ServerHandler {
             }
         } catch (Exception e) {
             System.out.println("Ошибка обработки команды: " + e.getMessage());
-            sendMessage(channel, new CommandResponse(3, e.getMessage()));
+            sendMessage(channel, new CommandResponse(CommandResponseCode.ERROR, e.getMessage()));
         }
     }
 
@@ -155,10 +156,12 @@ public class TcpServerHandler implements ServerHandler {
                 CommandResponse response = calledCommand.execute(command.args());
                 sendMessage(channel, response);
             } else {
-                sendMessage(channel, new CommandResponse(3, "Команда не найдена"));
+                sendMessage(
+                        channel,
+                        new CommandResponse(CommandResponseCode.ERROR, "Команда не найдена"));
             }
         } catch (Exception e) {
-            sendMessage(channel, new CommandResponse(3, e.getMessage()));
+            sendMessage(channel, new CommandResponse(CommandResponseCode.ERROR, e.getMessage()));
         }
     }
 

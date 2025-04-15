@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import ru.askar.common.CommandResponse;
+import ru.askar.common.cli.CommandResponseCode;
 import ru.askar.common.object.Ticket;
 import ru.askar.common.object.TicketType;
 import ru.askar.serverLab6.collection.CollectionManager;
@@ -29,7 +30,7 @@ public class PrintFieldDescendingTypeCommand extends CollectionCommand {
                         .sorted()
                         .toList();
         return new CommandResponse(
-                0,
+                CommandResponseCode.INFO,
                 AsciiTable.getTable(
                         ticketTypes,
                         Collections.singletonList(

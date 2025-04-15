@@ -1,6 +1,7 @@
 package ru.askar.serverLab6.serverCommand;
 
 import ru.askar.common.CommandResponse;
+import ru.askar.common.cli.CommandResponseCode;
 import ru.askar.serverLab6.connection.ServerHandler;
 
 public class ServerStatusCommand extends ServerCommand {
@@ -11,9 +12,11 @@ public class ServerStatusCommand extends ServerCommand {
     @Override
     public CommandResponse execute(String[] args) {
         if (serverHandler.getStatus()) {
-            return new CommandResponse(0, "Сервер работает на порту " + serverHandler.getPort());
+            return new CommandResponse(
+                    CommandResponseCode.INFO,
+                    "Сервер работает на порту " + serverHandler.getPort());
         } else {
-            return new CommandResponse(0, "Сервер не запущен");
+            return new CommandResponse(CommandResponseCode.INFO, "Сервер не запущен");
         }
     }
 }

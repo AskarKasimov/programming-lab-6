@@ -1,6 +1,7 @@
 package ru.askar.serverLab6.collectionCommand;
 
 import ru.askar.common.CommandResponse;
+import ru.askar.common.cli.CommandResponseCode;
 import ru.askar.serverLab6.collection.CollectionManager;
 
 public class RemoveGreaterKeyCommand extends CollectionCommand {
@@ -18,9 +19,9 @@ public class RemoveGreaterKeyCommand extends CollectionCommand {
         int lastSize = collectionManager.getCollection().size();
         collectionManager.getCollection().entrySet().removeIf(e -> e.getKey() > key);
         if (lastSize == collectionManager.getCollection().size()) {
-            return new CommandResponse(3, "Элементы не найдены");
+            return new CommandResponse(CommandResponseCode.ERROR, "Элементы не найдены");
         } else {
-            return new CommandResponse(1, "Элементы удалены");
+            return new CommandResponse(CommandResponseCode.SUCCESS, "Элементы удалены");
         }
     }
 }

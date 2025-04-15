@@ -1,4 +1,4 @@
-package ru.askar.common.object;
+package ru.askar.common.cli;
 
 import java.io.Serializable;
 import ru.askar.common.CommandResponse;

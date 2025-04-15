@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import ru.askar.clientLab6.connection.ClientHandler;
 import ru.askar.common.CommandResponse;
+import ru.askar.common.cli.Command;
 import ru.askar.common.cli.CommandExecutor;
-import ru.askar.common.object.Command;
+import ru.askar.common.cli.CommandResponseCode;
 
 public class ClientHelpCommand extends ClientCommand {
     private final CommandExecutor<ClientCommand> executor;
@@ -21,6 +22,7 @@ public class ClientHelpCommand extends ClientCommand {
         StringBuilder builder = new StringBuilder();
         List<Command> commands = new ArrayList<>(executor.getAllCommands().values());
         commands.forEach(command -> builder.append(command.getInfo()).append("\n"));
-        return new CommandResponse(0, builder.substring(0, builder.length() - 1));
+        return new CommandResponse(
+                CommandResponseCode.INFO, builder.substring(0, builder.length() - 1));
     }
 }

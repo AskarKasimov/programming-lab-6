@@ -16,10 +16,10 @@ import ru.askar.common.object.Ticket;
 public class CollectionManager {
     private final LocalDateTime dateOfInitialization;
     private final TreeMap<Long, Ticket> collection;
+    private final DataReader starterDataReader;
 
     public CollectionManager(DataReader dataReader) throws InvalidInputFieldException, IOException {
         this.dateOfInitialization = LocalDateTime.now();
-        DataReader starterDataReader;
         if (dataReader == null) {
             starterDataReader =
                     new DataReader() {
@@ -55,6 +55,10 @@ public class CollectionManager {
             throw new IOException("Ошибка при чтении файла: " + e.getMessage());
         }
         this.collection = starterDataReader.getData();
+    }
+
+    public String getStarterSource() {
+        return starterDataReader.getSource();
     }
 
     public Long generateNextTicketId() {

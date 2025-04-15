@@ -1,7 +1,7 @@
 package ru.askar.clientLab6.clientCommand;
 
 import ru.askar.clientLab6.connection.ClientHandler;
-import ru.askar.common.object.Command;
+import ru.askar.common.cli.Command;
 
 public abstract class ClientCommand extends Command {
     protected final ClientHandler clientHandler;

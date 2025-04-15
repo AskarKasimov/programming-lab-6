@@ -137,31 +137,46 @@ public class InputReader {
                         commandExecutor
                                 .getCommand(parsedCommand.name())
                                 .execute(parsedCommand.args());
-                if (commandResponse.code() == 0) {
-                    commandExecutor.getOutputWriter().write(commandResponse.response());
-                } else if (commandResponse.code() == -1) {
-                    // игнорим
-                } else if (commandResponse.code() == 1) {
-                    commandExecutor
-                            .getOutputWriter()
-                            .write(
-                                    OutputWriter.ANSI_GREEN
-                                            + commandResponse.response()
-                                            + OutputWriter.ANSI_RESET);
-                } else if (commandResponse.code() == 2) {
-                    commandExecutor
-                            .getOutputWriter()
-                            .write(
-                                    OutputWriter.ANSI_YELLOW
-                                            + commandResponse.response()
-                                            + OutputWriter.ANSI_RESET);
-                } else {
-                    commandExecutor
-                            .getOutputWriter()
-                            .write(
-                                    OutputWriter.ANSI_RED
-                                            + commandResponse.response()
-                                            + OutputWriter.ANSI_RESET);
+                switch (commandResponse.code()) {
+                    case HIDDEN -> {
+                        // спрятанное сообщение
+                    }
+                    case INFO -> {
+                        commandExecutor.getOutputWriter().write(commandResponse.response());
+                    }
+                    case SUCCESS -> {
+                        commandExecutor
+                                .getOutputWriter()
+                                .write(
+                                        OutputWriter.ANSI_GREEN
+                                                + commandResponse.response()
+                                                + OutputWriter.ANSI_RESET);
+                    }
+                    case WARNING -> {
+                        commandExecutor
+                                .getOutputWriter()
+                                .write(
+                                        OutputWriter.ANSI_YELLOW
+                                                + commandResponse.response()
+                                                + OutputWriter.ANSI_RESET);
+                    }
+                    case ERROR -> {
+                        commandExecutor
+                                .getOutputWriter()
+                                .write(
+                                        OutputWriter.ANSI_RED
+                                                + commandResponse.response()
+                                                + OutputWriter.ANSI_RESET);
+                    }
+                    default -> {
+                        commandExecutor
+                                .getOutputWriter()
+                                .write(
+                                        OutputWriter.ANSI_RED
+                                                + "Команда вернула неизвестный код: "
+                                                + commandResponse.code()
+                                                + OutputWriter.ANSI_RESET);
+                    }
                 }
             } catch (NoSuchCommandException e) {
                 commandExecutor

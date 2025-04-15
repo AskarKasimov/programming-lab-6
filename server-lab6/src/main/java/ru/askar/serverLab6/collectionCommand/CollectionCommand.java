@@ -1,6 +1,6 @@
 package ru.askar.serverLab6.collectionCommand;
 
-import ru.askar.common.object.Command;
+import ru.askar.common.cli.Command;
 import ru.askar.serverLab6.collection.CollectionManager;
 
 public abstract class CollectionCommand extends Command {

@@ -1,6 +1,7 @@
 package ru.askar.serverLab6.collectionCommand;
 
 import ru.askar.common.CommandResponse;
+import ru.askar.common.cli.CommandResponseCode;
 import ru.askar.serverLab6.collection.CollectionManager;
 
 public class InfoCommand extends CollectionCommand {
@@ -21,6 +22,6 @@ public class InfoCommand extends CollectionCommand {
                         + collectionManager.getDateOfCreation()
                         + "\nКоличество элементов: "
                         + collectionManager.getCollection().size();
-        return new CommandResponse(0, info);
+        return new CommandResponse(CommandResponseCode.INFO, info);
     }
 }
