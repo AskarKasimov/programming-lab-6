@@ -15,11 +15,16 @@ public class RemoveByKeyCommand extends CollectionCommand {
 
     @Override
     public CommandResponse execute(String[] args) {
-        long id = Long.parseLong(args[0]);
-        if (collectionManager.getCollection().remove(id) != null) {
-            return new CommandResponse(CommandResponseCode.SUCCESS, "Элемент удален");
-        } else {
+        Long id;
+        try {
+            id = Long.parseLong(args[0]);
+        } catch (NumberFormatException e) {
+            return new CommandResponse(CommandResponseCode.ERROR, "В поле id требуется число");
+        }
+        if (collectionManager.getCollection().get(id) == null) {
             return new CommandResponse(CommandResponseCode.ERROR, "Элемент с таким id не найден");
         }
+        collectionManager.remove(id);
+        return new CommandResponse(CommandResponseCode.SUCCESS, "Элемент удалён");
     }
 }
