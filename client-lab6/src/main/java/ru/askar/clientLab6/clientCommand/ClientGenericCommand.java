@@ -25,12 +25,12 @@ public class ClientGenericCommand extends ClientCommand {
      */
     public ClientGenericCommand(
             InputReader inputReader,
-            CommandAsList rowCommand,
+            CommandAsList rawCommand,
             ClientHandler clientHandler,
             OutputWriter outputWriter) {
-        super(rowCommand.name(), rowCommand.args(), null, clientHandler);
+        super(rawCommand.name(), rawCommand.args(), null, clientHandler);
         this.clientHandler = clientHandler;
-        this.needObject = rowCommand.needObject();
+        this.needObject = rawCommand.needObject();
         this.outputWriter = outputWriter;
         this.inputReader = inputReader;
     }
@@ -38,20 +38,25 @@ public class ClientGenericCommand extends ClientCommand {
     @Override
     public CommandResponse execute(String[] args) {
         if (needObject) {
-            String ticketName = args[1];
+            String ticketName = args[args.length - 2];
             long price;
             try {
-                price = Long.parseLong(args[2]);
+                price = Long.parseLong(args[args.length - 1]);
             } catch (NumberFormatException e) {
                 return new CommandResponse(
                         CommandResponseCode.ERROR, "В поле price требуется число");
             }
 
             Long id;
-            if (args[0].equals("null")) {
+            if (args[args.length - 3].equalsIgnoreCase("null")) {
                 id = null;
             } else {
-                id = Long.parseLong(args[0]);
+                try {
+                    id = Long.parseLong(args[0]);
+                } catch (NumberFormatException e) {
+                    return new CommandResponse(
+                            CommandResponseCode.ERROR, "В поле id требуется число");
+                }
             }
             try {
                 Ticket ticket;

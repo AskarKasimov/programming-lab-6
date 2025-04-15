@@ -93,6 +93,10 @@ public class CollectionManager {
         return new TreeMap<>(collection);
     }
 
+    public void remove(Long id) {
+        collection.remove(id);
+    }
+
     public void put(Ticket ticket) throws InvalidInputFieldException {
         validateTicket(ticket);
         collection.put(ticket.getId(), ticket);
