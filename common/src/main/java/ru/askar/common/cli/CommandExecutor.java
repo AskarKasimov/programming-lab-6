@@ -9,7 +9,7 @@ import ru.askar.common.exception.NoSuchCommandException;
 public class CommandExecutor<T extends Command> {
     private final LinkedHashMap<String, T> commands = new LinkedHashMap<>();
     private OutputWriter outputWriter;
-    private boolean scriptMode;
+    private final boolean scriptMode;
 
     public CommandExecutor() {
         this.scriptMode = false;

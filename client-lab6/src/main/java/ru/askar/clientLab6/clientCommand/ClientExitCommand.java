@@ -11,6 +11,7 @@ public class ClientExitCommand extends ClientCommand {
 
     @Override
     public CommandResponse execute(String[] args) throws ExitCLIException {
+        clientHandler.stop();
         throw new ExitCLIException();
     }
 }

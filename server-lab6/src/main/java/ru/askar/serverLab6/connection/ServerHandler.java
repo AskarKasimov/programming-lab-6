@@ -6,7 +6,7 @@ import java.nio.channels.SocketChannel;
 public interface ServerHandler {
     void start() throws IOException;
 
-    void stop() throws IOException;
+    void stop();
 
     boolean getStatus();
 

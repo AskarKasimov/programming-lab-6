@@ -8,7 +8,6 @@ import java.util.Objects;
 import ru.askar.common.cli.CommandResponseCode;
 import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.cli.output.OutputWriter;
-import ru.askar.common.exception.InvalidInputFieldException;
 import ru.askar.common.exception.UserRejectedToFillFieldsException;
 
 public class Ticket implements Comparable<Ticket>, Serializable {
@@ -27,8 +26,7 @@ public class Ticket implements Comparable<Ticket>, Serializable {
             @JsonProperty("coordinates") Coordinates coordinates,
             @JsonProperty("price") long price,
             @JsonProperty("type") TicketType type,
-            @JsonProperty("event") Event event)
-            throws InvalidInputFieldException {
+            @JsonProperty("event") Event event) {
         setId(id);
         setName(name);
         setCoordinates(coordinates);
@@ -64,7 +62,7 @@ public class Ticket implements Comparable<Ticket>, Serializable {
             long price,
             Integer eventId,
             boolean scriptMode)
-            throws InvalidInputFieldException, UserRejectedToFillFieldsException {
+            throws UserRejectedToFillFieldsException {
         Ticket ticket = new Ticket(ticketId, name, price);
         ticket.setCoordinates(Coordinates.createCoordinates(outputWriter, inputReader, scriptMode));
         ticket.setType(TicketType.createTicketType(outputWriter, inputReader, scriptMode));

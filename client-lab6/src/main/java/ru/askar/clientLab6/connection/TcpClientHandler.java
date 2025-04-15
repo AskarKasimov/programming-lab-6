@@ -31,18 +31,6 @@ public class TcpClientHandler implements ClientHandler {
     private int depth = 0;
     private final int maxDepth = 3;
 
-    public int getMaxDepth() {
-        return maxDepth;
-    }
-
-    public int getDepth() {
-        return depth;
-    }
-
-    public void setDepth(int depth) {
-        this.depth = depth;
-    }
-
     // Для вложенного режима
     private InputReader nestedInputReader = null;
     private final List<ClientCommand> originalCommands = new ArrayList<>();
@@ -84,13 +72,19 @@ public class TcpClientHandler implements ClientHandler {
                 processOutputQueue();
             }
         } catch (IOException e) {
+            //
         } finally {
             closeResources();
         }
     }
 
     private void processSelectedKeys() throws IOException, NeedToReconnectException {
-        Set<SelectionKey> keys = selector.selectedKeys();
+        Set<SelectionKey> keys;
+        try {
+            keys = selector.selectedKeys();
+        } catch (ClosedSelectorException e) {
+            throw new IOException(e);
+        }
         Iterator<SelectionKey> iter = keys.iterator();
 
         while (iter.hasNext()) {
@@ -286,7 +280,7 @@ public class TcpClientHandler implements ClientHandler {
 
     @Override
     public void stop() {
-        closeResources();
+        handleDisconnect();
     }
 
     @Override

@@ -14,5 +14,5 @@ public interface ClientHandler {
 
     void setHost(String host);
 
-    void sendMessage(Object object) throws IOException;
+    void sendMessage(Object object);
 }

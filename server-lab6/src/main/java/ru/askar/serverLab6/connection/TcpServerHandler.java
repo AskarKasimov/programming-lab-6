@@ -96,7 +96,7 @@ public class TcpServerHandler implements ServerHandler {
         System.out.println("Клиент подключен: " + clientChannel.getRemoteAddress());
     }
 
-    private void handleRead(SelectionKey key) throws IOException {
+    private void handleRead(SelectionKey key) {
         SocketChannel channel = (SocketChannel) key.channel();
         ByteBuffer buf = (ByteBuffer) key.attachment();
 
@@ -119,7 +119,7 @@ public class TcpServerHandler implements ServerHandler {
                     int size = buf.getInt();
                     key.attach(ByteBuffer.allocate(size));
                 } else {
-                    processReceivedData(key, channel, buf);
+                    processReceivedData(channel, buf);
                     key.attach(null);
                 }
             }
@@ -128,7 +128,7 @@ public class TcpServerHandler implements ServerHandler {
         }
     }
 
-    private void processReceivedData(SelectionKey key, SocketChannel channel, ByteBuffer buf) {
+    private void processReceivedData(SocketChannel channel, ByteBuffer buf) {
         try {
             Object dto = deserialize(buf);
             if (dto instanceof CommandToExecute command) {
