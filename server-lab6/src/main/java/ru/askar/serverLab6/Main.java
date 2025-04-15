@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import ru.askar.common.CommandAsList;
 import ru.askar.common.cli.CommandExecutor;
 import ru.askar.common.cli.CommandParser;
+import ru.askar.common.cli.CommandResponseCode;
 import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.cli.output.Stdout;
@@ -22,22 +23,18 @@ public class Main {
         String filePath = System.getenv("COLLECTION_PATH");
         if (filePath == null) {
             System.out.println(
-                    OutputWriter.ANSI_RED
-                            + "Переменная окружения COLLECTION_PATH не установлена"
-                            + OutputWriter.ANSI_RESET);
+                    CommandResponseCode.ERROR.getColoredMessage(
+                            "Переменная окружения COLLECTION_PATH не установлена"));
             return;
         }
-        System.out.println(OutputWriter.ANSI_GREEN + "Файл: " + filePath + OutputWriter.ANSI_RESET);
-
+        System.out.println(CommandResponseCode.INFO.getColoredMessage("Файл: " + filePath));
         BufferedInputStream bufferedInputStream = null;
         try {
             bufferedInputStream = new BufferedInputStream(new FileInputStream(filePath));
         } catch (FileNotFoundException | SecurityException e) {
             System.out.println(
-                    OutputWriter.ANSI_RED
-                            + "Файл не удаётся прочитать: "
-                            + e.getMessage()
-                            + OutputWriter.ANSI_RESET);
+                    CommandResponseCode.ERROR.getColoredMessage(
+                            "Файл не удаётся прочитать: " + e.getMessage()));
         }
 
         DataReader dataReader = new JsonReader(filePath, bufferedInputStream);
@@ -49,16 +46,14 @@ public class Main {
         try {
             collectionManager = new CollectionManager(dataReader);
         } catch (Exception e) {
-            System.out.println(OutputWriter.ANSI_RED + e.getMessage() + OutputWriter.ANSI_RESET);
+            System.out.println(CommandResponseCode.ERROR.getColoredMessage(e.getMessage()));
         } finally {
             try {
                 if (bufferedInputStream != null) bufferedInputStream.close();
             } catch (IOException e) {
                 System.out.println(
-                        OutputWriter.ANSI_RED
-                                + "Ошибка при закрытии файла: "
-                                + e.getMessage()
-                                + OutputWriter.ANSI_RESET);
+                        CommandResponseCode.ERROR.getColoredMessage(
+                                "Ошибка при закрытии файла: " + e.getMessage()));
             }
         }
         if (collectionManager == null) {
@@ -69,8 +64,7 @@ public class Main {
             }
         }
         if (collectionManager.getCollection().isEmpty()) {
-            System.out.println(
-                    OutputWriter.ANSI_YELLOW + "Коллекция пуста" + OutputWriter.ANSI_RESET);
+            System.out.println(CommandResponseCode.WARNING.getColoredMessage("Коллекция пуста"));
         }
         ArrayList<CommandAsList> commandList = new ArrayList<>();
         CommandExecutor<CollectionCommand> collectionCommandExecutor = new CommandExecutor<>();

@@ -18,8 +18,8 @@ import ru.askar.common.CommandAsList;
 import ru.askar.common.CommandResponse;
 import ru.askar.common.cli.CommandExecutor;
 import ru.askar.common.cli.CommandParser;
+import ru.askar.common.cli.CommandResponseCode;
 import ru.askar.common.cli.input.InputReader;
-import ru.askar.common.cli.output.OutputWriter;
 
 public class TcpClientHandler implements ClientHandler {
     private final InputReader inputReader; // основной InputReader
@@ -151,9 +151,8 @@ public class TcpClientHandler implements ClientHandler {
                             commandExecutor
                                     .getOutputWriter()
                                     .write(
-                                            OutputWriter.ANSI_GREEN
-                                                    + "Вход в режим полученных команд сервера"
-                                                    + OutputWriter.ANSI_RESET);
+                                            CommandResponseCode.SUCCESS.getColoredMessage(
+                                                    "Вход в режим полученных команд сервера"));
                         } else {
                             commandExecutor.clearCommands();
                         }
@@ -168,47 +167,12 @@ public class TcpClientHandler implements ClientHandler {
                         }
                     } else if (dto instanceof CommandResponse) {
                         CommandResponse commandResponse = (CommandResponse) dto;
-                        switch (commandResponse.code()) {
-                            case HIDDEN -> {
-                                // игнорируем
-                            }
-                            case INFO -> {
-                                commandExecutor.getOutputWriter().write(commandResponse.response());
-                            }
-                            case SUCCESS -> {
-                                commandExecutor
-                                        .getOutputWriter()
-                                        .write(
-                                                OutputWriter.ANSI_GREEN
-                                                        + commandResponse.response()
-                                                        + OutputWriter.ANSI_RESET);
-                            }
-                            case WARNING -> {
-                                commandExecutor
-                                        .getOutputWriter()
-                                        .write(
-                                                OutputWriter.ANSI_YELLOW
-                                                        + commandResponse.response()
-                                                        + OutputWriter.ANSI_RESET);
-                            }
-                            case ERROR -> {
-                                commandExecutor
-                                        .getOutputWriter()
-                                        .write(
-                                                OutputWriter.ANSI_RED
-                                                        + commandResponse.response()
-                                                        + OutputWriter.ANSI_RESET);
-                            }
-                            default -> {
-                                commandExecutor
-                                        .getOutputWriter()
-                                        .write(
-                                                OutputWriter.ANSI_RED
-                                                        + "Сервер вернул неизвестный код ответа команды: "
-                                                        + commandResponse.code()
-                                                        + OutputWriter.ANSI_RESET);
-                            }
-                        }
+                        commandExecutor
+                                .getOutputWriter()
+                                .write(
+                                        commandResponse
+                                                .code()
+                                                .getColoredMessage(commandResponse.response()));
                     } else {
                         System.out.println("Клиент не смог распознать сообщение");
                     }
@@ -229,9 +193,8 @@ public class TcpClientHandler implements ClientHandler {
             commandExecutor
                     .getOutputWriter()
                     .write(
-                            OutputWriter.ANSI_YELLOW
-                                    + "Отключение от сервера. Возврат к локальному режиму."
-                                    + OutputWriter.ANSI_RESET);
+                            CommandResponseCode.WARNING.getColoredMessage(
+                                    "Отключение от сервера. Возврат к локальному режиму."));
             commandExecutor.clearCommands();
             for (ClientCommand command : originalCommands) {
                 commandExecutor.register(command);

@@ -5,23 +5,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import ru.askar.common.cli.CommandResponseCode;
 import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.InvalidInputFieldException;
 import ru.askar.common.exception.UserRejectedToFillFieldsException;
 
 public class Ticket implements Comparable<Ticket>, Serializable {
-    private final LocalDateTime
-            creationDate; // Поле не может быть null, Значение этого поля должно генерироваться
-    // автоматически
-    private Long
-            id; // Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля
-    // должно быть уникальным, Значение этого поля должно генерироваться автоматически
-    private String name; // Поле не может быть null, Строка не может быть пустой
-    private Coordinates coordinates; // Поле не может быть null
-    private long price; // Значение поля должно быть больше 0
-    private TicketType type; // Поле не может быть null
-    private Event event; // Поле может быть null
+    private final LocalDateTime creationDate;
+    private Long id;
+    private String name;
+    private Coordinates coordinates;
+    private long price;
+    private TicketType type;
+    private Event event;
 
     @JsonCreator
     public Ticket(
@@ -79,9 +76,7 @@ public class Ticket implements Comparable<Ticket>, Serializable {
             OutputWriter outputWriter, InputReader inputReader, Integer eventId, boolean scriptMode)
             throws UserRejectedToFillFieldsException {
         outputWriter.write(
-                OutputWriter.ANSI_YELLOW
-                        + "Хотите ввести событие? (y/n): "
-                        + OutputWriter.ANSI_RESET);
+                CommandResponseCode.WARNING.getColoredMessage("Хотите ввести событие? (y/n): "));
         String answer = inputReader.getInputString();
         if (answer != null && answer.equalsIgnoreCase("y")) {
             this.setEvent(Event.createEvent(outputWriter, inputReader, eventId, scriptMode));

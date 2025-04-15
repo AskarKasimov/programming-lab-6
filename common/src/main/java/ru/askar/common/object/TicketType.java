@@ -2,6 +2,7 @@ package ru.askar.common.object;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import ru.askar.common.cli.CommandResponseCode;
 import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.UserRejectedToFillFieldsException;
@@ -40,11 +41,10 @@ public enum TicketType {
             if (scriptMode) {
                 throw new UserRejectedToFillFieldsException();
             }
-            outputWriter.write(OutputWriter.ANSI_RED + "Такого типа нет" + OutputWriter.ANSI_RESET);
+            outputWriter.write(CommandResponseCode.ERROR.getColoredMessage("Такого типа нет!"));
             outputWriter.write(
-                    OutputWriter.ANSI_YELLOW
-                            + "Хотите попробовать еще раз? (y/n): "
-                            + OutputWriter.ANSI_RESET);
+                    CommandResponseCode.WARNING.getColoredMessage(
+                            "Хотите попробовать еще раз? (y/n): "));
             String answer = inputReader.getInputString();
             if (answer != null && !answer.equalsIgnoreCase("y")) {
                 throw new UserRejectedToFillFieldsException();

@@ -6,8 +6,8 @@ import java.math.BigDecimal;
 import ru.askar.common.CommandResponse;
 import ru.askar.common.cli.CommandExecutor;
 import ru.askar.common.cli.CommandParser;
+import ru.askar.common.cli.CommandResponseCode;
 import ru.askar.common.cli.ParsedCommand;
-import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.ExitCLIException;
 import ru.askar.common.exception.InvalidCommandException;
 import ru.askar.common.exception.NoSuchCommandException;
@@ -112,10 +112,7 @@ public class InputReader {
                 } catch (InvalidCommandException e) {
                     commandExecutor
                             .getOutputWriter()
-                            .write(
-                                    OutputWriter.ANSI_RED
-                                            + e.getMessage()
-                                            + OutputWriter.ANSI_RESET);
+                            .write(CommandResponseCode.ERROR.getColoredMessage(e.getMessage()));
                     continue;
                 }
                 if (parsedCommand.args().length
@@ -123,69 +120,33 @@ public class InputReader {
                     commandExecutor
                             .getOutputWriter()
                             .write(
-                                    OutputWriter.ANSI_RED
-                                            + "Неверное количество аргументов: для команды "
-                                            + parsedCommand.name()
-                                            + " требуется "
-                                            + commandExecutor
-                                                    .getCommand(parsedCommand.name())
-                                                    .getArgsCount()
-                                            + OutputWriter.ANSI_RESET);
+                                    CommandResponseCode.ERROR.getColoredMessage(
+                                            "Неверное количество аргументов: для команды "
+                                                    + parsedCommand.name()
+                                                    + " требуется "
+                                                    + commandExecutor
+                                                            .getCommand(parsedCommand.name())
+                                                            .getArgsCount()));
                     continue;
                 }
                 CommandResponse commandResponse =
                         commandExecutor
                                 .getCommand(parsedCommand.name())
                                 .execute(parsedCommand.args());
-                switch (commandResponse.code()) {
-                    case HIDDEN -> {
-                        // спрятанное сообщение
-                    }
-                    case INFO -> {
-                        commandExecutor.getOutputWriter().write(commandResponse.response());
-                    }
-                    case SUCCESS -> {
-                        commandExecutor
-                                .getOutputWriter()
-                                .write(
-                                        OutputWriter.ANSI_GREEN
-                                                + commandResponse.response()
-                                                + OutputWriter.ANSI_RESET);
-                    }
-                    case WARNING -> {
-                        commandExecutor
-                                .getOutputWriter()
-                                .write(
-                                        OutputWriter.ANSI_YELLOW
-                                                + commandResponse.response()
-                                                + OutputWriter.ANSI_RESET);
-                    }
-                    case ERROR -> {
-                        commandExecutor
-                                .getOutputWriter()
-                                .write(
-                                        OutputWriter.ANSI_RED
-                                                + commandResponse.response()
-                                                + OutputWriter.ANSI_RESET);
-                    }
-                    default -> {
-                        commandExecutor
-                                .getOutputWriter()
-                                .write(
-                                        OutputWriter.ANSI_RED
-                                                + "Команда вернула неизвестный код: "
-                                                + commandResponse.code()
-                                                + OutputWriter.ANSI_RESET);
-                    }
-                }
+                commandExecutor
+                        .getOutputWriter()
+                        .write(
+                                commandResponse
+                                        .code()
+                                        .getColoredMessage(commandResponse.response()));
             } catch (NoSuchCommandException e) {
                 commandExecutor
                         .getOutputWriter()
-                        .write(OutputWriter.ANSI_RED + e.getMessage() + OutputWriter.ANSI_RESET);
+                        .write(CommandResponseCode.ERROR.getColoredMessage(e.getMessage()));
             } catch (ExitCLIException e) {
                 commandExecutor
                         .getOutputWriter()
-                        .write(OutputWriter.ANSI_YELLOW + e.getMessage() + OutputWriter.ANSI_RESET);
+                        .write(CommandResponseCode.WARNING.getColoredMessage(e.getMessage()));
                 return;
             }
         }

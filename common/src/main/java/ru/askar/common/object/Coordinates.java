@@ -5,14 +5,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
+import ru.askar.common.cli.CommandResponseCode;
 import ru.askar.common.cli.input.InputReader;
 import ru.askar.common.cli.output.OutputWriter;
 import ru.askar.common.exception.InvalidInputFieldException;
 import ru.askar.common.exception.UserRejectedToFillFieldsException;
 
 public class Coordinates implements Serializable {
-    private Float x; // Поле не может быть null
-    private Float y; // Максимальное значение поля: 654, Поле не может быть null
+    private Float x;
+    private Float y;
 
     @JsonCreator
     public Coordinates(@JsonProperty("x") Float x, @JsonProperty("y") BigDecimal y)
@@ -53,12 +54,10 @@ public class Coordinates implements Serializable {
                 if (scriptMode) {
                     throw new UserRejectedToFillFieldsException();
                 }
+                outputWriter.write(CommandResponseCode.ERROR.getColoredMessage(e.getMessage()));
                 outputWriter.write(
-                        OutputWriter.ANSI_RED + e.getMessage() + OutputWriter.ANSI_RESET);
-                outputWriter.write(
-                        OutputWriter.ANSI_YELLOW
-                                + "Хотите попробовать еще раз? (y/n): "
-                                + OutputWriter.ANSI_RESET);
+                        CommandResponseCode.WARNING.getColoredMessage(
+                                "Хотите попробовать еще раз? (y/n): "));
                 String answer = inputReader.getInputString();
                 if (answer != null && !answer.equalsIgnoreCase("y")) {
                     throw new UserRejectedToFillFieldsException();
@@ -80,12 +79,10 @@ public class Coordinates implements Serializable {
                 if (scriptMode) {
                     throw new UserRejectedToFillFieldsException();
                 }
+                outputWriter.write(CommandResponseCode.ERROR.getColoredMessage(e.getMessage()));
                 outputWriter.write(
-                        OutputWriter.ANSI_RED + e.getMessage() + OutputWriter.ANSI_RESET);
-                outputWriter.write(
-                        OutputWriter.ANSI_YELLOW
-                                + "Хотите попробовать еще раз? (y/n): "
-                                + OutputWriter.ANSI_RESET);
+                        CommandResponseCode.WARNING.getColoredMessage(
+                                "Хотите попробовать еще раз? (y/n): "));
                 String answer = inputReader.getInputString();
                 if (answer != null && !answer.equalsIgnoreCase("y")) {
                     throw new UserRejectedToFillFieldsException();
