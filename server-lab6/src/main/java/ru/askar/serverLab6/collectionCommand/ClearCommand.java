@@ -14,7 +14,7 @@ public class ClearCommand extends CollectionCommand {
         if (collectionManager.getCollection().isEmpty())
             return new CommandResponse(CommandResponseCode.WARNING, "Коллекция пуста");
         else {
-            collectionManager.getCollection().clear();
+            collectionManager.clear();
             return new CommandResponse(CommandResponseCode.SUCCESS, "Коллекция очищена");
         }
     }

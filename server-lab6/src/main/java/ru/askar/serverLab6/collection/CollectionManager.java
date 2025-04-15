@@ -93,6 +93,10 @@ public class CollectionManager {
         return new TreeMap<>(collection);
     }
 
+    public void clear() {
+        collection.clear();
+    }
+
     public void remove(Long id) {
         collection.remove(id);
     }
