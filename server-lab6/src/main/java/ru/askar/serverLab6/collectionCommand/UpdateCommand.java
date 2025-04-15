@@ -19,7 +19,21 @@ public class UpdateCommand extends ObjectCollectionCommand {
         if (object == null)
             return new CommandResponse(
                     CommandResponseCode.ERROR, "Данной команде требуется объект!");
-        Long idToUpdate = object.getId();
+        Long idToUpdate;
+        try {
+            idToUpdate = Long.parseLong(args[0]);
+        } catch (NumberFormatException e) {
+            return new CommandResponse(CommandResponseCode.ERROR, "В поле id требуется число");
+        }
+        if (object.getId() == null) {
+            return new CommandResponse(
+                    CommandResponseCode.ERROR, "id элемента в объекте не может быть null");
+        }
+        if (!idToUpdate.equals(object.getId())) {
+            return new CommandResponse(
+                    CommandResponseCode.ERROR,
+                    "id элемента из аргумента не совпадает с id объекта");
+        }
         if (collectionManager.getCollection().get(idToUpdate) == null) {
             return new CommandResponse(CommandResponseCode.ERROR, "Элемент с таким id не найден");
         }
@@ -28,7 +42,7 @@ public class UpdateCommand extends ObjectCollectionCommand {
         }
         try {
             collectionManager.remove(idToUpdate);
-            collectionManager.put(object);
+            collectionManager.putWithValidation(object);
         } catch (InvalidInputFieldException e) {
             return new CommandResponse(CommandResponseCode.ERROR, e.getMessage());
         }

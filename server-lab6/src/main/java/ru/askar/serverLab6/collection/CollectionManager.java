@@ -97,7 +97,7 @@ public class CollectionManager {
         collection.remove(id);
     }
 
-    public void put(Ticket ticket) throws InvalidInputFieldException {
+    public void putWithValidation(Ticket ticket) throws InvalidInputFieldException {
         validateTicket(ticket);
         collection.put(ticket.getId(), ticket);
     }
@@ -175,10 +175,6 @@ public class CollectionManager {
             if (object.getEvent().getDescription().length() > 1573) {
                 throw new InvalidInputFieldException(
                         "Поле event.description не может быть больше 1573");
-            }
-            // event type
-            if (object.getEvent().getEventType() == null) {
-                throw new InvalidInputFieldException("Поле event.eventType не может быть null");
             }
         }
     }

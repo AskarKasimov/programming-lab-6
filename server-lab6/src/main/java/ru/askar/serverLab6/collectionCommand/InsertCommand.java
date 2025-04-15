@@ -22,7 +22,7 @@ public class InsertCommand extends ObjectCollectionCommand {
             object.getEvent().setId(collectionManager.generateNextEventId());
         }
         try {
-            collectionManager.put(object);
+            collectionManager.putWithValidation(object);
         } catch (InvalidInputFieldException e) {
             return new CommandResponse(CommandResponseCode.ERROR, e.getMessage());
         }
