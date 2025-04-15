@@ -12,7 +12,11 @@ public class ShowCommand extends CollectionCommand {
     private final CollectionManager collectionManager;
 
     public ShowCommand(CollectionManager collectionManager) {
-        super("show", 0, "show - вывести все элементы коллекции в строковом представлении", false);
+        super(
+                "show",
+                0,
+                "show - вывести все элементы коллекции в строковом представлении",
+                collectionManager);
         this.collectionManager = collectionManager;
     }
 

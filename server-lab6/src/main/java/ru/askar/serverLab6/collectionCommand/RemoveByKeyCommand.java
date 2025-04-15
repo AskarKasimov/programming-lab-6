@@ -4,11 +4,12 @@ import ru.askar.common.CommandResponse;
 import ru.askar.serverLab6.collection.CollectionManager;
 
 public class RemoveByKeyCommand extends CollectionCommand {
-    private final CollectionManager collectionManager;
-
     public RemoveByKeyCommand(CollectionManager collectionManager) {
-        super("remove_key", 1, "remove_key key - удалить элемент из коллекции по его id", false);
-        this.collectionManager = collectionManager;
+        super(
+                "remove_key",
+                1,
+                "remove_key key - удалить элемент из коллекции по его id",
+                collectionManager);
     }
 
     @Override

@@ -80,13 +80,12 @@ public class Main {
         collectionCommandExecutor.register(new InfoCommand(collectionManager));
         collectionCommandExecutor.register(new ShowCommand(collectionManager));
         collectionCommandExecutor.register(new InsertCommand(collectionManager));
-        collectionCommandExecutor.register(new UpdateCommand(null, collectionManager, null));
+        collectionCommandExecutor.register(new UpdateCommand(collectionManager));
         collectionCommandExecutor.register(new RemoveByKeyCommand(collectionManager));
         collectionCommandExecutor.register(new ClearCommand(collectionManager));
         collectionCommandExecutor.register(new ExitCommand());
-        collectionCommandExecutor.register(new RemoveLowerCommand(null, collectionManager, null));
-        collectionCommandExecutor.register(
-                new ReplaceIfGreaterCommand(null, collectionManager, null));
+        collectionCommandExecutor.register(new RemoveLowerCommand(collectionManager));
+        collectionCommandExecutor.register(new ReplaceIfGreaterCommand(collectionManager));
         collectionCommandExecutor.register(new RemoveGreaterKeyCommand(collectionManager));
         collectionCommandExecutor.register(new FilterStartsWithNameCommand(collectionManager));
         collectionCommandExecutor.register(new PrintFieldAscendingEventCommand(collectionManager));
@@ -95,11 +94,14 @@ public class Main {
                 .getAllCommands()
                 .forEach(
                         (name, command) -> {
-                            commandList.add(
-                                    new CommandAsList(
-                                            command.getName(),
-                                            command.getArgsCount(),
-                                            command.isNeedObject()));
+                            if (command instanceof ObjectCollectionCommand)
+                                commandList.add(
+                                        new CommandAsList(
+                                                command.getName(), command.getArgsCount(), true));
+                            else
+                                commandList.add(
+                                        new CommandAsList(
+                                                command.getName(), command.getArgsCount(), false));
                         });
 
         CommandExecutor<ServerCommand> serverCommandExecutor = new CommandExecutor<>();

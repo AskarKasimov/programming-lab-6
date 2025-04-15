@@ -4,7 +4,7 @@ import ru.askar.common.CommandResponse;
 
 public class ExitCommand extends CollectionCommand {
     public ExitCommand() {
-        super("exit", 0, "exit - завершить программу (без сохранения в файл)", false);
+        super("exit", 0, "exit - завершить программу (без сохранения в файл)", null);
     }
 
     @Override

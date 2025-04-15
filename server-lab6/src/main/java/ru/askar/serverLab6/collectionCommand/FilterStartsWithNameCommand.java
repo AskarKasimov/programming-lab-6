@@ -10,15 +10,12 @@ import ru.askar.common.object.Ticket;
 import ru.askar.serverLab6.collection.CollectionManager;
 
 public class FilterStartsWithNameCommand extends CollectionCommand {
-    private final CollectionManager collectionManager;
-
     public FilterStartsWithNameCommand(CollectionManager collectionManager) {
         super(
                 "filter_starts_with_name",
                 1,
                 "filter_starts_with_name name - вывести элементы, значение поля name которых начинается с заданной подстроки",
-                false);
-        this.collectionManager = collectionManager;
+                collectionManager);
     }
 
     @Override

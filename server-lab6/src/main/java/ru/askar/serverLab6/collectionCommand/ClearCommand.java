@@ -4,11 +4,8 @@ import ru.askar.common.CommandResponse;
 import ru.askar.serverLab6.collection.CollectionManager;
 
 public class ClearCommand extends CollectionCommand {
-    private final CollectionManager collectionManager;
-
     public ClearCommand(CollectionManager collectionManager) {
-        super("clear", 0, "clear - очистить коллекцию", false);
-        this.collectionManager = collectionManager;
+        super("clear", 0, "clear - очистить коллекцию", collectionManager);
     }
 
     @Override

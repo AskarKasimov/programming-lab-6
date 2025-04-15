@@ -10,7 +10,7 @@ public class HelpCommand extends CollectionCommand {
     private final CommandExecutor<CollectionCommand> executor;
 
     public HelpCommand(CommandExecutor<CollectionCommand> executor) {
-        super("help", 0, "help - вывести справку по доступным командам", false);
+        super("help", 0, "help - вывести справку по доступным командам", null);
         this.executor = executor;
     }
 

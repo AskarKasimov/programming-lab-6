@@ -10,7 +10,7 @@ public class SaveCommand extends CollectionCommand {
     private final CommandExecutor<CollectionCommand> executor;
 
     public SaveCommand(CommandExecutor<CollectionCommand> executor) {
-        super("help", 0, "save - ", false);
+        super("help", 0, "save - сохранить коллекцию в файл", null);
         this.executor = executor;
     }
 

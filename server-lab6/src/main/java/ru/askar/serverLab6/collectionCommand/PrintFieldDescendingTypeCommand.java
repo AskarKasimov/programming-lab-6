@@ -12,15 +12,12 @@ import ru.askar.common.object.TicketType;
 import ru.askar.serverLab6.collection.CollectionManager;
 
 public class PrintFieldDescendingTypeCommand extends CollectionCommand {
-    private final CollectionManager collectionManager;
-
     public PrintFieldDescendingTypeCommand(CollectionManager collectionManager) {
         super(
                 "print_field_descending_type",
                 0,
                 "print_field_descending_type - вывести значения поля type всех элементов в порядке убывания",
-                false);
-        this.collectionManager = collectionManager;
+                collectionManager);
     }
 
     @Override

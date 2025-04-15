@@ -1,11 +1,10 @@
 package ru.askar.serverLab6.collectionCommand;
 
 import ru.askar.common.object.Command;
-import ru.askar.common.object.Ticket;
+import ru.askar.serverLab6.collection.CollectionManager;
 
 public abstract class CollectionCommand extends Command {
-    protected final boolean needObject;
-    protected Ticket object;
+    protected final CollectionManager collectionManager;
 
     /**
      * Заполнение имени и количества требуемых аргументов
@@ -13,16 +12,9 @@ public abstract class CollectionCommand extends Command {
      * @param name
      * @param argsCount
      */
-    public CollectionCommand(String name, int argsCount, String info, boolean needObject) {
+    public CollectionCommand(
+            String name, int argsCount, String info, CollectionManager collectionManager) {
         super(name, argsCount, info);
-        this.needObject = needObject;
-    }
-
-    public boolean isNeedObject() {
-        return needObject;
-    }
-
-    public void setObject(Ticket object) {
-        this.object = object;
+        this.collectionManager = collectionManager;
     }
 }

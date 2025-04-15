@@ -12,15 +12,12 @@ import ru.askar.common.object.Ticket;
 import ru.askar.serverLab6.collection.CollectionManager;
 
 public class PrintFieldAscendingEventCommand extends CollectionCommand {
-    private final CollectionManager collectionManager;
-
     public PrintFieldAscendingEventCommand(CollectionManager collectionManager) {
         super(
                 "print_field_ascending_event",
                 0,
                 "print_field_ascending_event - вывести значения поля event всех элементов в порядке возрастания",
-                false);
-        this.collectionManager = collectionManager;
+                collectionManager);
     }
 
     @Override

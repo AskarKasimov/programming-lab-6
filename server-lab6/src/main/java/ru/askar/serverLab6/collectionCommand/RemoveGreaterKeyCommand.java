@@ -4,15 +4,12 @@ import ru.askar.common.CommandResponse;
 import ru.askar.serverLab6.collection.CollectionManager;
 
 public class RemoveGreaterKeyCommand extends CollectionCommand {
-    private final CollectionManager collectionManager;
-
     public RemoveGreaterKeyCommand(CollectionManager collectionManager) {
         super(
                 "remove_greater_key",
                 1,
                 "remove_greater_key key - удалить элементы, ключ которых превышает заданный",
-                false);
-        this.collectionManager = collectionManager;
+                collectionManager);
     }
 
     @Override

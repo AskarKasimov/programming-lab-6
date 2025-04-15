@@ -16,6 +16,7 @@ import ru.askar.common.CommandToExecute;
 import ru.askar.common.cli.CommandExecutor;
 import ru.askar.serverLab6.collectionCommand.CollectionCommand;
 import ru.askar.serverLab6.collectionCommand.ExitCommand;
+import ru.askar.serverLab6.collectionCommand.ObjectCollectionCommand;
 
 public class TcpServerHandler implements ServerHandler {
     private final CommandExecutor<CollectionCommand> collectionCommandExecutor;
@@ -148,8 +149,8 @@ public class TcpServerHandler implements ServerHandler {
                     handleDisconnect(channel.keyFor(selector), channel);
                     return;
                 }
-                if (calledCommand.isNeedObject()) {
-                    calledCommand.setObject(command.object());
+                if (calledCommand instanceof ObjectCollectionCommand) {
+                    ((ObjectCollectionCommand) calledCommand).setObject(command.object());
                 }
                 CommandResponse response = calledCommand.execute(command.args());
                 sendMessage(channel, response);

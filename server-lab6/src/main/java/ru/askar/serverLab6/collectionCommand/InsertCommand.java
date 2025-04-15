@@ -4,12 +4,9 @@ import ru.askar.common.CommandResponse;
 import ru.askar.common.exception.InvalidInputFieldException;
 import ru.askar.serverLab6.collection.CollectionManager;
 
-public class InsertCommand extends CollectionCommand {
-    private final CollectionManager collectionManager;
-
+public class InsertCommand extends ObjectCollectionCommand {
     public InsertCommand(CollectionManager collectionManager) {
-        super("insert", 3, "insert id?null name price - добавить новый элемент", true);
-        this.collectionManager = collectionManager;
+        super("insert", 3, "insert id?null name price - добавить новый элемент", collectionManager);
     }
 
     @Override

@@ -4,15 +4,12 @@ import ru.askar.common.CommandResponse;
 import ru.askar.serverLab6.collection.CollectionManager;
 
 public class InfoCommand extends CollectionCommand {
-    private final CollectionManager collectionManager;
-
     public InfoCommand(CollectionManager collectionManager) {
         super(
                 "info",
                 0,
                 "info - вывести информацию о коллекции (тип, дата инициализации, количество элементов)",
-                false);
-        this.collectionManager = collectionManager;
+                collectionManager);
     }
 
     @Override
