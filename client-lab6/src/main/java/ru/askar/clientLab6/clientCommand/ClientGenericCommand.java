@@ -66,17 +66,11 @@ public class ClientGenericCommand extends ClientCommand {
                         Ticket.createTicket(
                                 outputWriter, inputReader, id, ticketName, price, null, scriptMode);
                 clientHandler.sendMessage(new CommandToExecute(this.name, args, ticket));
-            } catch (IOException
-                    | InvalidInputFieldException
-                    | UserRejectedToFillFieldsException e) {
+            } catch (UserRejectedToFillFieldsException e) {
                 return new CommandResponse(CommandResponseCode.ERROR, e.getMessage());
             }
         } else {
-            try {
-                clientHandler.sendMessage(new CommandToExecute(this.name, args, null));
-            } catch (IOException e) {
-                return new CommandResponse(CommandResponseCode.ERROR, e.getMessage());
-            }
+            clientHandler.sendMessage(new CommandToExecute(this.name, args, null));
         }
         return new CommandResponse(CommandResponseCode.HIDDEN, "Команда отправлена на сервер");
     }

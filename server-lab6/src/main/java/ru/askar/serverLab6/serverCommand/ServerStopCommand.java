@@ -13,11 +13,7 @@ public class ServerStopCommand extends ServerCommand {
     @Override
     public CommandResponse execute(String[] args) {
         if (serverHandler.getStatus()) {
-            try {
-                serverHandler.stop();
-            } catch (IOException e) {
-                return new CommandResponse(CommandResponseCode.ERROR, e.getMessage());
-            }
+            serverHandler.stop();
         } else {
             return new CommandResponse(CommandResponseCode.ERROR, "Сервер не запущен");
         }
