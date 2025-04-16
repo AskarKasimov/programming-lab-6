@@ -2,6 +2,7 @@ package ru.askar.serverLab6.collectionCommand;
 
 import ru.askar.common.CommandResponse;
 import ru.askar.common.cli.CommandResponseCode;
+import ru.askar.common.exception.InvalidInputFieldException;
 import ru.askar.serverLab6.collection.CollectionManager;
 
 public class RemoveLowerCommand extends ObjectCollectionCommand {
@@ -23,6 +24,11 @@ public class RemoveLowerCommand extends ObjectCollectionCommand {
         }
         if (object.getEvent() != null && object.getEvent().getId() == null) {
             object.getEvent().setId(collectionManager.generateNextEventId());
+        }
+        try {
+            collectionManager.validateTicket(object);
+        } catch (InvalidInputFieldException e) {
+            return new CommandResponse(CommandResponseCode.ERROR, e.getMessage());
         }
         int lastSize = collectionManager.getCollection().size();
         collectionManager.getCollection().values().stream()
